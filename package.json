@@ -3,16 +3,28 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "source": "src/index.ts",
+  "main": "./dist/main.js",
+  "module": "./dist/module.js",
+  "types": "./dist/types.d.ts",
+  "exports": {
+    "import": "./dist/module.js",
+    "require": "./dist/main.js",
+    "types": "./dist/types.d.ts"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node esbuild.js",
     "preview": "vite preview",
     "generate:proto": "sh initialize.sh",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
+    "@parcel/transformer-typescript-types": "^2.15.4",
     "@types/node": "^24.3.0",
     "degit": "^2.8.4",
+    "esbuild": "^0.25.9",
+    "parcel": "^2.15.4",
     "ts-proto": "^2.7.7",
     "typescript": "~5.8.3",
     "vite": "^7.1.2"
