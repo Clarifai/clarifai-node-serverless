@@ -6,9 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:proto": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto --ts_out=./src/generated --proto_path=. $(find proto/clarifai -name '*.proto')"
   },
   "devDependencies": {
+    "degit": "^2.8.4",
+    "ts-proto": "^2.7.7",
     "typescript": "~5.8.3",
     "vite": "^7.1.2"
   }
