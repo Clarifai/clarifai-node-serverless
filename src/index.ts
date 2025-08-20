@@ -1,15 +1,15 @@
 import {
-  PostWorkflowResultsRequest,
   V2Client,
+  PostWorkflowResultsRequest,
 } from "./generated/proto/clarifai/api/service";
 import { ChannelCredentials, Metadata } from "@grpc/grpc-js";
 
 const client = new V2Client(
-  "https://api.clarifai.com",
+  "api.clarifai.com:443",
   ChannelCredentials.createSsl(),
 );
 
-const request: PostWorkflowResultsRequest = {
+const request = PostWorkflowResultsRequest.fromPartial({
   userAppId: {
     appId: "test-ocr-workflow",
     userId: "dani-cfg",
@@ -25,13 +25,14 @@ const request: PostWorkflowResultsRequest = {
       },
     },
   ],
-};
+});
 const meta = new Metadata();
 
-meta.set("authorization", "Key key-here");
+meta.set("authorization", `Key ${process.env.CLARIFAI_PAT}`);
 
 client.postWorkflowResults(request, meta, (error, response) => {
   if (error) {
+    console.log("rendering error");
     console.error("Error:", error);
   } else {
     console.log("Response:", response);
