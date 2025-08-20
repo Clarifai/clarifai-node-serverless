@@ -9,4 +9,8 @@ find ./proto -type f ! -name '*.proto' -delete
 npx degit --force gogo/protobuf/protobuf/google/ google/
 npx degit --force googleapis/googleapis/google/api/ google/api/
 
-protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto --ts_out=./src/generated --proto_path=. $(find proto/clarifai -name '*.proto')
+protoc \
+  --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto \
+  --ts_out=grpc-js,outputServices=grpc-js:./src/generated \
+  --proto_path=. \
+  $(find proto/clarifai -name '*.proto')
