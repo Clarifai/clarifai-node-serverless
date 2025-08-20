@@ -6,8 +6,22 @@
 
 /* eslint-disable */
 import { BinaryReader, BinaryWriter } from "@bufbuild/protobuf/wire";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import {
+  type CallOptions,
+  type ChannelCredentials,
+  Client,
+  type ClientDuplexStream,
+  type ClientOptions,
+  type ClientReadableStream,
+  type ClientUnaryCall,
+  type handleBidiStreamingCall,
+  type handleServerStreamingCall,
+  type handleUnaryCall,
+  makeGenericClientConstructor,
+  type Metadata,
+  type ServiceError,
+  type UntypedServiceImplementation,
+} from "@grpc/grpc-js";
 import { Duration } from "../../../google/protobuf/duration";
 import { Value } from "../../../google/protobuf/struct";
 import {
@@ -47213,93 +47227,419 @@ export const MultiSecretResponse: MessageFns<MultiSecretResponse> = {
   },
 };
 
-export interface V2 {
+export type V2Service = typeof V2Service;
+export const V2Service = {
   /**
    * List concept relations between concepts in the platform.
    * MUST be above ListConcepts so that if concept_id is empty this will still match
    * /concepts/relations to list all the concept relations in the app.
    */
-  ListConceptRelations(request: ListConceptRelationsRequest): Promise<MultiConceptRelationResponse>;
+  listConceptRelations: {
+    path: "/clarifai.api.V2/ListConceptRelations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListConceptRelationsRequest): Buffer =>
+      Buffer.from(ListConceptRelationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListConceptRelationsRequest => ListConceptRelationsRequest.decode(value),
+    responseSerialize: (value: MultiConceptRelationResponse): Buffer =>
+      Buffer.from(MultiConceptRelationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptRelationResponse => MultiConceptRelationResponse.decode(value),
+  },
   /** Post concept relations to create relations between concepts in the platform. */
-  PostConceptRelations(request: PostConceptRelationsRequest): Promise<MultiConceptRelationResponse>;
+  postConceptRelations: {
+    path: "/clarifai.api.V2/PostConceptRelations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostConceptRelationsRequest): Buffer =>
+      Buffer.from(PostConceptRelationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostConceptRelationsRequest => PostConceptRelationsRequest.decode(value),
+    responseSerialize: (value: MultiConceptRelationResponse): Buffer =>
+      Buffer.from(MultiConceptRelationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptRelationResponse => MultiConceptRelationResponse.decode(value),
+  },
   /** Post concept relations to create relations between concepts in the platform. */
-  DeleteConceptRelations(request: DeleteConceptRelationsRequest): Promise<BaseResponse>;
+  deleteConceptRelations: {
+    path: "/clarifai.api.V2/DeleteConceptRelations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteConceptRelationsRequest): Buffer =>
+      Buffer.from(DeleteConceptRelationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteConceptRelationsRequest => DeleteConceptRelationsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all the concepts with their positive and negative counts */
-  GetConceptCounts(request: GetConceptCountsRequest): Promise<MultiConceptCountResponse>;
+  getConceptCounts: {
+    path: "/clarifai.api.V2/GetConceptCounts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetConceptCountsRequest): Buffer =>
+      Buffer.from(GetConceptCountsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetConceptCountsRequest => GetConceptCountsRequest.decode(value),
+    responseSerialize: (value: MultiConceptCountResponse): Buffer =>
+      Buffer.from(MultiConceptCountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptCountResponse => MultiConceptCountResponse.decode(value),
+  },
   /** Get a specific concept from an app. */
-  GetConcept(request: GetConceptRequest): Promise<SingleConceptResponse>;
+  getConcept: {
+    path: "/clarifai.api.V2/GetConcept",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetConceptRequest): Buffer => Buffer.from(GetConceptRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetConceptRequest => GetConceptRequest.decode(value),
+    responseSerialize: (value: SingleConceptResponse): Buffer =>
+      Buffer.from(SingleConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleConceptResponse => SingleConceptResponse.decode(value),
+  },
   /** List all the concepts. */
-  ListConcepts(request: ListConceptsRequest): Promise<MultiConceptResponse>;
+  listConcepts: {
+    path: "/clarifai.api.V2/ListConcepts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListConceptsRequest): Buffer => Buffer.from(ListConceptsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListConceptsRequest => ListConceptsRequest.decode(value),
+    responseSerialize: (value: MultiConceptResponse): Buffer =>
+      Buffer.from(MultiConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptResponse => MultiConceptResponse.decode(value),
+  },
   /** List models concepts. */
-  ListModelConcepts(request: ListModelConceptsRequest): Promise<MultiConceptResponse>;
+  listModelConcepts: {
+    path: "/clarifai.api.V2/ListModelConcepts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelConceptsRequest): Buffer =>
+      Buffer.from(ListModelConceptsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelConceptsRequest => ListModelConceptsRequest.decode(value),
+    responseSerialize: (value: MultiConceptResponse): Buffer =>
+      Buffer.from(MultiConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptResponse => MultiConceptResponse.decode(value),
+  },
   /**
    * Search over the concepts to find one or more you're looking for.
    * This leverage the "body" parameter because we also have page and
    * per_page as url query param variables in this request.
    */
-  PostConceptsSearches(request: PostConceptsSearchesRequest): Promise<MultiConceptResponse>;
+  postConceptsSearches: {
+    path: "/clarifai.api.V2/PostConceptsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostConceptsSearchesRequest): Buffer =>
+      Buffer.from(PostConceptsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostConceptsSearchesRequest => PostConceptsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiConceptResponse): Buffer =>
+      Buffer.from(MultiConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptResponse => MultiConceptResponse.decode(value),
+  },
   /** Add a concept to an app. */
-  PostConcepts(request: PostConceptsRequest): Promise<MultiConceptResponse>;
+  postConcepts: {
+    path: "/clarifai.api.V2/PostConcepts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostConceptsRequest): Buffer => Buffer.from(PostConceptsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostConceptsRequest => PostConceptsRequest.decode(value),
+    responseSerialize: (value: MultiConceptResponse): Buffer =>
+      Buffer.from(MultiConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptResponse => MultiConceptResponse.decode(value),
+  },
   /** Patch one or more concepts. */
-  PatchConcepts(request: PatchConceptsRequest): Promise<MultiConceptResponse>;
+  patchConcepts: {
+    path: "/clarifai.api.V2/PatchConcepts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchConceptsRequest): Buffer => Buffer.from(PatchConceptsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchConceptsRequest => PatchConceptsRequest.decode(value),
+    responseSerialize: (value: MultiConceptResponse): Buffer =>
+      Buffer.from(MultiConceptResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptResponse => MultiConceptResponse.decode(value),
+  },
   /** Get a specific concept from an app. */
-  GetConceptLanguage(request: GetConceptLanguageRequest): Promise<SingleConceptLanguageResponse>;
+  getConceptLanguage: {
+    path: "/clarifai.api.V2/GetConceptLanguage",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetConceptLanguageRequest): Buffer =>
+      Buffer.from(GetConceptLanguageRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetConceptLanguageRequest => GetConceptLanguageRequest.decode(value),
+    responseSerialize: (value: SingleConceptLanguageResponse): Buffer =>
+      Buffer.from(SingleConceptLanguageResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleConceptLanguageResponse => SingleConceptLanguageResponse.decode(value),
+  },
   /** List the concept in all the translated languages. */
-  ListConceptLanguages(request: ListConceptLanguagesRequest): Promise<MultiConceptLanguageResponse>;
+  listConceptLanguages: {
+    path: "/clarifai.api.V2/ListConceptLanguages",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListConceptLanguagesRequest): Buffer =>
+      Buffer.from(ListConceptLanguagesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListConceptLanguagesRequest => ListConceptLanguagesRequest.decode(value),
+    responseSerialize: (value: MultiConceptLanguageResponse): Buffer =>
+      Buffer.from(MultiConceptLanguageResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptLanguageResponse => MultiConceptLanguageResponse.decode(value),
+  },
   /** Add a new translation for this concept. */
-  PostConceptLanguages(request: PostConceptLanguagesRequest): Promise<MultiConceptLanguageResponse>;
+  postConceptLanguages: {
+    path: "/clarifai.api.V2/PostConceptLanguages",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostConceptLanguagesRequest): Buffer =>
+      Buffer.from(PostConceptLanguagesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostConceptLanguagesRequest => PostConceptLanguagesRequest.decode(value),
+    responseSerialize: (value: MultiConceptLanguageResponse): Buffer =>
+      Buffer.from(MultiConceptLanguageResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptLanguageResponse => MultiConceptLanguageResponse.decode(value),
+  },
   /**
    * Patch the name for a given language names by passing in a list of concepts with the new names
    * for the languages.
    */
-  PatchConceptLanguages(request: PatchConceptLanguagesRequest): Promise<MultiConceptLanguageResponse>;
+  patchConceptLanguages: {
+    path: "/clarifai.api.V2/PatchConceptLanguages",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchConceptLanguagesRequest): Buffer =>
+      Buffer.from(PatchConceptLanguagesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchConceptLanguagesRequest => PatchConceptLanguagesRequest.decode(value),
+    responseSerialize: (value: MultiConceptLanguageResponse): Buffer =>
+      Buffer.from(MultiConceptLanguageResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiConceptLanguageResponse => MultiConceptLanguageResponse.decode(value),
+  },
   /** List all domain graphs. */
-  ListKnowledgeGraphs(request: ListKnowledgeGraphsRequest): Promise<MultiKnowledgeGraphResponse>;
+  listKnowledgeGraphs: {
+    path: "/clarifai.api.V2/ListKnowledgeGraphs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListKnowledgeGraphsRequest): Buffer =>
+      Buffer.from(ListKnowledgeGraphsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListKnowledgeGraphsRequest => ListKnowledgeGraphsRequest.decode(value),
+    responseSerialize: (value: MultiKnowledgeGraphResponse): Buffer =>
+      Buffer.from(MultiKnowledgeGraphResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKnowledgeGraphResponse => MultiKnowledgeGraphResponse.decode(value),
+  },
   /** Post domain graphs. */
-  PostKnowledgeGraphs(request: PostKnowledgeGraphsRequest): Promise<MultiKnowledgeGraphResponse>;
+  postKnowledgeGraphs: {
+    path: "/clarifai.api.V2/PostKnowledgeGraphs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostKnowledgeGraphsRequest): Buffer =>
+      Buffer.from(PostKnowledgeGraphsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostKnowledgeGraphsRequest => PostKnowledgeGraphsRequest.decode(value),
+    responseSerialize: (value: MultiKnowledgeGraphResponse): Buffer =>
+      Buffer.from(MultiKnowledgeGraphResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKnowledgeGraphResponse => MultiKnowledgeGraphResponse.decode(value),
+  },
   /** Get a specific annotation from an app. */
-  GetAnnotation(request: GetAnnotationRequest): Promise<SingleAnnotationResponse>;
+  getAnnotation: {
+    path: "/clarifai.api.V2/GetAnnotation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetAnnotationRequest): Buffer => Buffer.from(GetAnnotationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAnnotationRequest => GetAnnotationRequest.decode(value),
+    responseSerialize: (value: SingleAnnotationResponse): Buffer =>
+      Buffer.from(SingleAnnotationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleAnnotationResponse => SingleAnnotationResponse.decode(value),
+  },
   /** List all the annotation. */
-  ListAnnotations(request: ListAnnotationsRequest): Promise<MultiAnnotationResponse>;
+  listAnnotations: {
+    path: "/clarifai.api.V2/ListAnnotations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAnnotationsRequest): Buffer =>
+      Buffer.from(ListAnnotationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAnnotationsRequest => ListAnnotationsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationResponse): Buffer =>
+      Buffer.from(MultiAnnotationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationResponse => MultiAnnotationResponse.decode(value),
+  },
   /** Post annotations. */
-  PostAnnotations(request: PostAnnotationsRequest): Promise<MultiAnnotationResponse>;
+  postAnnotations: {
+    path: "/clarifai.api.V2/PostAnnotations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAnnotationsRequest): Buffer =>
+      Buffer.from(PostAnnotationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAnnotationsRequest => PostAnnotationsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationResponse): Buffer =>
+      Buffer.from(MultiAnnotationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationResponse => MultiAnnotationResponse.decode(value),
+  },
   /** Patch one or more annotations. */
-  PatchAnnotations(request: PatchAnnotationsRequest): Promise<MultiAnnotationResponse>;
+  patchAnnotations: {
+    path: "/clarifai.api.V2/PatchAnnotations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAnnotationsRequest): Buffer =>
+      Buffer.from(PatchAnnotationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAnnotationsRequest => PatchAnnotationsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationResponse): Buffer =>
+      Buffer.from(MultiAnnotationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationResponse => MultiAnnotationResponse.decode(value),
+  },
   /**
    * Patch annotations status by worker id and task id.
    * Deprecated: Use PutTaskAssignments to update task annotations.
    *   For example, you can use PutTaskAssignments with action REVIEW_APPROVE
    *   to approve task assignments and associated annotations in bulk.
    */
-  PatchAnnotationsStatus(request: PatchAnnotationsStatusRequest): Promise<PatchAnnotationsStatusResponse>;
+  patchAnnotationsStatus: {
+    path: "/clarifai.api.V2/PatchAnnotationsStatus",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAnnotationsStatusRequest): Buffer =>
+      Buffer.from(PatchAnnotationsStatusRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAnnotationsStatusRequest => PatchAnnotationsStatusRequest.decode(value),
+    responseSerialize: (value: PatchAnnotationsStatusResponse): Buffer =>
+      Buffer.from(PatchAnnotationsStatusResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): PatchAnnotationsStatusResponse =>
+      PatchAnnotationsStatusResponse.decode(value),
+  },
   /** Delete a single annotation. */
-  DeleteAnnotation(request: DeleteAnnotationRequest): Promise<BaseResponse>;
+  deleteAnnotation: {
+    path: "/clarifai.api.V2/DeleteAnnotation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAnnotationRequest): Buffer =>
+      Buffer.from(DeleteAnnotationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAnnotationRequest => DeleteAnnotationRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Delete multiple annotations in one request. */
-  DeleteAnnotations(request: DeleteAnnotationsRequest): Promise<BaseResponse>;
+  deleteAnnotations: {
+    path: "/clarifai.api.V2/DeleteAnnotations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAnnotationsRequest): Buffer =>
+      Buffer.from(DeleteAnnotationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAnnotationsRequest => DeleteAnnotationsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all the annotation tracks. */
-  ListAnnotationTracks(request: ListAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse>;
+  listAnnotationTracks: {
+    path: "/clarifai.api.V2/ListAnnotationTracks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAnnotationTracksRequest): Buffer =>
+      Buffer.from(ListAnnotationTracksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAnnotationTracksRequest => ListAnnotationTracksRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationTrackResponse): Buffer =>
+      Buffer.from(MultiAnnotationTrackResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationTrackResponse => MultiAnnotationTrackResponse.decode(value),
+  },
   /** Post annotation tracks. */
-  PostAnnotationTracks(request: PostAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse>;
+  postAnnotationTracks: {
+    path: "/clarifai.api.V2/PostAnnotationTracks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAnnotationTracksRequest): Buffer =>
+      Buffer.from(PostAnnotationTracksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAnnotationTracksRequest => PostAnnotationTracksRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationTrackResponse): Buffer =>
+      Buffer.from(MultiAnnotationTrackResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationTrackResponse => MultiAnnotationTrackResponse.decode(value),
+  },
   /** Patch one or more annotation tracks. */
-  PatchAnnotationTracks(request: PatchAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse>;
+  patchAnnotationTracks: {
+    path: "/clarifai.api.V2/PatchAnnotationTracks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAnnotationTracksRequest): Buffer =>
+      Buffer.from(PatchAnnotationTracksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAnnotationTracksRequest => PatchAnnotationTracksRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationTrackResponse): Buffer =>
+      Buffer.from(MultiAnnotationTrackResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationTrackResponse => MultiAnnotationTrackResponse.decode(value),
+  },
   /** Delete multiple annotation tracks in one request. */
-  DeleteAnnotationTracks(request: DeleteAnnotationTracksRequest): Promise<BaseResponse>;
+  deleteAnnotationTracks: {
+    path: "/clarifai.api.V2/DeleteAnnotationTracks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAnnotationTracksRequest): Buffer =>
+      Buffer.from(DeleteAnnotationTracksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAnnotationTracksRequest => DeleteAnnotationTracksRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Patch saved annotations searches by ids. */
-  PatchAnnotationsSearches(request: PatchAnnotationsSearchesRequest): Promise<MultiSearchResponse>;
+  patchAnnotationsSearches: {
+    path: "/clarifai.api.V2/PatchAnnotationsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAnnotationsSearchesRequest): Buffer =>
+      Buffer.from(PatchAnnotationsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAnnotationsSearchesRequest =>
+      PatchAnnotationsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Execute a search over annotations */
-  PostAnnotationsSearches(request: PostAnnotationsSearchesRequest): Promise<MultiSearchResponse>;
+  postAnnotationsSearches: {
+    path: "/clarifai.api.V2/PostAnnotationsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAnnotationsSearchesRequest): Buffer =>
+      Buffer.from(PostAnnotationsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAnnotationsSearchesRequest => PostAnnotationsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /**
    * ListAnnotationWorkers lists users, models, and workflows (collectively
    * known as "workers") that have added annotations to the application.
    */
-  ListAnnotationWorkers(request: ListAnnotationWorkersRequest): Promise<MultiWorkerResponse>;
+  listAnnotationWorkers: {
+    path: "/clarifai.api.V2/ListAnnotationWorkers",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAnnotationWorkersRequest): Buffer =>
+      Buffer.from(ListAnnotationWorkersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAnnotationWorkersRequest => ListAnnotationWorkersRequest.decode(value),
+    responseSerialize: (value: MultiWorkerResponse): Buffer => Buffer.from(MultiWorkerResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkerResponse => MultiWorkerResponse.decode(value),
+  },
   /** Get input count per status. */
-  GetInputCount(request: GetInputCountRequest): Promise<SingleInputCountResponse>;
+  getInputCount: {
+    path: "/clarifai.api.V2/GetInputCount",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInputCountRequest): Buffer => Buffer.from(GetInputCountRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInputCountRequest => GetInputCountRequest.decode(value),
+    responseSerialize: (value: SingleInputCountResponse): Buffer =>
+      Buffer.from(SingleInputCountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInputCountResponse => SingleInputCountResponse.decode(value),
+  },
   /** Streams all the inputs starting from oldest assets. */
-  StreamInputs(request: StreamInputsRequest): Promise<MultiInputResponse>;
-  GetInputSamples(request: GetInputSamplesRequest): Promise<MultiInputAnnotationResponse>;
+  streamInputs: {
+    path: "/clarifai.api.V2/StreamInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: StreamInputsRequest): Buffer => Buffer.from(StreamInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): StreamInputsRequest => StreamInputsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
+  getInputSamples: {
+    path: "/clarifai.api.V2/GetInputSamples",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInputSamplesRequest): Buffer =>
+      Buffer.from(GetInputSamplesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInputSamplesRequest => GetInputSamplesRequest.decode(value),
+    responseSerialize: (value: MultiInputAnnotationResponse): Buffer =>
+      Buffer.from(MultiInputAnnotationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputAnnotationResponse => MultiInputAnnotationResponse.decode(value),
+  },
   /** Get a specific input from an app. */
-  GetInput(request: GetInputRequest): Promise<SingleInputResponse>;
+  getInput: {
+    path: "/clarifai.api.V2/GetInput",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInputRequest): Buffer => Buffer.from(GetInputRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInputRequest => GetInputRequest.decode(value),
+    responseSerialize: (value: SingleInputResponse): Buffer => Buffer.from(SingleInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInputResponse => SingleInputResponse.decode(value),
+  },
   /**
    * Get a MPEG-DASH manifest for video-type inputs that were added via PostInputs and successfully processed
    * Experimental. Manifest is used by browser and desktop clients that implement an efficient streaming playback
@@ -47308,9 +47648,27 @@ export interface V2 {
    * This also means that reencoded video streams are reencoded in a uniform way, not relying on original format
    * Alternative to MPEG-dash is to stream original file with byte-range header
    */
-  GetInputVideoManifest(request: GetVideoManifestRequest): Promise<GetVideoManifestResponse>;
+  getInputVideoManifest: {
+    path: "/clarifai.api.V2/GetInputVideoManifest",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetVideoManifestRequest): Buffer =>
+      Buffer.from(GetVideoManifestRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetVideoManifestRequest => GetVideoManifestRequest.decode(value),
+    responseSerialize: (value: GetVideoManifestResponse): Buffer =>
+      Buffer.from(GetVideoManifestResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GetVideoManifestResponse => GetVideoManifestResponse.decode(value),
+  },
   /** List all the inputs. */
-  ListInputs(request: ListInputsRequest): Promise<MultiInputResponse>;
+  listInputs: {
+    path: "/clarifai.api.V2/ListInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListInputsRequest): Buffer => Buffer.from(ListInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListInputsRequest => ListInputsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
   /**
    * PostInputs adds one or more inputs to the app.
    * Takes a list of image/video/audio/text URLs, image/video/audio bytes or raw text
@@ -47319,53 +47677,195 @@ export interface V2 {
    * Note that inputs processing is asynchronous process
    * See ListInputs, StreamInputs or PostInputSearches to list results
    */
-  PostInputs(request: PostInputsRequest): Promise<MultiInputResponse>;
+  postInputs: {
+    path: "/clarifai.api.V2/PostInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInputsRequest): Buffer => Buffer.from(PostInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInputsRequest => PostInputsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
   /** Patch one or more inputs. */
-  PatchInputs(request: PatchInputsRequest): Promise<MultiInputResponse>;
+  patchInputs: {
+    path: "/clarifai.api.V2/PatchInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchInputsRequest): Buffer => Buffer.from(PatchInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchInputsRequest => PatchInputsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
   /** Delete a single input asynchronously. */
-  DeleteInput(request: DeleteInputRequest): Promise<BaseResponse>;
+  deleteInput: {
+    path: "/clarifai.api.V2/DeleteInput",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteInputRequest): Buffer => Buffer.from(DeleteInputRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteInputRequest => DeleteInputRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Delete multiple inputs in one request.
    * This call is asynchronous.
    */
-  DeleteInputs(request: DeleteInputsRequest): Promise<BaseResponse>;
+  deleteInputs: {
+    path: "/clarifai.api.V2/DeleteInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteInputsRequest): Buffer => Buffer.from(DeleteInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteInputsRequest => DeleteInputsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Patch saved inputs searches by ids. */
-  PatchInputsSearches(request: PatchInputsSearchesRequest): Promise<MultiSearchResponse>;
+  patchInputsSearches: {
+    path: "/clarifai.api.V2/PatchInputsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchInputsSearchesRequest): Buffer =>
+      Buffer.from(PatchInputsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchInputsSearchesRequest => PatchInputsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Execute a search over inputs */
-  PostInputsSearches(request: PostInputsSearchesRequest): Promise<MultiSearchResponse>;
+  postInputsSearches: {
+    path: "/clarifai.api.V2/PostInputsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInputsSearchesRequest): Buffer =>
+      Buffer.from(PostInputsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInputsSearchesRequest => PostInputsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Get predicted outputs from the model. */
-  PostModelOutputs(request: PostModelOutputsRequest): Promise<MultiOutputResponse>;
+  postModelOutputs: {
+    path: "/clarifai.api.V2/PostModelOutputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelOutputsRequest): Buffer =>
+      Buffer.from(PostModelOutputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelOutputsRequest => PostModelOutputsRequest.decode(value),
+    responseSerialize: (value: MultiOutputResponse): Buffer => Buffer.from(MultiOutputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiOutputResponse => MultiOutputResponse.decode(value),
+  },
   /**
    * TODO(zeiler): will need to
    * Single request but streaming responses.
    */
-  GenerateModelOutputs(request: PostModelOutputsRequest): Observable<MultiOutputResponse>;
+  generateModelOutputs: {
+    path: "/clarifai.api.V2/GenerateModelOutputs",
+    requestStream: false,
+    responseStream: true,
+    requestSerialize: (value: PostModelOutputsRequest): Buffer =>
+      Buffer.from(PostModelOutputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelOutputsRequest => PostModelOutputsRequest.decode(value),
+    responseSerialize: (value: MultiOutputResponse): Buffer => Buffer.from(MultiOutputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiOutputResponse => MultiOutputResponse.decode(value),
+  },
   /** Stream of requests and stream of responses */
-  StreamModelOutputs(request: Observable<PostModelOutputsRequest>): Observable<MultiOutputResponse>;
+  streamModelOutputs: {
+    path: "/clarifai.api.V2/StreamModelOutputs",
+    requestStream: true,
+    responseStream: true,
+    requestSerialize: (value: PostModelOutputsRequest): Buffer =>
+      Buffer.from(PostModelOutputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelOutputsRequest => PostModelOutputsRequest.decode(value),
+    responseSerialize: (value: MultiOutputResponse): Buffer => Buffer.from(MultiOutputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiOutputResponse => MultiOutputResponse.decode(value),
+  },
   /** List all the datasets. */
-  ListDatasets(request: ListDatasetsRequest): Promise<MultiDatasetResponse>;
+  listDatasets: {
+    path: "/clarifai.api.V2/ListDatasets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListDatasetsRequest): Buffer => Buffer.from(ListDatasetsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListDatasetsRequest => ListDatasetsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetResponse): Buffer =>
+      Buffer.from(MultiDatasetResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetResponse => MultiDatasetResponse.decode(value),
+  },
   /** Get a specific dataset. */
-  GetDataset(request: GetDatasetRequest): Promise<SingleDatasetResponse>;
+  getDataset: {
+    path: "/clarifai.api.V2/GetDataset",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetDatasetRequest): Buffer => Buffer.from(GetDatasetRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetDatasetRequest => GetDatasetRequest.decode(value),
+    responseSerialize: (value: SingleDatasetResponse): Buffer =>
+      Buffer.from(SingleDatasetResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleDatasetResponse => SingleDatasetResponse.decode(value),
+  },
   /**
    * Add datasets to an app.
    * The process is atomic, i.e. either all or no datasets are added.
    * If there is an error for one dataset,
    * the process will stop, revert the transaction and return the error.
    */
-  PostDatasets(request: PostDatasetsRequest): Promise<MultiDatasetResponse>;
+  postDatasets: {
+    path: "/clarifai.api.V2/PostDatasets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostDatasetsRequest): Buffer => Buffer.from(PostDatasetsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostDatasetsRequest => PostDatasetsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetResponse): Buffer =>
+      Buffer.from(MultiDatasetResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetResponse => MultiDatasetResponse.decode(value),
+  },
   /**
    * Patch one or more datasets.
    * The process is atomic, i.e. either all or no datasets are patched.
    * If there is an error for one dataset,
    * the process will stop, revert the transaction and return the error.
    */
-  PatchDatasets(request: PatchDatasetsRequest): Promise<MultiDatasetResponse>;
+  patchDatasets: {
+    path: "/clarifai.api.V2/PatchDatasets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchDatasetsRequest): Buffer => Buffer.from(PatchDatasetsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchDatasetsRequest => PatchDatasetsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetResponse): Buffer =>
+      Buffer.from(MultiDatasetResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetResponse => MultiDatasetResponse.decode(value),
+  },
   /** Delete one or more datasets in a single request. */
-  DeleteDatasets(request: DeleteDatasetsRequest): Promise<BaseResponse>;
+  deleteDatasets: {
+    path: "/clarifai.api.V2/DeleteDatasets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteDatasetsRequest): Buffer =>
+      Buffer.from(DeleteDatasetsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteDatasetsRequest => DeleteDatasetsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all the dataset inputs in a dataset. */
-  ListDatasetInputs(request: ListDatasetInputsRequest): Promise<MultiDatasetInputResponse>;
+  listDatasetInputs: {
+    path: "/clarifai.api.V2/ListDatasetInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListDatasetInputsRequest): Buffer =>
+      Buffer.from(ListDatasetInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListDatasetInputsRequest => ListDatasetInputsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetInputResponse): Buffer =>
+      Buffer.from(MultiDatasetInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetInputResponse => MultiDatasetInputResponse.decode(value),
+  },
   /** Get a specific dataset input. */
-  GetDatasetInput(request: GetDatasetInputRequest): Promise<SingleDatasetInputResponse>;
+  getDatasetInput: {
+    path: "/clarifai.api.V2/GetDatasetInput",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetDatasetInputRequest): Buffer =>
+      Buffer.from(GetDatasetInputRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetDatasetInputRequest => GetDatasetInputRequest.decode(value),
+    responseSerialize: (value: SingleDatasetInputResponse): Buffer =>
+      Buffer.from(SingleDatasetInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleDatasetInputResponse => SingleDatasetInputResponse.decode(value),
+  },
   /**
    * Add dataset inputs to a dataset.
    * The process is not atomic, i.e. if there are errors with some dataset
@@ -47376,91 +47876,432 @@ export interface V2 {
    * Each individual dataset input in the response has the status set to
    * indicate if it was successful or if there was an error.
    */
-  PostDatasetInputs(request: PostDatasetInputsRequest): Promise<MultiDatasetInputResponse>;
+  postDatasetInputs: {
+    path: "/clarifai.api.V2/PostDatasetInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostDatasetInputsRequest): Buffer =>
+      Buffer.from(PostDatasetInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostDatasetInputsRequest => PostDatasetInputsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetInputResponse): Buffer =>
+      Buffer.from(MultiDatasetInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetInputResponse => MultiDatasetInputResponse.decode(value),
+  },
   /** Delete one or more dataset inputs in a single request. */
-  DeleteDatasetInputs(request: DeleteDatasetInputsRequest): Promise<BaseResponse>;
+  deleteDatasetInputs: {
+    path: "/clarifai.api.V2/DeleteDatasetInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteDatasetInputsRequest): Buffer =>
+      Buffer.from(DeleteDatasetInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteDatasetInputsRequest => DeleteDatasetInputsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all the dataset versions. */
-  ListDatasetVersions(request: ListDatasetVersionsRequest): Promise<MultiDatasetVersionResponse>;
+  listDatasetVersions: {
+    path: "/clarifai.api.V2/ListDatasetVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListDatasetVersionsRequest): Buffer =>
+      Buffer.from(ListDatasetVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListDatasetVersionsRequest => ListDatasetVersionsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetVersionResponse): Buffer =>
+      Buffer.from(MultiDatasetVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetVersionResponse => MultiDatasetVersionResponse.decode(value),
+  },
   /** Get a specific dataset version. */
-  GetDatasetVersion(request: GetDatasetVersionRequest): Promise<SingleDatasetVersionResponse>;
-  ListDatasetVersionMetricsGroups(
-    request: ListDatasetVersionMetricsGroupsRequest,
-  ): Promise<MultiDatasetVersionMetricsGroupResponse>;
+  getDatasetVersion: {
+    path: "/clarifai.api.V2/GetDatasetVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetDatasetVersionRequest): Buffer =>
+      Buffer.from(GetDatasetVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetDatasetVersionRequest => GetDatasetVersionRequest.decode(value),
+    responseSerialize: (value: SingleDatasetVersionResponse): Buffer =>
+      Buffer.from(SingleDatasetVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleDatasetVersionResponse => SingleDatasetVersionResponse.decode(value),
+  },
+  listDatasetVersionMetricsGroups: {
+    path: "/clarifai.api.V2/ListDatasetVersionMetricsGroups",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListDatasetVersionMetricsGroupsRequest): Buffer =>
+      Buffer.from(ListDatasetVersionMetricsGroupsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListDatasetVersionMetricsGroupsRequest =>
+      ListDatasetVersionMetricsGroupsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetVersionMetricsGroupResponse): Buffer =>
+      Buffer.from(MultiDatasetVersionMetricsGroupResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetVersionMetricsGroupResponse =>
+      MultiDatasetVersionMetricsGroupResponse.decode(value),
+  },
   /** Add dataset versions to a dataset. */
-  PostDatasetVersions(request: PostDatasetVersionsRequest): Promise<MultiDatasetVersionResponse>;
+  postDatasetVersions: {
+    path: "/clarifai.api.V2/PostDatasetVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostDatasetVersionsRequest): Buffer =>
+      Buffer.from(PostDatasetVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostDatasetVersionsRequest => PostDatasetVersionsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetVersionResponse): Buffer =>
+      Buffer.from(MultiDatasetVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetVersionResponse => MultiDatasetVersionResponse.decode(value),
+  },
   /** Patch one or more dataset versions. */
-  PatchDatasetVersions(request: PatchDatasetVersionsRequest): Promise<MultiDatasetVersionResponse>;
+  patchDatasetVersions: {
+    path: "/clarifai.api.V2/PatchDatasetVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchDatasetVersionsRequest): Buffer =>
+      Buffer.from(PatchDatasetVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchDatasetVersionsRequest => PatchDatasetVersionsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetVersionResponse): Buffer =>
+      Buffer.from(MultiDatasetVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetVersionResponse => MultiDatasetVersionResponse.decode(value),
+  },
   /** Delete one or more dataset versions in a single request. */
-  DeleteDatasetVersions(request: DeleteDatasetVersionsRequest): Promise<BaseResponse>;
+  deleteDatasetVersions: {
+    path: "/clarifai.api.V2/DeleteDatasetVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteDatasetVersionsRequest): Buffer =>
+      Buffer.from(DeleteDatasetVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteDatasetVersionsRequest => DeleteDatasetVersionsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Create export of a dataset version. */
-  PutDatasetVersionExports(request: PutDatasetVersionExportsRequest): Promise<MultiDatasetVersionExportResponse>;
+  putDatasetVersionExports: {
+    path: "/clarifai.api.V2/PutDatasetVersionExports",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PutDatasetVersionExportsRequest): Buffer =>
+      Buffer.from(PutDatasetVersionExportsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PutDatasetVersionExportsRequest =>
+      PutDatasetVersionExportsRequest.decode(value),
+    responseSerialize: (value: MultiDatasetVersionExportResponse): Buffer =>
+      Buffer.from(MultiDatasetVersionExportResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDatasetVersionExportResponse =>
+      MultiDatasetVersionExportResponse.decode(value),
+  },
   /** Get a specific model type. */
-  GetModelType(request: GetModelTypeRequest): Promise<SingleModelTypeResponse>;
+  getModelType: {
+    path: "/clarifai.api.V2/GetModelType",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelTypeRequest): Buffer => Buffer.from(GetModelTypeRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelTypeRequest => GetModelTypeRequest.decode(value),
+    responseSerialize: (value: SingleModelTypeResponse): Buffer =>
+      Buffer.from(SingleModelTypeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelTypeResponse => SingleModelTypeResponse.decode(value),
+  },
   /** List all the supported open source licenses in the platform. */
-  ListOpenSourceLicenses(request: ListOpenSourceLicensesRequest): Promise<ListOpenSourceLicensesResponse>;
+  listOpenSourceLicenses: {
+    path: "/clarifai.api.V2/ListOpenSourceLicenses",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListOpenSourceLicensesRequest): Buffer =>
+      Buffer.from(ListOpenSourceLicensesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListOpenSourceLicensesRequest => ListOpenSourceLicensesRequest.decode(value),
+    responseSerialize: (value: ListOpenSourceLicensesResponse): Buffer =>
+      Buffer.from(ListOpenSourceLicensesResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): ListOpenSourceLicensesResponse =>
+      ListOpenSourceLicensesResponse.decode(value),
+  },
   /**
    * List all the model types available in the platform.
    * This MUST be above ListModels so that the /models/types endpoint takes precedence.
    */
-  ListModelTypes(request: ListModelTypesRequest): Promise<MultiModelTypeResponse>;
+  listModelTypes: {
+    path: "/clarifai.api.V2/ListModelTypes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelTypesRequest): Buffer =>
+      Buffer.from(ListModelTypesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelTypesRequest => ListModelTypesRequest.decode(value),
+    responseSerialize: (value: MultiModelTypeResponse): Buffer =>
+      Buffer.from(MultiModelTypeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelTypeResponse => MultiModelTypeResponse.decode(value),
+  },
   /** Get a specific model from an app. */
-  GetModel(request: GetModelRequest): Promise<SingleModelResponse>;
+  getModel: {
+    path: "/clarifai.api.V2/GetModel",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelRequest): Buffer => Buffer.from(GetModelRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelRequest => GetModelRequest.decode(value),
+    responseSerialize: (value: SingleModelResponse): Buffer => Buffer.from(SingleModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelResponse => SingleModelResponse.decode(value),
+  },
   /**
    * Get a the output info for a given model_id or model_id/version_id
    * combo.
    */
-  GetModelOutputInfo(request: GetModelRequest): Promise<SingleModelResponse>;
+  getModelOutputInfo: {
+    path: "/clarifai.api.V2/GetModelOutputInfo",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelRequest): Buffer => Buffer.from(GetModelRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelRequest => GetModelRequest.decode(value),
+    responseSerialize: (value: SingleModelResponse): Buffer => Buffer.from(SingleModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelResponse => SingleModelResponse.decode(value),
+  },
   /** List all the models. */
-  ListModels(request: ListModelsRequest): Promise<MultiModelResponse>;
+  listModels: {
+    path: "/clarifai.api.V2/ListModels",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelsRequest): Buffer => Buffer.from(ListModelsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelsRequest => ListModelsRequest.decode(value),
+    responseSerialize: (value: MultiModelResponse): Buffer => Buffer.from(MultiModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelResponse => MultiModelResponse.decode(value),
+  },
   /** List the resource counts for the app. */
-  GetResourceCounts(request: GetResourceCountsRequest): Promise<GetResourceCountsResponse>;
+  getResourceCounts: {
+    path: "/clarifai.api.V2/GetResourceCounts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetResourceCountsRequest): Buffer =>
+      Buffer.from(GetResourceCountsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetResourceCountsRequest => GetResourceCountsRequest.decode(value),
+    responseSerialize: (value: GetResourceCountsResponse): Buffer =>
+      Buffer.from(GetResourceCountsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GetResourceCountsResponse => GetResourceCountsResponse.decode(value),
+  },
   /**
    * Search over the models to find one or more you're looking for.
    * This leverage the "body" parameter because we also have page and
    * per_page as url query param variables in this request.
    */
-  PostModelsSearches(request: PostModelsSearchesRequest): Promise<MultiModelResponse>;
+  postModelsSearches: {
+    path: "/clarifai.api.V2/PostModelsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelsSearchesRequest): Buffer =>
+      Buffer.from(PostModelsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelsSearchesRequest => PostModelsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiModelResponse): Buffer => Buffer.from(MultiModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelResponse => MultiModelResponse.decode(value),
+  },
   /** Add a models to an app. */
-  PostModels(request: PostModelsRequest): Promise<SingleModelResponse>;
+  postModels: {
+    path: "/clarifai.api.V2/PostModels",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelsRequest): Buffer => Buffer.from(PostModelsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelsRequest => PostModelsRequest.decode(value),
+    responseSerialize: (value: SingleModelResponse): Buffer => Buffer.from(SingleModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelResponse => SingleModelResponse.decode(value),
+  },
   /** Patch one or more models. */
-  PatchModels(request: PatchModelsRequest): Promise<MultiModelResponse>;
+  patchModels: {
+    path: "/clarifai.api.V2/PatchModels",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelsRequest): Buffer => Buffer.from(PatchModelsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelsRequest => PatchModelsRequest.decode(value),
+    responseSerialize: (value: MultiModelResponse): Buffer => Buffer.from(MultiModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelResponse => MultiModelResponse.decode(value),
+  },
   /** Patch one or more models ids. */
-  PatchModelIds(request: PatchModelIdsRequest): Promise<MultiModelResponse>;
+  patchModelIds: {
+    path: "/clarifai.api.V2/PatchModelIds",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelIdsRequest): Buffer => Buffer.from(PatchModelIdsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelIdsRequest => PatchModelIdsRequest.decode(value),
+    responseSerialize: (value: MultiModelResponse): Buffer => Buffer.from(MultiModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelResponse => MultiModelResponse.decode(value),
+  },
   /** Delete a single model. */
-  DeleteModel(request: DeleteModelRequest): Promise<BaseResponse>;
+  deleteModel: {
+    path: "/clarifai.api.V2/DeleteModel",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteModelRequest): Buffer => Buffer.from(DeleteModelRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteModelRequest => DeleteModelRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Delete multiple models in one request. */
-  DeleteModels(request: DeleteModelsRequest): Promise<BaseResponse>;
+  deleteModels: {
+    path: "/clarifai.api.V2/DeleteModels",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteModelsRequest): Buffer => Buffer.from(DeleteModelsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteModelsRequest => DeleteModelsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Update model check consents */
-  PatchModelCheckConsents(request: PatchModelCheckConsentsRequest): Promise<MultiModelCheckConsentResponse>;
+  patchModelCheckConsents: {
+    path: "/clarifai.api.V2/PatchModelCheckConsents",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelCheckConsentsRequest): Buffer =>
+      Buffer.from(PatchModelCheckConsentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelCheckConsentsRequest => PatchModelCheckConsentsRequest.decode(value),
+    responseSerialize: (value: MultiModelCheckConsentResponse): Buffer =>
+      Buffer.from(MultiModelCheckConsentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelCheckConsentResponse =>
+      MultiModelCheckConsentResponse.decode(value),
+  },
   /** Update model toolkits tags */
-  PatchModelToolkits(request: PatchModelToolkitsRequest): Promise<MultiModelToolkitResponse>;
+  patchModelToolkits: {
+    path: "/clarifai.api.V2/PatchModelToolkits",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelToolkitsRequest): Buffer =>
+      Buffer.from(PatchModelToolkitsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelToolkitsRequest => PatchModelToolkitsRequest.decode(value),
+    responseSerialize: (value: MultiModelToolkitResponse): Buffer =>
+      Buffer.from(MultiModelToolkitResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelToolkitResponse => MultiModelToolkitResponse.decode(value),
+  },
   /** Update model use_cases tags */
-  PatchModelUseCases(request: PatchModelUseCasesRequest): Promise<MultiModelUseCaseResponse>;
+  patchModelUseCases: {
+    path: "/clarifai.api.V2/PatchModelUseCases",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelUseCasesRequest): Buffer =>
+      Buffer.from(PatchModelUseCasesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelUseCasesRequest => PatchModelUseCasesRequest.decode(value),
+    responseSerialize: (value: MultiModelUseCaseResponse): Buffer =>
+      Buffer.from(MultiModelUseCaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelUseCaseResponse => MultiModelUseCaseResponse.decode(value),
+  },
   /** Update model languages tags */
-  PatchModelLanguages(request: PatchModelLanguagesRequest): Promise<MultiModelLanguageResponse>;
+  patchModelLanguages: {
+    path: "/clarifai.api.V2/PatchModelLanguages",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelLanguagesRequest): Buffer =>
+      Buffer.from(PatchModelLanguagesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelLanguagesRequest => PatchModelLanguagesRequest.decode(value),
+    responseSerialize: (value: MultiModelLanguageResponse): Buffer =>
+      Buffer.from(MultiModelLanguageResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelLanguageResponse => MultiModelLanguageResponse.decode(value),
+  },
   /**
    * Deprecated: Unmaintained and ideally replaced with usage of datasets
    *   The server may refuse to accept requests to this endpoint.
    *
    * @deprecated
    */
-  ListModelInputs(request: ListModelInputsRequest): Promise<MultiInputResponse>;
+  listModelInputs: {
+    path: "/clarifai.api.V2/ListModelInputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelInputsRequest): Buffer =>
+      Buffer.from(ListModelInputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelInputsRequest => ListModelInputsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
   /** Get a specific model from an app. */
-  GetModelVersion(request: GetModelVersionRequest): Promise<SingleModelVersionResponse>;
+  getModelVersion: {
+    path: "/clarifai.api.V2/GetModelVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelVersionRequest): Buffer =>
+      Buffer.from(GetModelVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelVersionRequest => GetModelVersionRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionResponse): Buffer =>
+      Buffer.from(SingleModelVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionResponse => SingleModelVersionResponse.decode(value),
+  },
   /** List all the models. */
-  ListModelVersions(request: ListModelVersionsRequest): Promise<MultiModelVersionResponse>;
-  PostWorkflowVersionsUnPublish(request: PostWorkflowVersionsUnPublishRequest): Promise<BaseResponse>;
-  PostWorkflowVersionsPublish(request: PostWorkflowVersionsPublishRequest): Promise<BaseResponse>;
+  listModelVersions: {
+    path: "/clarifai.api.V2/ListModelVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelVersionsRequest): Buffer =>
+      Buffer.from(ListModelVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelVersionsRequest => ListModelVersionsRequest.decode(value),
+    responseSerialize: (value: MultiModelVersionResponse): Buffer =>
+      Buffer.from(MultiModelVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelVersionResponse => MultiModelVersionResponse.decode(value),
+  },
+  postWorkflowVersionsUnPublish: {
+    path: "/clarifai.api.V2/PostWorkflowVersionsUnPublish",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowVersionsUnPublishRequest): Buffer =>
+      Buffer.from(PostWorkflowVersionsUnPublishRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowVersionsUnPublishRequest =>
+      PostWorkflowVersionsUnPublishRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  postWorkflowVersionsPublish: {
+    path: "/clarifai.api.V2/PostWorkflowVersionsPublish",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowVersionsPublishRequest): Buffer =>
+      Buffer.from(PostWorkflowVersionsPublishRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowVersionsPublishRequest =>
+      PostWorkflowVersionsPublishRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** PostModelVersionsPublish */
-  PostModelVersionsPublish(request: PostModelVersionsPublishRequest): Promise<BaseResponse>;
+  postModelVersionsPublish: {
+    path: "/clarifai.api.V2/PostModelVersionsPublish",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionsPublishRequest): Buffer =>
+      Buffer.from(PostModelVersionsPublishRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionsPublishRequest =>
+      PostModelVersionsPublishRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** PostModelVersionsUnPublish */
-  PostModelVersionsUnPublish(request: PostModelVersionsUnPublishRequest): Promise<BaseResponse>;
+  postModelVersionsUnPublish: {
+    path: "/clarifai.api.V2/PostModelVersionsUnPublish",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionsUnPublishRequest): Buffer =>
+      Buffer.from(PostModelVersionsUnPublishRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionsUnPublishRequest =>
+      PostModelVersionsUnPublishRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Create a new model version to trigger training of the model. */
-  PostModelVersions(request: PostModelVersionsRequest): Promise<SingleModelResponse>;
+  postModelVersions: {
+    path: "/clarifai.api.V2/PostModelVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionsRequest): Buffer =>
+      Buffer.from(PostModelVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionsRequest => PostModelVersionsRequest.decode(value),
+    responseSerialize: (value: SingleModelResponse): Buffer => Buffer.from(SingleModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelResponse => SingleModelResponse.decode(value),
+  },
   /** PatchModelVersions */
-  PatchModelVersions(request: PatchModelVersionsRequest): Promise<MultiModelVersionResponse>;
+  patchModelVersions: {
+    path: "/clarifai.api.V2/PatchModelVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModelVersionsRequest): Buffer =>
+      Buffer.from(PatchModelVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModelVersionsRequest => PatchModelVersionsRequest.decode(value),
+    responseSerialize: (value: MultiModelVersionResponse): Buffer =>
+      Buffer.from(MultiModelVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelVersionResponse => MultiModelVersionResponse.decode(value),
+  },
   /** Delete a single model. */
-  DeleteModelVersion(request: DeleteModelVersionRequest): Promise<BaseResponse>;
+  deleteModelVersion: {
+    path: "/clarifai.api.V2/DeleteModelVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteModelVersionRequest): Buffer =>
+      Buffer.from(DeleteModelVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteModelVersionRequest => DeleteModelVersionRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
    * The config must be sent first before the model_bytes can be uploaded.
@@ -47468,55 +48309,225 @@ export interface V2 {
    * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the model_version_id specified for your model_version.
    * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the model_bytes.
    */
-  PostModelVersionsUpload(
-    request: Observable<PostModelVersionsUploadRequest>,
-  ): Observable<PostModelVersionsUploadResponse>;
+  postModelVersionsUpload: {
+    path: "/clarifai.api.V2/PostModelVersionsUpload",
+    requestStream: true,
+    responseStream: true,
+    requestSerialize: (value: PostModelVersionsUploadRequest): Buffer =>
+      Buffer.from(PostModelVersionsUploadRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionsUploadRequest => PostModelVersionsUploadRequest.decode(value),
+    responseSerialize: (value: PostModelVersionsUploadResponse): Buffer =>
+      Buffer.from(PostModelVersionsUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): PostModelVersionsUploadResponse =>
+      PostModelVersionsUploadResponse.decode(value),
+  },
   /** Kicks off conversion from the old Triton model format to the new Docker model format. */
-  PostModelMigration(request: PostModelMigrationRequest): Promise<SingleModelResponse>;
+  postModelMigration: {
+    path: "/clarifai.api.V2/PostModelMigration",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelMigrationRequest): Buffer =>
+      Buffer.from(PostModelMigrationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelMigrationRequest => PostModelMigrationRequest.decode(value),
+    responseSerialize: (value: SingleModelResponse): Buffer => Buffer.from(SingleModelResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelResponse => SingleModelResponse.decode(value),
+  },
   /** Export a model */
-  PutModelVersionExports(request: PutModelVersionExportsRequest): Promise<SingleModelVersionExportResponse>;
+  putModelVersionExports: {
+    path: "/clarifai.api.V2/PutModelVersionExports",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PutModelVersionExportsRequest): Buffer =>
+      Buffer.from(PutModelVersionExportsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PutModelVersionExportsRequest => PutModelVersionExportsRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionExportResponse): Buffer =>
+      Buffer.from(SingleModelVersionExportResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionExportResponse =>
+      SingleModelVersionExportResponse.decode(value),
+  },
   /** GetModelVersionExport */
-  GetModelVersionExport(request: GetModelVersionExportRequest): Promise<SingleModelVersionExportResponse>;
+  getModelVersionExport: {
+    path: "/clarifai.api.V2/GetModelVersionExport",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelVersionExportRequest): Buffer =>
+      Buffer.from(GetModelVersionExportRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelVersionExportRequest => GetModelVersionExportRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionExportResponse): Buffer =>
+      Buffer.from(SingleModelVersionExportResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionExportResponse =>
+      SingleModelVersionExportResponse.decode(value),
+  },
   /**
    * Get the evaluation metrics for a model version.
    * Deprecated: Use GetEvaluation instead
    *   The server may refuse to accept requests to this endpoint.
    */
-  GetModelVersionMetrics(request: GetModelVersionMetricsRequest): Promise<SingleModelVersionResponse>;
+  getModelVersionMetrics: {
+    path: "/clarifai.api.V2/GetModelVersionMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelVersionMetricsRequest): Buffer =>
+      Buffer.from(GetModelVersionMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelVersionMetricsRequest => GetModelVersionMetricsRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionResponse): Buffer =>
+      Buffer.from(SingleModelVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionResponse => SingleModelVersionResponse.decode(value),
+  },
   /**
    * Deprecated, use PostEvaluations instead
    * Run the evaluation metrics for a model version.
    */
-  PostModelVersionMetrics(request: PostModelVersionMetricsRequest): Promise<SingleModelVersionResponse>;
+  postModelVersionMetrics: {
+    path: "/clarifai.api.V2/PostModelVersionMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionMetricsRequest): Buffer =>
+      Buffer.from(PostModelVersionMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionMetricsRequest => PostModelVersionMetricsRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionResponse): Buffer =>
+      Buffer.from(SingleModelVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionResponse => SingleModelVersionResponse.decode(value),
+  },
   /** Deprecated, use PostEvaluations instead */
-  PostModelVersionEvaluations(request: PostModelVersionEvaluationsRequest): Promise<MultiEvalMetricsResponse>;
+  postModelVersionEvaluations: {
+    path: "/clarifai.api.V2/PostModelVersionEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionEvaluationsRequest): Buffer =>
+      Buffer.from(PostModelVersionEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionEvaluationsRequest =>
+      PostModelVersionEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiEvalMetricsResponse): Buffer =>
+      Buffer.from(MultiEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiEvalMetricsResponse => MultiEvalMetricsResponse.decode(value),
+  },
   /**
    * Deprecated, use GetEvaluation instead
    * List the evaluation metrics for a model version.
    */
-  ListModelVersionEvaluations(request: ListModelVersionEvaluationsRequest): Promise<MultiEvalMetricsResponse>;
+  listModelVersionEvaluations: {
+    path: "/clarifai.api.V2/ListModelVersionEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelVersionEvaluationsRequest): Buffer =>
+      Buffer.from(ListModelVersionEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelVersionEvaluationsRequest =>
+      ListModelVersionEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiEvalMetricsResponse): Buffer =>
+      Buffer.from(MultiEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiEvalMetricsResponse => MultiEvalMetricsResponse.decode(value),
+  },
   /**
    * Deprecated, use GetEvaluation instead
    * Get an evaluation metrics for a model version.
    */
-  GetModelVersionEvaluation(request: GetModelVersionEvaluationRequest): Promise<SingleEvalMetricsResponse>;
-  PostEvaluations(request: PostEvaluationsRequest): Promise<MultiEvalMetricsResponse>;
-  ListEvaluations(request: ListEvaluationsRequest): Promise<MultiEvalMetricsResponse>;
-  GetEvaluation(request: GetEvaluationRequest): Promise<SingleEvalMetricsResponse>;
+  getModelVersionEvaluation: {
+    path: "/clarifai.api.V2/GetModelVersionEvaluation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelVersionEvaluationRequest): Buffer =>
+      Buffer.from(GetModelVersionEvaluationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelVersionEvaluationRequest =>
+      GetModelVersionEvaluationRequest.decode(value),
+    responseSerialize: (value: SingleEvalMetricsResponse): Buffer =>
+      Buffer.from(SingleEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleEvalMetricsResponse => SingleEvalMetricsResponse.decode(value),
+  },
+  postEvaluations: {
+    path: "/clarifai.api.V2/PostEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostEvaluationsRequest): Buffer =>
+      Buffer.from(PostEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostEvaluationsRequest => PostEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiEvalMetricsResponse): Buffer =>
+      Buffer.from(MultiEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiEvalMetricsResponse => MultiEvalMetricsResponse.decode(value),
+  },
+  listEvaluations: {
+    path: "/clarifai.api.V2/ListEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListEvaluationsRequest): Buffer =>
+      Buffer.from(ListEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListEvaluationsRequest => ListEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiEvalMetricsResponse): Buffer =>
+      Buffer.from(MultiEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiEvalMetricsResponse => MultiEvalMetricsResponse.decode(value),
+  },
+  getEvaluation: {
+    path: "/clarifai.api.V2/GetEvaluation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetEvaluationRequest): Buffer => Buffer.from(GetEvaluationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetEvaluationRequest => GetEvaluationRequest.decode(value),
+    responseSerialize: (value: SingleEvalMetricsResponse): Buffer =>
+      Buffer.from(SingleEvalMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleEvalMetricsResponse => SingleEvalMetricsResponse.decode(value),
+  },
   /** Lists model references tied to a particular model id. */
-  ListModelReferences(request: ListModelReferencesRequest): Promise<MultiModelReferenceResponse>;
+  listModelReferences: {
+    path: "/clarifai.api.V2/ListModelReferences",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelReferencesRequest): Buffer =>
+      Buffer.from(ListModelReferencesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelReferencesRequest => ListModelReferencesRequest.decode(value),
+    responseSerialize: (value: MultiModelReferenceResponse): Buffer =>
+      Buffer.from(MultiModelReferenceResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelReferenceResponse => MultiModelReferenceResponse.decode(value),
+  },
   /** GetModelVersionInputExample */
-  GetModelVersionInputExample(
-    request: GetModelVersionInputExampleRequest,
-  ): Promise<SingleModelVersionInputExampleResponse>;
+  getModelVersionInputExample: {
+    path: "/clarifai.api.V2/GetModelVersionInputExample",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModelVersionInputExampleRequest): Buffer =>
+      Buffer.from(GetModelVersionInputExampleRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModelVersionInputExampleRequest =>
+      GetModelVersionInputExampleRequest.decode(value),
+    responseSerialize: (value: SingleModelVersionInputExampleResponse): Buffer =>
+      Buffer.from(SingleModelVersionInputExampleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModelVersionInputExampleResponse =>
+      SingleModelVersionInputExampleResponse.decode(value),
+  },
   /** ListModelVersionInputExamples */
-  ListModelVersionInputExamples(
-    request: ListModelVersionInputExamplesRequest,
-  ): Promise<MultiModelVersionInputExampleResponse>;
+  listModelVersionInputExamples: {
+    path: "/clarifai.api.V2/ListModelVersionInputExamples",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModelVersionInputExamplesRequest): Buffer =>
+      Buffer.from(ListModelVersionInputExamplesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModelVersionInputExamplesRequest =>
+      ListModelVersionInputExamplesRequest.decode(value),
+    responseSerialize: (value: MultiModelVersionInputExampleResponse): Buffer =>
+      Buffer.from(MultiModelVersionInputExampleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModelVersionInputExampleResponse =>
+      MultiModelVersionInputExampleResponse.decode(value),
+  },
   /** Get a specific workflow from an app. */
-  GetWorkflow(request: GetWorkflowRequest): Promise<SingleWorkflowResponse>;
+  getWorkflow: {
+    path: "/clarifai.api.V2/GetWorkflow",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetWorkflowRequest): Buffer => Buffer.from(GetWorkflowRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetWorkflowRequest => GetWorkflowRequest.decode(value),
+    responseSerialize: (value: SingleWorkflowResponse): Buffer =>
+      Buffer.from(SingleWorkflowResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleWorkflowResponse => SingleWorkflowResponse.decode(value),
+  },
   /** List all the workflows. */
-  ListWorkflows(request: ListWorkflowsRequest): Promise<MultiWorkflowResponse>;
+  listWorkflows: {
+    path: "/clarifai.api.V2/ListWorkflows",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListWorkflowsRequest): Buffer => Buffer.from(ListWorkflowsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListWorkflowsRequest => ListWorkflowsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowResponse): Buffer =>
+      Buffer.from(MultiWorkflowResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowResponse => MultiWorkflowResponse.decode(value),
+  },
   /**
    * Add a workflow to an app.
    * Note(zeiler): the order of the workflows that are returned from this endpoint
@@ -47525,90 +48536,387 @@ export interface V2 {
    * When using the workflow in any future call the order returned by this endpoint
    * will be used.
    */
-  PostWorkflows(request: PostWorkflowsRequest): Promise<MultiWorkflowResponse>;
+  postWorkflows: {
+    path: "/clarifai.api.V2/PostWorkflows",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowsRequest): Buffer => Buffer.from(PostWorkflowsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowsRequest => PostWorkflowsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowResponse): Buffer =>
+      Buffer.from(MultiWorkflowResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowResponse => MultiWorkflowResponse.decode(value),
+  },
   /** Patch one or more workflows. */
-  PatchWorkflows(request: PatchWorkflowsRequest): Promise<MultiWorkflowResponse>;
+  patchWorkflows: {
+    path: "/clarifai.api.V2/PatchWorkflows",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchWorkflowsRequest): Buffer =>
+      Buffer.from(PatchWorkflowsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchWorkflowsRequest => PatchWorkflowsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowResponse): Buffer =>
+      Buffer.from(MultiWorkflowResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowResponse => MultiWorkflowResponse.decode(value),
+  },
   /** Patch one or more workflows ids. */
-  PatchWorkflowIds(request: PatchWorkflowIdsRequest): Promise<MultiWorkflowResponse>;
+  patchWorkflowIds: {
+    path: "/clarifai.api.V2/PatchWorkflowIds",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchWorkflowIdsRequest): Buffer =>
+      Buffer.from(PatchWorkflowIdsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchWorkflowIdsRequest => PatchWorkflowIdsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowResponse): Buffer =>
+      Buffer.from(MultiWorkflowResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowResponse => MultiWorkflowResponse.decode(value),
+  },
   /** Delete a single workflow. */
-  DeleteWorkflow(request: DeleteWorkflowRequest): Promise<BaseResponse>;
+  deleteWorkflow: {
+    path: "/clarifai.api.V2/DeleteWorkflow",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteWorkflowRequest): Buffer =>
+      Buffer.from(DeleteWorkflowRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteWorkflowRequest => DeleteWorkflowRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Delete multiple workflows in one request. */
-  DeleteWorkflows(request: DeleteWorkflowsRequest): Promise<BaseResponse>;
+  deleteWorkflows: {
+    path: "/clarifai.api.V2/DeleteWorkflows",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteWorkflowsRequest): Buffer =>
+      Buffer.from(DeleteWorkflowsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteWorkflowsRequest => DeleteWorkflowsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Predict using a workflow. */
-  PostWorkflowResults(request: PostWorkflowResultsRequest): Promise<PostWorkflowResultsResponse>;
+  postWorkflowResults: {
+    path: "/clarifai.api.V2/PostWorkflowResults",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowResultsRequest): Buffer =>
+      Buffer.from(PostWorkflowResultsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowResultsRequest => PostWorkflowResultsRequest.decode(value),
+    responseSerialize: (value: PostWorkflowResultsResponse): Buffer =>
+      Buffer.from(PostWorkflowResultsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): PostWorkflowResultsResponse => PostWorkflowResultsResponse.decode(value),
+  },
   /** List workflow versions. */
-  ListWorkflowVersions(request: ListWorkflowVersionsRequest): Promise<MultiWorkflowVersionResponse>;
+  listWorkflowVersions: {
+    path: "/clarifai.api.V2/ListWorkflowVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListWorkflowVersionsRequest): Buffer =>
+      Buffer.from(ListWorkflowVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListWorkflowVersionsRequest => ListWorkflowVersionsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowVersionResponse): Buffer =>
+      Buffer.from(MultiWorkflowVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowVersionResponse => MultiWorkflowVersionResponse.decode(value),
+  },
   /** Get single workflow version. */
-  GetWorkflowVersion(request: GetWorkflowVersionRequest): Promise<SingleWorkflowVersionResponse>;
+  getWorkflowVersion: {
+    path: "/clarifai.api.V2/GetWorkflowVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetWorkflowVersionRequest): Buffer =>
+      Buffer.from(GetWorkflowVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetWorkflowVersionRequest => GetWorkflowVersionRequest.decode(value),
+    responseSerialize: (value: SingleWorkflowVersionResponse): Buffer =>
+      Buffer.from(SingleWorkflowVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleWorkflowVersionResponse => SingleWorkflowVersionResponse.decode(value),
+  },
   /** Delete workflow versions. */
-  DeleteWorkflowVersions(request: DeleteWorkflowVersionsRequest): Promise<BaseResponse>;
+  deleteWorkflowVersions: {
+    path: "/clarifai.api.V2/DeleteWorkflowVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteWorkflowVersionsRequest): Buffer =>
+      Buffer.from(DeleteWorkflowVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteWorkflowVersionsRequest => DeleteWorkflowVersionsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Patch workflow versions. */
-  PatchWorkflowVersions(request: PatchWorkflowVersionsRequest): Promise<MultiWorkflowVersionResponse>;
+  patchWorkflowVersions: {
+    path: "/clarifai.api.V2/PatchWorkflowVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchWorkflowVersionsRequest): Buffer =>
+      Buffer.from(PatchWorkflowVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchWorkflowVersionsRequest => PatchWorkflowVersionsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowVersionResponse): Buffer =>
+      Buffer.from(MultiWorkflowVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowVersionResponse => MultiWorkflowVersionResponse.decode(value),
+  },
   /** Get a specific key from an app. */
-  GetKey(request: GetKeyRequest): Promise<SingleKeyResponse>;
+  getKey: {
+    path: "/clarifai.api.V2/GetKey",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetKeyRequest): Buffer => Buffer.from(GetKeyRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetKeyRequest => GetKeyRequest.decode(value),
+    responseSerialize: (value: SingleKeyResponse): Buffer => Buffer.from(SingleKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleKeyResponse => SingleKeyResponse.decode(value),
+  },
   /** List all the keys. */
-  ListKeys(request: ListKeysRequest): Promise<MultiKeyResponse>;
+  listKeys: {
+    path: "/clarifai.api.V2/ListKeys",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListKeysRequest): Buffer => Buffer.from(ListKeysRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListKeysRequest => ListKeysRequest.decode(value),
+    responseSerialize: (value: MultiKeyResponse): Buffer => Buffer.from(MultiKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKeyResponse => MultiKeyResponse.decode(value),
+  },
   /** List keys by app_id */
-  ListAppKeys(request: ListAppKeysRequest): Promise<MultiKeyResponse>;
+  listAppKeys: {
+    path: "/clarifai.api.V2/ListAppKeys",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAppKeysRequest): Buffer => Buffer.from(ListAppKeysRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAppKeysRequest => ListAppKeysRequest.decode(value),
+    responseSerialize: (value: MultiKeyResponse): Buffer => Buffer.from(MultiKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKeyResponse => MultiKeyResponse.decode(value),
+  },
   /**
    * Search over the keys to find one or more you're looking for.
    * This leverage the "body" parameter because we also have page and
    * per_page as url query param variables in this request.
    */
-  DeleteKey(request: DeleteKeyRequest): Promise<BaseResponse>;
+  deleteKey: {
+    path: "/clarifai.api.V2/DeleteKey",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteKeyRequest): Buffer => Buffer.from(DeleteKeyRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteKeyRequest => DeleteKeyRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Add a key to an app. */
-  PostKeys(request: PostKeysRequest): Promise<MultiKeyResponse>;
+  postKeys: {
+    path: "/clarifai.api.V2/PostKeys",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostKeysRequest): Buffer => Buffer.from(PostKeysRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostKeysRequest => PostKeysRequest.decode(value),
+    responseSerialize: (value: MultiKeyResponse): Buffer => Buffer.from(MultiKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKeyResponse => MultiKeyResponse.decode(value),
+  },
   /** Patch one or more keys. */
-  PatchKeys(request: PatchKeysRequest): Promise<MultiKeyResponse>;
+  patchKeys: {
+    path: "/clarifai.api.V2/PatchKeys",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchKeysRequest): Buffer => Buffer.from(PatchKeysRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchKeysRequest => PatchKeysRequest.decode(value),
+    responseSerialize: (value: MultiKeyResponse): Buffer => Buffer.from(MultiKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiKeyResponse => MultiKeyResponse.decode(value),
+  },
   /**
    * API Keys in the public API -- request is itself Key authorized, and will tell
    * the user the scopes/access of the key/credential they're providing, as computed by
    * our authorizer:
    */
-  MyScopes(request: MyScopesRequest): Promise<MultiScopeResponse>;
-  MyScopesUser(request: MyScopesUserRequest): Promise<MultiScopeUserResponse>;
-  MyScopesRoot(request: MyScopesRootRequest): Promise<MultiScopeRootResponse>;
+  myScopes: {
+    path: "/clarifai.api.V2/MyScopes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: MyScopesRequest): Buffer => Buffer.from(MyScopesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): MyScopesRequest => MyScopesRequest.decode(value),
+    responseSerialize: (value: MultiScopeResponse): Buffer => Buffer.from(MultiScopeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiScopeResponse => MultiScopeResponse.decode(value),
+  },
+  myScopesUser: {
+    path: "/clarifai.api.V2/MyScopesUser",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: MyScopesUserRequest): Buffer => Buffer.from(MyScopesUserRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): MyScopesUserRequest => MyScopesUserRequest.decode(value),
+    responseSerialize: (value: MultiScopeUserResponse): Buffer =>
+      Buffer.from(MultiScopeUserResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiScopeUserResponse => MultiScopeUserResponse.decode(value),
+  },
+  myScopesRoot: {
+    path: "/clarifai.api.V2/MyScopesRoot",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: MyScopesRootRequest): Buffer => Buffer.from(MyScopesRootRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): MyScopesRootRequest => MyScopesRootRequest.decode(value),
+    responseSerialize: (value: MultiScopeRootResponse): Buffer =>
+      Buffer.from(MultiScopeRootResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiScopeRootResponse => MultiScopeRootResponse.decode(value),
+  },
   /** List all auth scopes available to me as a user. */
-  ListScopes(request: ListScopesRequest): Promise<MultiScopeDepsResponse>;
+  listScopes: {
+    path: "/clarifai.api.V2/ListScopes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListScopesRequest): Buffer => Buffer.from(ListScopesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListScopesRequest => ListScopesRequest.decode(value),
+    responseSerialize: (value: MultiScopeDepsResponse): Buffer =>
+      Buffer.from(MultiScopeDepsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiScopeDepsResponse => MultiScopeDepsResponse.decode(value),
+  },
   /** Get a specific app from an app. */
-  GetApp(request: GetAppRequest): Promise<SingleAppResponse>;
+  getApp: {
+    path: "/clarifai.api.V2/GetApp",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetAppRequest): Buffer => Buffer.from(GetAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAppRequest => GetAppRequest.decode(value),
+    responseSerialize: (value: SingleAppResponse): Buffer => Buffer.from(SingleAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleAppResponse => SingleAppResponse.decode(value),
+  },
   /** List all the apps. */
-  ListApps(request: ListAppsRequest): Promise<MultiAppResponse>;
+  listApps: {
+    path: "/clarifai.api.V2/ListApps",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAppsRequest): Buffer => Buffer.from(ListAppsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAppsRequest => ListAppsRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /**
    * Search over the apps to find one or more you're looking for.
    * This leverage the "body" parameter because we also have page and
    * per_page as url query param variables in this request.
    */
-  DeleteApp(request: DeleteAppRequest): Promise<BaseResponse>;
+  deleteApp: {
+    path: "/clarifai.api.V2/DeleteApp",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAppRequest): Buffer => Buffer.from(DeleteAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAppRequest => DeleteAppRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Add a app to an app.
    * This needs to load the default workflow to make a copy, validating all the models in it, and
    * then writing the new workflow back to this new app.
    */
-  PostApps(request: PostAppsRequest): Promise<MultiAppResponse>;
+  postApps: {
+    path: "/clarifai.api.V2/PostApps",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAppsRequest): Buffer => Buffer.from(PostAppsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAppsRequest => PostAppsRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /** Patch one or more apps. */
-  PatchApps(request: PatchAppsRequest): Promise<MultiAppResponse>;
+  patchApps: {
+    path: "/clarifai.api.V2/PatchApps",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAppsRequest): Buffer => Buffer.from(PatchAppsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAppsRequest => PatchAppsRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /**
    * Allows to Patch only the below fields in one or more apps.
    * Allowed fields are notes, description and image
    */
-  PatchAppsDetails(request: PatchAppsDetailsRequest): Promise<MultiAppResponse>;
+  patchAppsDetails: {
+    path: "/clarifai.api.V2/PatchAppsDetails",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAppsDetailsRequest): Buffer =>
+      Buffer.from(PatchAppsDetailsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAppsDetailsRequest => PatchAppsDetailsRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /** Patch apps ids. */
-  PatchAppsIds(request: PatchAppsIdsRequest): Promise<MultiAppResponse>;
+  patchAppsIds: {
+    path: "/clarifai.api.V2/PatchAppsIds",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAppsIdsRequest): Buffer => Buffer.from(PatchAppsIdsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAppsIdsRequest => PatchAppsIdsRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /** Patch one app. */
-  PatchApp(request: PatchAppRequest): Promise<SingleAppResponse>;
+  patchApp: {
+    path: "/clarifai.api.V2/PatchApp",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAppRequest): Buffer => Buffer.from(PatchAppRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAppRequest => PatchAppRequest.decode(value),
+    responseSerialize: (value: SingleAppResponse): Buffer => Buffer.from(SingleAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleAppResponse => SingleAppResponse.decode(value),
+  },
   /** Search over the applications to find one or more you're looking for. */
-  PostAppsSearches(request: PostAppsSearchesRequest): Promise<MultiAppResponse>;
+  postAppsSearches: {
+    path: "/clarifai.api.V2/PostAppsSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAppsSearchesRequest): Buffer =>
+      Buffer.from(PostAppsSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAppsSearchesRequest => PostAppsSearchesRequest.decode(value),
+    responseSerialize: (value: MultiAppResponse): Buffer => Buffer.from(MultiAppResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppResponse => MultiAppResponse.decode(value),
+  },
   /** Get user information */
-  GetUser(request: GetUserRequest): Promise<SingleUserResponse>;
+  getUser: {
+    path: "/clarifai.api.V2/GetUser",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetUserRequest): Buffer => Buffer.from(GetUserRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetUserRequest => GetUserRequest.decode(value),
+    responseSerialize: (value: SingleUserResponse): Buffer => Buffer.from(SingleUserResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleUserResponse => SingleUserResponse.decode(value),
+  },
   /** Validate new password in real-time for a user */
-  PostValidatePassword(request: PostValidatePasswordRequest): Promise<SinglePasswordValidationResponse>;
+  postValidatePassword: {
+    path: "/clarifai.api.V2/PostValidatePassword",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostValidatePasswordRequest): Buffer =>
+      Buffer.from(PostValidatePasswordRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostValidatePasswordRequest => PostValidatePasswordRequest.decode(value),
+    responseSerialize: (value: SinglePasswordValidationResponse): Buffer =>
+      Buffer.from(SinglePasswordValidationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePasswordValidationResponse =>
+      SinglePasswordValidationResponse.decode(value),
+  },
   /** Get a saved legacy search. */
-  GetSearch(request: GetSearchRequest): Promise<SingleSearchResponse>;
+  getSearch: {
+    path: "/clarifai.api.V2/GetSearch",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetSearchRequest): Buffer => Buffer.from(GetSearchRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetSearchRequest => GetSearchRequest.decode(value),
+    responseSerialize: (value: SingleSearchResponse): Buffer =>
+      Buffer.from(SingleSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleSearchResponse => SingleSearchResponse.decode(value),
+  },
   /** List all saved legacy searches. */
-  ListSearches(request: ListSearchesRequest): Promise<MultiSearchResponse>;
+  listSearches: {
+    path: "/clarifai.api.V2/ListSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListSearchesRequest): Buffer => Buffer.from(ListSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListSearchesRequest => ListSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Patch saved legacy searches by ids. */
-  PatchSearches(request: PatchSearchesRequest): Promise<MultiSearchResponse>;
+  patchSearches: {
+    path: "/clarifai.api.V2/PatchSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchSearchesRequest): Buffer => Buffer.from(PatchSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchSearchesRequest => PatchSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /**
    * Execute a new search and optionally save it.
    *
@@ -47617,47 +48925,232 @@ export interface V2 {
    *
    * @deprecated
    */
-  PostSearches(request: PostSearchesRequest): Promise<MultiSearchResponse>;
+  postSearches: {
+    path: "/clarifai.api.V2/PostSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostSearchesRequest): Buffer => Buffer.from(PostSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostSearchesRequest => PostSearchesRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Execute a previously saved legacy search. */
-  PostSearchesByID(request: PostSearchesByIDRequest): Promise<MultiSearchResponse>;
+  postSearchesById: {
+    path: "/clarifai.api.V2/PostSearchesByID",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostSearchesByIDRequest): Buffer =>
+      Buffer.from(PostSearchesByIDRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostSearchesByIDRequest => PostSearchesByIDRequest.decode(value),
+    responseSerialize: (value: MultiSearchResponse): Buffer => Buffer.from(MultiSearchResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSearchResponse => MultiSearchResponse.decode(value),
+  },
   /** Evaluate the results of two search requests */
-  PostAnnotationSearchMetrics(
-    request: PostAnnotationSearchMetricsRequest,
-  ): Promise<MultiAnnotationSearchMetricsResponse>;
+  postAnnotationSearchMetrics: {
+    path: "/clarifai.api.V2/PostAnnotationSearchMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAnnotationSearchMetricsRequest): Buffer =>
+      Buffer.from(PostAnnotationSearchMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAnnotationSearchMetricsRequest =>
+      PostAnnotationSearchMetricsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationSearchMetricsResponse): Buffer =>
+      Buffer.from(MultiAnnotationSearchMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationSearchMetricsResponse =>
+      MultiAnnotationSearchMetricsResponse.decode(value),
+  },
   /** Get the evaluation results between two search requests */
-  GetAnnotationSearchMetrics(request: GetAnnotationSearchMetricsRequest): Promise<MultiAnnotationSearchMetricsResponse>;
+  getAnnotationSearchMetrics: {
+    path: "/clarifai.api.V2/GetAnnotationSearchMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetAnnotationSearchMetricsRequest): Buffer =>
+      Buffer.from(GetAnnotationSearchMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAnnotationSearchMetricsRequest =>
+      GetAnnotationSearchMetricsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationSearchMetricsResponse): Buffer =>
+      Buffer.from(MultiAnnotationSearchMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationSearchMetricsResponse =>
+      MultiAnnotationSearchMetricsResponse.decode(value),
+  },
   /** List the evaluation results between two search requests */
-  ListAnnotationSearchMetrics(
-    request: ListAnnotationSearchMetricsRequest,
-  ): Promise<MultiAnnotationSearchMetricsResponse>;
+  listAnnotationSearchMetrics: {
+    path: "/clarifai.api.V2/ListAnnotationSearchMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAnnotationSearchMetricsRequest): Buffer =>
+      Buffer.from(ListAnnotationSearchMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAnnotationSearchMetricsRequest =>
+      ListAnnotationSearchMetricsRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationSearchMetricsResponse): Buffer =>
+      Buffer.from(MultiAnnotationSearchMetricsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationSearchMetricsResponse =>
+      MultiAnnotationSearchMetricsResponse.decode(value),
+  },
   /** DeleteAnnotationSearchMetrics */
-  DeleteAnnotationSearchMetrics(request: DeleteAnnotationSearchMetricsRequest): Promise<BaseResponse>;
+  deleteAnnotationSearchMetrics: {
+    path: "/clarifai.api.V2/DeleteAnnotationSearchMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAnnotationSearchMetricsRequest): Buffer =>
+      Buffer.from(DeleteAnnotationSearchMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAnnotationSearchMetricsRequest =>
+      DeleteAnnotationSearchMetricsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Delete a saved search. */
-  DeleteSearch(request: DeleteSearchRequest): Promise<BaseResponse>;
+  deleteSearch: {
+    path: "/clarifai.api.V2/DeleteSearch",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteSearchRequest): Buffer => Buffer.from(DeleteSearchRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteSearchRequest => DeleteSearchRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all the annotation filters. */
-  ListAnnotationFilters(request: ListAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse>;
+  listAnnotationFilters: {
+    path: "/clarifai.api.V2/ListAnnotationFilters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAnnotationFiltersRequest): Buffer =>
+      Buffer.from(ListAnnotationFiltersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAnnotationFiltersRequest => ListAnnotationFiltersRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationFilterResponse): Buffer =>
+      Buffer.from(MultiAnnotationFilterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationFilterResponse => MultiAnnotationFilterResponse.decode(value),
+  },
   /** Get a specific annotation filter. */
-  GetAnnotationFilter(request: GetAnnotationFilterRequest): Promise<SingleAnnotationFilterResponse>;
+  getAnnotationFilter: {
+    path: "/clarifai.api.V2/GetAnnotationFilter",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetAnnotationFilterRequest): Buffer =>
+      Buffer.from(GetAnnotationFilterRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAnnotationFilterRequest => GetAnnotationFilterRequest.decode(value),
+    responseSerialize: (value: SingleAnnotationFilterResponse): Buffer =>
+      Buffer.from(SingleAnnotationFilterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleAnnotationFilterResponse =>
+      SingleAnnotationFilterResponse.decode(value),
+  },
   /** Add annotation filters. */
-  PostAnnotationFilters(request: PostAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse>;
+  postAnnotationFilters: {
+    path: "/clarifai.api.V2/PostAnnotationFilters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAnnotationFiltersRequest): Buffer =>
+      Buffer.from(PostAnnotationFiltersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAnnotationFiltersRequest => PostAnnotationFiltersRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationFilterResponse): Buffer =>
+      Buffer.from(MultiAnnotationFilterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationFilterResponse => MultiAnnotationFilterResponse.decode(value),
+  },
   /** Patch one or more annotation filters. */
-  PatchAnnotationFilters(request: PatchAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse>;
+  patchAnnotationFilters: {
+    path: "/clarifai.api.V2/PatchAnnotationFilters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchAnnotationFiltersRequest): Buffer =>
+      Buffer.from(PatchAnnotationFiltersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchAnnotationFiltersRequest => PatchAnnotationFiltersRequest.decode(value),
+    responseSerialize: (value: MultiAnnotationFilterResponse): Buffer =>
+      Buffer.from(MultiAnnotationFilterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAnnotationFilterResponse => MultiAnnotationFilterResponse.decode(value),
+  },
   /** Delete one or more annotation filters in a single request. */
-  DeleteAnnotationFilters(request: DeleteAnnotationFiltersRequest): Promise<BaseResponse>;
+  deleteAnnotationFilters: {
+    path: "/clarifai.api.V2/DeleteAnnotationFilters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteAnnotationFiltersRequest): Buffer =>
+      Buffer.from(DeleteAnnotationFiltersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteAnnotationFiltersRequest => DeleteAnnotationFiltersRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** List all status codes. */
-  ListStatusCodes(request: ListStatusCodesRequest): Promise<MultiStatusCodeResponse>;
+  listStatusCodes: {
+    path: "/clarifai.api.V2/ListStatusCodes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListStatusCodesRequest): Buffer =>
+      Buffer.from(ListStatusCodesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListStatusCodesRequest => ListStatusCodesRequest.decode(value),
+    responseSerialize: (value: MultiStatusCodeResponse): Buffer =>
+      Buffer.from(MultiStatusCodeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiStatusCodeResponse => MultiStatusCodeResponse.decode(value),
+  },
   /** Get more details for a status code. */
-  GetStatusCode(request: GetStatusCodeRequest): Promise<SingleStatusCodeResponse>;
+  getStatusCode: {
+    path: "/clarifai.api.V2/GetStatusCode",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetStatusCodeRequest): Buffer => Buffer.from(GetStatusCodeRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetStatusCodeRequest => GetStatusCodeRequest.decode(value),
+    responseSerialize: (value: SingleStatusCodeResponse): Buffer =>
+      Buffer.from(SingleStatusCodeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleStatusCodeResponse => SingleStatusCodeResponse.decode(value),
+  },
   /** owner list users who the app is shared with */
-  ListCollaborators(request: ListCollaboratorsRequest): Promise<MultiCollaboratorsResponse>;
+  listCollaborators: {
+    path: "/clarifai.api.V2/ListCollaborators",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListCollaboratorsRequest): Buffer =>
+      Buffer.from(ListCollaboratorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListCollaboratorsRequest => ListCollaboratorsRequest.decode(value),
+    responseSerialize: (value: MultiCollaboratorsResponse): Buffer =>
+      Buffer.from(MultiCollaboratorsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollaboratorsResponse => MultiCollaboratorsResponse.decode(value),
+  },
   /** add collaborators to an app. */
-  PostCollaborators(request: PostCollaboratorsRequest): Promise<MultiCollaboratorsResponse>;
+  postCollaborators: {
+    path: "/clarifai.api.V2/PostCollaborators",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostCollaboratorsRequest): Buffer =>
+      Buffer.from(PostCollaboratorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostCollaboratorsRequest => PostCollaboratorsRequest.decode(value),
+    responseSerialize: (value: MultiCollaboratorsResponse): Buffer =>
+      Buffer.from(MultiCollaboratorsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollaboratorsResponse => MultiCollaboratorsResponse.decode(value),
+  },
   /** Patch existing collaborators. */
-  PatchCollaborators(request: PatchCollaboratorsRequest): Promise<MultiCollaboratorsResponse>;
+  patchCollaborators: {
+    path: "/clarifai.api.V2/PatchCollaborators",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchCollaboratorsRequest): Buffer =>
+      Buffer.from(PatchCollaboratorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchCollaboratorsRequest => PatchCollaboratorsRequest.decode(value),
+    responseSerialize: (value: MultiCollaboratorsResponse): Buffer =>
+      Buffer.from(MultiCollaboratorsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollaboratorsResponse => MultiCollaboratorsResponse.decode(value),
+  },
   /** Delete existing collaborators. */
-  DeleteCollaborators(request: DeleteCollaboratorsRequest): Promise<BaseResponse>;
+  deleteCollaborators: {
+    path: "/clarifai.api.V2/DeleteCollaborators",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteCollaboratorsRequest): Buffer =>
+      Buffer.from(DeleteCollaboratorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteCollaboratorsRequest => DeleteCollaboratorsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Collaboration includes the app user are invitied to work on */
-  ListCollaborations(request: ListCollaborationsRequest): Promise<MultiCollaborationsResponse>;
+  listCollaborations: {
+    path: "/clarifai.api.V2/ListCollaborations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListCollaborationsRequest): Buffer =>
+      Buffer.from(ListCollaborationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListCollaborationsRequest => ListCollaborationsRequest.decode(value),
+    responseSerialize: (value: MultiCollaborationsResponse): Buffer =>
+      Buffer.from(MultiCollaborationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollaborationsResponse => MultiCollaborationsResponse.decode(value),
+  },
   /**
    * PostAppDuplications starts async app duplication jobs which copy resources
    * (inputs, annotations, models etc) from one application to another. It can
@@ -47671,38 +49164,174 @@ export interface V2 {
    * user's ID has to be used in the call to GetAppDuplication, which might be
    * different to the source application owner ID in this call.
    */
-  PostAppDuplications(request: PostAppDuplicationsRequest): Promise<MultiAppDuplicationsResponse>;
+  postAppDuplications: {
+    path: "/clarifai.api.V2/PostAppDuplications",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAppDuplicationsRequest): Buffer =>
+      Buffer.from(PostAppDuplicationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAppDuplicationsRequest => PostAppDuplicationsRequest.decode(value),
+    responseSerialize: (value: MultiAppDuplicationsResponse): Buffer =>
+      Buffer.from(MultiAppDuplicationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppDuplicationsResponse => MultiAppDuplicationsResponse.decode(value),
+  },
   /** ListAppDuplications lists all app duplication jobs created by the user. */
-  ListAppDuplications(request: ListAppDuplicationsRequest): Promise<MultiAppDuplicationsResponse>;
+  listAppDuplications: {
+    path: "/clarifai.api.V2/ListAppDuplications",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListAppDuplicationsRequest): Buffer =>
+      Buffer.from(ListAppDuplicationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListAppDuplicationsRequest => ListAppDuplicationsRequest.decode(value),
+    responseSerialize: (value: MultiAppDuplicationsResponse): Buffer =>
+      Buffer.from(MultiAppDuplicationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAppDuplicationsResponse => MultiAppDuplicationsResponse.decode(value),
+  },
   /** GetAppDuplication returns an app duplication job created by the user. */
-  GetAppDuplication(request: GetAppDuplicationRequest): Promise<SingleAppDuplicationResponse>;
+  getAppDuplication: {
+    path: "/clarifai.api.V2/GetAppDuplication",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetAppDuplicationRequest): Buffer =>
+      Buffer.from(GetAppDuplicationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAppDuplicationRequest => GetAppDuplicationRequest.decode(value),
+    responseSerialize: (value: SingleAppDuplicationResponse): Buffer =>
+      Buffer.from(SingleAppDuplicationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleAppDuplicationResponse => SingleAppDuplicationResponse.decode(value),
+  },
   /** Add tasks to an app. */
-  PostTasks(request: PostTasksRequest): Promise<MultiTaskResponse>;
+  postTasks: {
+    path: "/clarifai.api.V2/PostTasks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostTasksRequest): Buffer => Buffer.from(PostTasksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostTasksRequest => PostTasksRequest.decode(value),
+    responseSerialize: (value: MultiTaskResponse): Buffer => Buffer.from(MultiTaskResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiTaskResponse => MultiTaskResponse.decode(value),
+  },
   /** Task annotation count */
-  GetTaskAnnotationCount(request: GetTaskCountRequest): Promise<SingleTaskCountResponse>;
+  getTaskAnnotationCount: {
+    path: "/clarifai.api.V2/GetTaskAnnotationCount",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetTaskCountRequest): Buffer => Buffer.from(GetTaskCountRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetTaskCountRequest => GetTaskCountRequest.decode(value),
+    responseSerialize: (value: SingleTaskCountResponse): Buffer =>
+      Buffer.from(SingleTaskCountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleTaskCountResponse => SingleTaskCountResponse.decode(value),
+  },
   /** Task Input count */
-  GetTaskInputCount(request: GetTaskCountRequest): Promise<SingleTaskCountResponse>;
+  getTaskInputCount: {
+    path: "/clarifai.api.V2/GetTaskInputCount",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetTaskCountRequest): Buffer => Buffer.from(GetTaskCountRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetTaskCountRequest => GetTaskCountRequest.decode(value),
+    responseSerialize: (value: SingleTaskCountResponse): Buffer =>
+      Buffer.from(SingleTaskCountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleTaskCountResponse => SingleTaskCountResponse.decode(value),
+  },
   /** Get a specific task from an app. */
-  GetTask(request: GetTaskRequest): Promise<SingleTaskResponse>;
+  getTask: {
+    path: "/clarifai.api.V2/GetTask",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetTaskRequest): Buffer => Buffer.from(GetTaskRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetTaskRequest => GetTaskRequest.decode(value),
+    responseSerialize: (value: SingleTaskResponse): Buffer => Buffer.from(SingleTaskResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleTaskResponse => SingleTaskResponse.decode(value),
+  },
   /** List tasks from an app. */
-  ListTasks(request: ListTasksRequest): Promise<MultiTaskResponse>;
+  listTasks: {
+    path: "/clarifai.api.V2/ListTasks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListTasksRequest): Buffer => Buffer.from(ListTasksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListTasksRequest => ListTasksRequest.decode(value),
+    responseSerialize: (value: MultiTaskResponse): Buffer => Buffer.from(MultiTaskResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiTaskResponse => MultiTaskResponse.decode(value),
+  },
   /** Patch one or more tasks. */
-  PatchTasks(request: PatchTasksRequest): Promise<MultiTaskResponse>;
+  patchTasks: {
+    path: "/clarifai.api.V2/PatchTasks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchTasksRequest): Buffer => Buffer.from(PatchTasksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchTasksRequest => PatchTasksRequest.decode(value),
+    responseSerialize: (value: MultiTaskResponse): Buffer => Buffer.from(MultiTaskResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiTaskResponse => MultiTaskResponse.decode(value),
+  },
   /** Delete multiple tasks in one request. */
-  DeleteTasks(request: DeleteTasksRequest): Promise<BaseResponse>;
+  deleteTasks: {
+    path: "/clarifai.api.V2/DeleteTasks",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteTasksRequest): Buffer => Buffer.from(DeleteTasksRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteTasksRequest => DeleteTasksRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Add Label orders. */
-  PostLabelOrders(request: PostLabelOrdersRequest): Promise<MultiLabelOrderResponse>;
+  postLabelOrders: {
+    path: "/clarifai.api.V2/PostLabelOrders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostLabelOrdersRequest): Buffer =>
+      Buffer.from(PostLabelOrdersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostLabelOrdersRequest => PostLabelOrdersRequest.decode(value),
+    responseSerialize: (value: MultiLabelOrderResponse): Buffer =>
+      Buffer.from(MultiLabelOrderResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiLabelOrderResponse => MultiLabelOrderResponse.decode(value),
+  },
   /** Get a label order. */
-  GetLabelOrder(request: GetLabelOrderRequest): Promise<SingleLabelOrderResponse>;
+  getLabelOrder: {
+    path: "/clarifai.api.V2/GetLabelOrder",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetLabelOrderRequest): Buffer => Buffer.from(GetLabelOrderRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetLabelOrderRequest => GetLabelOrderRequest.decode(value),
+    responseSerialize: (value: SingleLabelOrderResponse): Buffer =>
+      Buffer.from(SingleLabelOrderResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleLabelOrderResponse => SingleLabelOrderResponse.decode(value),
+  },
   /** List label orders. */
-  ListLabelOrders(request: ListLabelOrdersRequest): Promise<MultiLabelOrderResponse>;
+  listLabelOrders: {
+    path: "/clarifai.api.V2/ListLabelOrders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListLabelOrdersRequest): Buffer =>
+      Buffer.from(ListLabelOrdersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListLabelOrdersRequest => ListLabelOrdersRequest.decode(value),
+    responseSerialize: (value: MultiLabelOrderResponse): Buffer =>
+      Buffer.from(MultiLabelOrderResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiLabelOrderResponse => MultiLabelOrderResponse.decode(value),
+  },
   /** Patch one or more label orders. */
-  PatchLabelOrders(request: PatchLabelOrdersRequest): Promise<MultiLabelOrderResponse>;
+  patchLabelOrders: {
+    path: "/clarifai.api.V2/PatchLabelOrders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchLabelOrdersRequest): Buffer =>
+      Buffer.from(PatchLabelOrdersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchLabelOrdersRequest => PatchLabelOrdersRequest.decode(value),
+    responseSerialize: (value: MultiLabelOrderResponse): Buffer =>
+      Buffer.from(MultiLabelOrderResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiLabelOrderResponse => MultiLabelOrderResponse.decode(value),
+  },
   /**
    * Delete multiple label orders in one request.
    * this do not change task status
    */
-  DeleteLabelOrders(request: DeleteLabelOrdersRequest): Promise<BaseResponse>;
+  deleteLabelOrders: {
+    path: "/clarifai.api.V2/DeleteLabelOrders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteLabelOrdersRequest): Buffer =>
+      Buffer.from(DeleteLabelOrdersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteLabelOrdersRequest => DeleteLabelOrdersRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Add a list of Collectors to an app.
    * In the handler of this endpoint we also check for all the scopes of the  POST /inputs
@@ -47711,81 +49340,351 @@ export interface V2 {
    * They are needed when adding the collectors just so we now that you have permission with
    * that key at least to do the writing to this app with POST /inputs.
    */
-  PostCollectors(request: PostCollectorsRequest): Promise<MultiCollectorResponse>;
+  postCollectors: {
+    path: "/clarifai.api.V2/PostCollectors",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostCollectorsRequest): Buffer =>
+      Buffer.from(PostCollectorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostCollectorsRequest => PostCollectorsRequest.decode(value),
+    responseSerialize: (value: MultiCollectorResponse): Buffer =>
+      Buffer.from(MultiCollectorResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollectorResponse => MultiCollectorResponse.decode(value),
+  },
   /** Get a specific collector from an app. */
-  GetCollector(request: GetCollectorRequest): Promise<SingleCollectorResponse>;
+  getCollector: {
+    path: "/clarifai.api.V2/GetCollector",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetCollectorRequest): Buffer => Buffer.from(GetCollectorRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetCollectorRequest => GetCollectorRequest.decode(value),
+    responseSerialize: (value: SingleCollectorResponse): Buffer =>
+      Buffer.from(SingleCollectorResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleCollectorResponse => SingleCollectorResponse.decode(value),
+  },
   /** List all the collectors. */
-  ListCollectors(request: ListCollectorsRequest): Promise<MultiCollectorResponse>;
+  listCollectors: {
+    path: "/clarifai.api.V2/ListCollectors",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListCollectorsRequest): Buffer =>
+      Buffer.from(ListCollectorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListCollectorsRequest => ListCollectorsRequest.decode(value),
+    responseSerialize: (value: MultiCollectorResponse): Buffer =>
+      Buffer.from(MultiCollectorResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollectorResponse => MultiCollectorResponse.decode(value),
+  },
   /** Patch one or more collectors. */
-  PatchCollectors(request: PatchCollectorsRequest): Promise<MultiCollectorResponse>;
+  patchCollectors: {
+    path: "/clarifai.api.V2/PatchCollectors",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchCollectorsRequest): Buffer =>
+      Buffer.from(PatchCollectorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchCollectorsRequest => PatchCollectorsRequest.decode(value),
+    responseSerialize: (value: MultiCollectorResponse): Buffer =>
+      Buffer.from(MultiCollectorResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCollectorResponse => MultiCollectorResponse.decode(value),
+  },
   /**
    * Delete multiple collectors in one request.
    * This call is asynchronous. Use DeleteCollector if you want a synchronous version.
    */
-  DeleteCollectors(request: DeleteCollectorsRequest): Promise<BaseResponse>;
+  deleteCollectors: {
+    path: "/clarifai.api.V2/DeleteCollectors",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteCollectorsRequest): Buffer =>
+      Buffer.from(DeleteCollectorsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteCollectorsRequest => DeleteCollectorsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** PostStatValues */
-  PostStatValues(request: PostStatValuesRequest): Promise<MultiStatValueResponse>;
+  postStatValues: {
+    path: "/clarifai.api.V2/PostStatValues",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostStatValuesRequest): Buffer =>
+      Buffer.from(PostStatValuesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostStatValuesRequest => PostStatValuesRequest.decode(value),
+    responseSerialize: (value: MultiStatValueResponse): Buffer =>
+      Buffer.from(MultiStatValueResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiStatValueResponse => MultiStatValueResponse.decode(value),
+  },
   /** PostStatValuesAggregate */
-  PostStatValuesAggregate(request: PostStatValuesAggregateRequest): Promise<MultiStatValueAggregateResponse>;
+  postStatValuesAggregate: {
+    path: "/clarifai.api.V2/PostStatValuesAggregate",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostStatValuesAggregateRequest): Buffer =>
+      Buffer.from(PostStatValuesAggregateRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostStatValuesAggregateRequest => PostStatValuesAggregateRequest.decode(value),
+    responseSerialize: (value: MultiStatValueAggregateResponse): Buffer =>
+      Buffer.from(MultiStatValueAggregateResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiStatValueAggregateResponse =>
+      MultiStatValueAggregateResponse.decode(value),
+  },
   /** Get a specific module from an app. */
-  GetModule(request: GetModuleRequest): Promise<SingleModuleResponse>;
+  getModule: {
+    path: "/clarifai.api.V2/GetModule",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModuleRequest): Buffer => Buffer.from(GetModuleRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModuleRequest => GetModuleRequest.decode(value),
+    responseSerialize: (value: SingleModuleResponse): Buffer =>
+      Buffer.from(SingleModuleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModuleResponse => SingleModuleResponse.decode(value),
+  },
   /** List all the modules in community, by user or by app. */
-  ListModules(request: ListModulesRequest): Promise<MultiModuleResponse>;
+  listModules: {
+    path: "/clarifai.api.V2/ListModules",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModulesRequest): Buffer => Buffer.from(ListModulesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModulesRequest => ListModulesRequest.decode(value),
+    responseSerialize: (value: MultiModuleResponse): Buffer => Buffer.from(MultiModuleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleResponse => MultiModuleResponse.decode(value),
+  },
   /** Add a modules to an app. */
-  PostModules(request: PostModulesRequest): Promise<MultiModuleResponse>;
+  postModules: {
+    path: "/clarifai.api.V2/PostModules",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModulesRequest): Buffer => Buffer.from(PostModulesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModulesRequest => PostModulesRequest.decode(value),
+    responseSerialize: (value: MultiModuleResponse): Buffer => Buffer.from(MultiModuleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleResponse => MultiModuleResponse.decode(value),
+  },
   /** Patch one or more modules. */
-  PatchModules(request: PatchModulesRequest): Promise<MultiModuleResponse>;
+  patchModules: {
+    path: "/clarifai.api.V2/PatchModules",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModulesRequest): Buffer => Buffer.from(PatchModulesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModulesRequest => PatchModulesRequest.decode(value),
+    responseSerialize: (value: MultiModuleResponse): Buffer => Buffer.from(MultiModuleResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleResponse => MultiModuleResponse.decode(value),
+  },
   /** Delete multiple modules in one request. */
-  DeleteModules(request: DeleteModulesRequest): Promise<BaseResponse>;
+  deleteModules: {
+    path: "/clarifai.api.V2/DeleteModules",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteModulesRequest): Buffer => Buffer.from(DeleteModulesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteModulesRequest => DeleteModulesRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Get a specific module version for a module. */
-  GetModuleVersion(request: GetModuleVersionRequest): Promise<SingleModuleVersionResponse>;
+  getModuleVersion: {
+    path: "/clarifai.api.V2/GetModuleVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModuleVersionRequest): Buffer =>
+      Buffer.from(GetModuleVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModuleVersionRequest => GetModuleVersionRequest.decode(value),
+    responseSerialize: (value: SingleModuleVersionResponse): Buffer =>
+      Buffer.from(SingleModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModuleVersionResponse => SingleModuleVersionResponse.decode(value),
+  },
   /** List all the modules versions for a given module. */
-  ListModuleVersions(request: ListModuleVersionsRequest): Promise<MultiModuleVersionResponse>;
+  listModuleVersions: {
+    path: "/clarifai.api.V2/ListModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListModuleVersionsRequest): Buffer =>
+      Buffer.from(ListModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListModuleVersionsRequest => ListModuleVersionsRequest.decode(value),
+    responseSerialize: (value: MultiModuleVersionResponse): Buffer =>
+      Buffer.from(MultiModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleVersionResponse => MultiModuleVersionResponse.decode(value),
+  },
   /** Create a new module version to trigger training of the module. */
-  PostModuleVersions(request: PostModuleVersionsRequest): Promise<MultiModuleVersionResponse>;
+  postModuleVersions: {
+    path: "/clarifai.api.V2/PostModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModuleVersionsRequest): Buffer =>
+      Buffer.from(PostModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModuleVersionsRequest => PostModuleVersionsRequest.decode(value),
+    responseSerialize: (value: MultiModuleVersionResponse): Buffer =>
+      Buffer.from(MultiModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleVersionResponse => MultiModuleVersionResponse.decode(value),
+  },
   /** Modify details of an existing module version. */
-  PatchModuleVersions(request: PatchModuleVersionsRequest): Promise<MultiModuleVersionResponse>;
+  patchModuleVersions: {
+    path: "/clarifai.api.V2/PatchModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchModuleVersionsRequest): Buffer =>
+      Buffer.from(PatchModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchModuleVersionsRequest => PatchModuleVersionsRequest.decode(value),
+    responseSerialize: (value: MultiModuleVersionResponse): Buffer =>
+      Buffer.from(MultiModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiModuleVersionResponse => MultiModuleVersionResponse.decode(value),
+  },
   /** Delete a multiple module version. */
-  DeleteModuleVersions(request: DeleteModuleVersionsRequest): Promise<BaseResponse>;
+  deleteModuleVersions: {
+    path: "/clarifai.api.V2/DeleteModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteModuleVersionsRequest): Buffer =>
+      Buffer.from(DeleteModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteModuleVersionsRequest => DeleteModuleVersionsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Get usage count for specific module version. */
-  GetModuleVersionUsageCount(
-    request: GetModuleVersionUsageCountRequest,
-  ): Promise<SingleModuleVersionUsageCountResponse>;
+  getModuleVersionUsageCount: {
+    path: "/clarifai.api.V2/GetModuleVersionUsageCount",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetModuleVersionUsageCountRequest): Buffer =>
+      Buffer.from(GetModuleVersionUsageCountRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetModuleVersionUsageCountRequest =>
+      GetModuleVersionUsageCountRequest.decode(value),
+    responseSerialize: (value: SingleModuleVersionUsageCountResponse): Buffer =>
+      Buffer.from(SingleModuleVersionUsageCountResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleModuleVersionUsageCountResponse =>
+      SingleModuleVersionUsageCountResponse.decode(value),
+  },
   /** Get installed modules vesrions for an app. */
-  GetInstalledModuleVersion(request: GetInstalledModuleVersionRequest): Promise<SingleInstalledModuleVersionResponse>;
+  getInstalledModuleVersion: {
+    path: "/clarifai.api.V2/GetInstalledModuleVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInstalledModuleVersionRequest): Buffer =>
+      Buffer.from(GetInstalledModuleVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInstalledModuleVersionRequest =>
+      GetInstalledModuleVersionRequest.decode(value),
+    responseSerialize: (value: SingleInstalledModuleVersionResponse): Buffer =>
+      Buffer.from(SingleInstalledModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInstalledModuleVersionResponse =>
+      SingleInstalledModuleVersionResponse.decode(value),
+  },
   /** List installed modules vesrions for an app. */
-  ListInstalledModuleVersions(
-    request: ListInstalledModuleVersionsRequest,
-  ): Promise<MultiInstalledModuleVersionResponse>;
+  listInstalledModuleVersions: {
+    path: "/clarifai.api.V2/ListInstalledModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListInstalledModuleVersionsRequest): Buffer =>
+      Buffer.from(ListInstalledModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListInstalledModuleVersionsRequest =>
+      ListInstalledModuleVersionsRequest.decode(value),
+    responseSerialize: (value: MultiInstalledModuleVersionResponse): Buffer =>
+      Buffer.from(MultiInstalledModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInstalledModuleVersionResponse =>
+      MultiInstalledModuleVersionResponse.decode(value),
+  },
   /** Install a new module version which will deploy the specific ModuleVersion to the app in the url. */
-  PostInstalledModuleVersions(
-    request: PostInstalledModuleVersionsRequest,
-  ): Promise<MultiInstalledModuleVersionResponse>;
+  postInstalledModuleVersions: {
+    path: "/clarifai.api.V2/PostInstalledModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInstalledModuleVersionsRequest): Buffer =>
+      Buffer.from(PostInstalledModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInstalledModuleVersionsRequest =>
+      PostInstalledModuleVersionsRequest.decode(value),
+    responseSerialize: (value: MultiInstalledModuleVersionResponse): Buffer =>
+      Buffer.from(MultiInstalledModuleVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInstalledModuleVersionResponse =>
+      MultiInstalledModuleVersionResponse.decode(value),
+  },
   /**
    * Uninstall an installed module version which will deploy the specific ModuleVersion to the app
    * in the url.
    * This cleaned up any associated caller keys so needs the Keys_Delete scope.
    */
-  DeleteInstalledModuleVersions(request: DeleteInstalledModuleVersionsRequest): Promise<BaseResponse>;
+  deleteInstalledModuleVersions: {
+    path: "/clarifai.api.V2/DeleteInstalledModuleVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteInstalledModuleVersionsRequest): Buffer =>
+      Buffer.from(DeleteInstalledModuleVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteInstalledModuleVersionsRequest =>
+      DeleteInstalledModuleVersionsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Assign a key that the caller owns to be used when accessing this installed module version
    * If this endpoint is called with a different key then it overwrites what is there.
    */
-  PostInstalledModuleVersionsKey(request: PostInstalledModuleVersionsKeyRequest): Promise<SingleKeyResponse>;
+  postInstalledModuleVersionsKey: {
+    path: "/clarifai.api.V2/PostInstalledModuleVersionsKey",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInstalledModuleVersionsKeyRequest): Buffer =>
+      Buffer.from(PostInstalledModuleVersionsKeyRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInstalledModuleVersionsKeyRequest =>
+      PostInstalledModuleVersionsKeyRequest.decode(value),
+    responseSerialize: (value: SingleKeyResponse): Buffer => Buffer.from(SingleKeyResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleKeyResponse => SingleKeyResponse.decode(value),
+  },
   /**
    * Perform bulk operations on a list of inputs based on input source.
    * Operation include add, update, delete of concepts, metadata and geo data.
    * This is an Asynchronous process. Use ListBulkOperations or GetBulkOperation to check the status.
    */
-  PostBulkOperations(request: PostBulkOperationsRequest): Promise<MultiBulkOperationsResponse>;
+  postBulkOperations: {
+    path: "/clarifai.api.V2/PostBulkOperations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostBulkOperationsRequest): Buffer =>
+      Buffer.from(PostBulkOperationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostBulkOperationsRequest => PostBulkOperationsRequest.decode(value),
+    responseSerialize: (value: MultiBulkOperationsResponse): Buffer =>
+      Buffer.from(MultiBulkOperationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiBulkOperationsResponse => MultiBulkOperationsResponse.decode(value),
+  },
   /** List all the bulk operations */
-  ListBulkOperations(request: ListBulkOperationsRequest): Promise<MultiBulkOperationsResponse>;
+  listBulkOperations: {
+    path: "/clarifai.api.V2/ListBulkOperations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListBulkOperationsRequest): Buffer =>
+      Buffer.from(ListBulkOperationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListBulkOperationsRequest => ListBulkOperationsRequest.decode(value),
+    responseSerialize: (value: MultiBulkOperationsResponse): Buffer =>
+      Buffer.from(MultiBulkOperationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiBulkOperationsResponse => MultiBulkOperationsResponse.decode(value),
+  },
   /** Get the bulk operation details by ID */
-  GetBulkOperation(request: GetBulkOperationRequest): Promise<SingleBulkOperationsResponse>;
+  getBulkOperation: {
+    path: "/clarifai.api.V2/GetBulkOperation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetBulkOperationRequest): Buffer =>
+      Buffer.from(GetBulkOperationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetBulkOperationRequest => GetBulkOperationRequest.decode(value),
+    responseSerialize: (value: SingleBulkOperationsResponse): Buffer =>
+      Buffer.from(SingleBulkOperationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleBulkOperationsResponse => SingleBulkOperationsResponse.decode(value),
+  },
   /** Cancel one or more bulk operations */
-  CancelBulkOperations(request: CancelBulkOperationRequest): Promise<MultiBulkOperationsResponse>;
+  cancelBulkOperations: {
+    path: "/clarifai.api.V2/CancelBulkOperations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: CancelBulkOperationRequest): Buffer =>
+      Buffer.from(CancelBulkOperationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): CancelBulkOperationRequest => CancelBulkOperationRequest.decode(value),
+    responseSerialize: (value: MultiBulkOperationsResponse): Buffer =>
+      Buffer.from(MultiBulkOperationsResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiBulkOperationsResponse => MultiBulkOperationsResponse.decode(value),
+  },
   /** delete one or more terminated bulk operations */
-  DeleteBulkOperations(request: DeleteBulkOperationRequest): Promise<BaseResponse>;
+  deleteBulkOperations: {
+    path: "/clarifai.api.V2/DeleteBulkOperations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteBulkOperationRequest): Buffer =>
+      Buffer.from(DeleteBulkOperationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteBulkOperationRequest => DeleteBulkOperationRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Deprecated: Use PutTaskAssignments with action=LABEL_START.
    *   This endpoint has initially been designed as a GET request,
@@ -47793,18 +49692,67 @@ export interface V2 {
    *   In order to clearly highlight that this endpoint serves a PUT request,
    *   this endpoint has been deprecated and replaced by PutTaskAssignments with action=LABEL_START.
    */
-  ListNextTaskAssignments(request: ListNextTaskAssignmentsRequest): Promise<MultiInputResponse>;
+  listNextTaskAssignments: {
+    path: "/clarifai.api.V2/ListNextTaskAssignments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListNextTaskAssignmentsRequest): Buffer =>
+      Buffer.from(ListNextTaskAssignmentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListNextTaskAssignmentsRequest => ListNextTaskAssignmentsRequest.decode(value),
+    responseSerialize: (value: MultiInputResponse): Buffer => Buffer.from(MultiInputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputResponse => MultiInputResponse.decode(value),
+  },
   /**
    * PutTaskAssignments performs an idempotent action for the task assignments in given task.
    * See PutTaskAssignmentsRequestAction for more details about possible actions.
    */
-  PutTaskAssignments(request: PutTaskAssignmentsRequest): Promise<MultiTaskAssignmentResponse>;
+  putTaskAssignments: {
+    path: "/clarifai.api.V2/PutTaskAssignments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PutTaskAssignmentsRequest): Buffer =>
+      Buffer.from(PutTaskAssignmentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PutTaskAssignmentsRequest => PutTaskAssignmentsRequest.decode(value),
+    responseSerialize: (value: MultiTaskAssignmentResponse): Buffer =>
+      Buffer.from(MultiTaskAssignmentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiTaskAssignmentResponse => MultiTaskAssignmentResponse.decode(value),
+  },
   /** List all the inputs add jobs */
-  ListInputsAddJobs(request: ListInputsAddJobsRequest): Promise<MultiInputsAddJobResponse>;
+  listInputsAddJobs: {
+    path: "/clarifai.api.V2/ListInputsAddJobs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListInputsAddJobsRequest): Buffer =>
+      Buffer.from(ListInputsAddJobsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListInputsAddJobsRequest => ListInputsAddJobsRequest.decode(value),
+    responseSerialize: (value: MultiInputsAddJobResponse): Buffer =>
+      Buffer.from(MultiInputsAddJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputsAddJobResponse => MultiInputsAddJobResponse.decode(value),
+  },
   /** Get the input add job details by ID */
-  GetInputsAddJob(request: GetInputsAddJobRequest): Promise<SingleInputsAddJobResponse>;
+  getInputsAddJob: {
+    path: "/clarifai.api.V2/GetInputsAddJob",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInputsAddJobRequest): Buffer =>
+      Buffer.from(GetInputsAddJobRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInputsAddJobRequest => GetInputsAddJobRequest.decode(value),
+    responseSerialize: (value: SingleInputsAddJobResponse): Buffer =>
+      Buffer.from(SingleInputsAddJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInputsAddJobResponse => SingleInputsAddJobResponse.decode(value),
+  },
   /** cancel the input add job by ID */
-  CancelInputsAddJob(request: CancelInputsAddJobRequest): Promise<SingleInputsAddJobResponse>;
+  cancelInputsAddJob: {
+    path: "/clarifai.api.V2/CancelInputsAddJob",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: CancelInputsAddJobRequest): Buffer =>
+      Buffer.from(CancelInputsAddJobRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): CancelInputsAddJobRequest => CancelInputsAddJobRequest.decode(value),
+    responseSerialize: (value: SingleInputsAddJobResponse): Buffer =>
+      Buffer.from(SingleInputsAddJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInputsAddJobResponse => SingleInputsAddJobResponse.decode(value),
+  },
   /**
    * PostUploads is used to upload files. Note that this does not create inputs.
    * returns job with uploadID, job has UPLOAD_IN_PROGRESS status
@@ -47812,15 +49760,58 @@ export interface V2 {
    * You can get status of upload with GetUpload or ListUploads endpoints
    * See also PostInputsUploads
    */
-  PostUploads(request: PostUploadsRequest): Promise<MultiUploadResponse>;
+  postUploads: {
+    path: "/clarifai.api.V2/PostUploads",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostUploadsRequest): Buffer => Buffer.from(PostUploadsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostUploadsRequest => PostUploadsRequest.decode(value),
+    responseSerialize: (value: MultiUploadResponse): Buffer => Buffer.from(MultiUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiUploadResponse => MultiUploadResponse.decode(value),
+  },
   /**
    * Upload a part of a multipart upload.
    * Behaviour on completion depends on the endpoint that was used to initiate the upload.
    */
-  PutUploadContentParts(request: PutUploadContentPartsRequest): Promise<SingleUploadResponse>;
-  GetUpload(request: GetUploadRequest): Promise<SingleUploadResponse>;
-  ListUploads(request: ListUploadsRequest): Promise<MultiUploadResponse>;
-  DeleteUploads(request: DeleteUploadsRequest): Promise<BaseResponse>;
+  putUploadContentParts: {
+    path: "/clarifai.api.V2/PutUploadContentParts",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PutUploadContentPartsRequest): Buffer =>
+      Buffer.from(PutUploadContentPartsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PutUploadContentPartsRequest => PutUploadContentPartsRequest.decode(value),
+    responseSerialize: (value: SingleUploadResponse): Buffer =>
+      Buffer.from(SingleUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleUploadResponse => SingleUploadResponse.decode(value),
+  },
+  getUpload: {
+    path: "/clarifai.api.V2/GetUpload",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetUploadRequest): Buffer => Buffer.from(GetUploadRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetUploadRequest => GetUploadRequest.decode(value),
+    responseSerialize: (value: SingleUploadResponse): Buffer =>
+      Buffer.from(SingleUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleUploadResponse => SingleUploadResponse.decode(value),
+  },
+  listUploads: {
+    path: "/clarifai.api.V2/ListUploads",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListUploadsRequest): Buffer => Buffer.from(ListUploadsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListUploadsRequest => ListUploadsRequest.decode(value),
+    responseSerialize: (value: MultiUploadResponse): Buffer => Buffer.from(MultiUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiUploadResponse => MultiUploadResponse.decode(value),
+  },
+  deleteUploads: {
+    path: "/clarifai.api.V2/DeleteUploads",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteUploadsRequest): Buffer => Buffer.from(DeleteUploadsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteUploadsRequest => DeleteUploadsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * Initiates retrieval of inputs from cloud storage from a user provided data source.
    * Will create and return an inputs-add-job for tracking progress.
@@ -47836,12 +49827,57 @@ export interface V2 {
    * Credentials should include rights to list the objects in the bucket, except when pointed directly at a file archive,
    * in which case it only requires rights to access that particular file.
    */
-  PostInputsDataSources(request: PostInputsDataSourcesRequest): Promise<MultiInputsAddJobResponse>;
+  postInputsDataSources: {
+    path: "/clarifai.api.V2/PostInputsDataSources",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInputsDataSourcesRequest): Buffer =>
+      Buffer.from(PostInputsDataSourcesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInputsDataSourcesRequest => PostInputsDataSourcesRequest.decode(value),
+    responseSerialize: (value: MultiInputsAddJobResponse): Buffer =>
+      Buffer.from(MultiInputsAddJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputsAddJobResponse => MultiInputsAddJobResponse.decode(value),
+  },
   /** Get the input extraction job details by ID */
-  GetInputsExtractionJob(request: GetInputsExtractionJobRequest): Promise<SingleInputsExtractionJobResponse>;
+  getInputsExtractionJob: {
+    path: "/clarifai.api.V2/GetInputsExtractionJob",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetInputsExtractionJobRequest): Buffer =>
+      Buffer.from(GetInputsExtractionJobRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetInputsExtractionJobRequest => GetInputsExtractionJobRequest.decode(value),
+    responseSerialize: (value: SingleInputsExtractionJobResponse): Buffer =>
+      Buffer.from(SingleInputsExtractionJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleInputsExtractionJobResponse =>
+      SingleInputsExtractionJobResponse.decode(value),
+  },
   /** List all the input extraction jobs */
-  ListInputsExtractionJobs(request: ListInputsExtractionJobsRequest): Promise<MultiInputsExtractionJobResponse>;
-  CancelInputsExtractionJobs(request: CancelInputsExtractionJobsRequest): Promise<MultiInputsExtractionJobResponse>;
+  listInputsExtractionJobs: {
+    path: "/clarifai.api.V2/ListInputsExtractionJobs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListInputsExtractionJobsRequest): Buffer =>
+      Buffer.from(ListInputsExtractionJobsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListInputsExtractionJobsRequest =>
+      ListInputsExtractionJobsRequest.decode(value),
+    responseSerialize: (value: MultiInputsExtractionJobResponse): Buffer =>
+      Buffer.from(MultiInputsExtractionJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputsExtractionJobResponse =>
+      MultiInputsExtractionJobResponse.decode(value),
+  },
+  cancelInputsExtractionJobs: {
+    path: "/clarifai.api.V2/CancelInputsExtractionJobs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: CancelInputsExtractionJobsRequest): Buffer =>
+      Buffer.from(CancelInputsExtractionJobsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): CancelInputsExtractionJobsRequest =>
+      CancelInputsExtractionJobsRequest.decode(value),
+    responseSerialize: (value: MultiInputsExtractionJobResponse): Buffer =>
+      Buffer.from(MultiInputsExtractionJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputsExtractionJobResponse =>
+      MultiInputsExtractionJobResponse.decode(value),
+  },
   /**
    * Create new upload job with a file archive containing inputs (images, videos, text, audio)
    * Actual file upload happens in next steps by calling `PutUploadContentParts` endpoint
@@ -47850,32 +49886,114 @@ export interface V2 {
    * Completing the upload will automatically begin unpacking the archive and uploading the contents as inputs.
    * See also GetInputsAddJob and then GetInputsExtractionJob
    */
-  PostInputsUploads(request: PostInputsUploadsRequest): Promise<MultiInputsAddJobResponse>;
+  postInputsUploads: {
+    path: "/clarifai.api.V2/PostInputsUploads",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostInputsUploadsRequest): Buffer =>
+      Buffer.from(PostInputsUploadsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostInputsUploadsRequest => PostInputsUploadsRequest.decode(value),
+    responseSerialize: (value: MultiInputsAddJobResponse): Buffer =>
+      Buffer.from(MultiInputsAddJobResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInputsAddJobResponse => MultiInputsAddJobResponse.decode(value),
+  },
   /** putting above the Get Nodepool endpoint to make it appear above the other one */
-  ListPipelineVersionRuns(request: ListPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse>;
+  listPipelineVersionRuns: {
+    path: "/clarifai.api.V2/ListPipelineVersionRuns",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListPipelineVersionRunsRequest): Buffer =>
+      Buffer.from(ListPipelineVersionRunsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListPipelineVersionRunsRequest => ListPipelineVersionRunsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineVersionRunResponse): Buffer =>
+      Buffer.from(MultiPipelineVersionRunResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineVersionRunResponse =>
+      MultiPipelineVersionRunResponse.decode(value),
+  },
   /**
    * Get a specific runner.
    * TODO(zeiler): runner_id is a UUID so can list globally as well.
    */
-  GetRunner(request: GetRunnerRequest): Promise<SingleRunnerResponse>;
+  getRunner: {
+    path: "/clarifai.api.V2/GetRunner",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetRunnerRequest): Buffer => Buffer.from(GetRunnerRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetRunnerRequest => GetRunnerRequest.decode(value),
+    responseSerialize: (value: SingleRunnerResponse): Buffer =>
+      Buffer.from(SingleRunnerResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleRunnerResponse => SingleRunnerResponse.decode(value),
+  },
   /** List all the runners for the user. */
-  ListRunners(request: ListRunnersRequest): Promise<MultiRunnerResponse>;
+  listRunners: {
+    path: "/clarifai.api.V2/ListRunners",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListRunnersRequest): Buffer => Buffer.from(ListRunnersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListRunnersRequest => ListRunnersRequest.decode(value),
+    responseSerialize: (value: MultiRunnerResponse): Buffer => Buffer.from(MultiRunnerResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerResponse => MultiRunnerResponse.decode(value),
+  },
   /** Add a runners to a user. */
-  PostRunners(request: PostRunnersRequest): Promise<MultiRunnerResponse>;
+  postRunners: {
+    path: "/clarifai.api.V2/PostRunners",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostRunnersRequest): Buffer => Buffer.from(PostRunnersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostRunnersRequest => PostRunnersRequest.decode(value),
+    responseSerialize: (value: MultiRunnerResponse): Buffer => Buffer.from(MultiRunnerResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerResponse => MultiRunnerResponse.decode(value),
+  },
   /** Patch runners of a user. */
-  PatchRunners(request: PatchRunnersRequest): Promise<MultiRunnerResponse>;
+  patchRunners: {
+    path: "/clarifai.api.V2/PatchRunners",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchRunnersRequest): Buffer => Buffer.from(PatchRunnersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchRunnersRequest => PatchRunnersRequest.decode(value),
+    responseSerialize: (value: MultiRunnerResponse): Buffer => Buffer.from(MultiRunnerResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerResponse => MultiRunnerResponse.decode(value),
+  },
   /** Delete multiple runners in one request. */
-  DeleteRunners(request: DeleteRunnersRequest): Promise<BaseResponse>;
+  deleteRunners: {
+    path: "/clarifai.api.V2/DeleteRunners",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteRunnersRequest): Buffer => Buffer.from(DeleteRunnersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteRunnersRequest => DeleteRunnersRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /**
    * List items for the remote runner to work on.
    * since the runner_id is a UUID we can access it directly too.
    */
-  ListRunnerItems(request: ListRunnerItemsRequest): Promise<MultiRunnerItemResponse>;
+  listRunnerItems: {
+    path: "/clarifai.api.V2/ListRunnerItems",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListRunnerItemsRequest): Buffer =>
+      Buffer.from(ListRunnerItemsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListRunnerItemsRequest => ListRunnerItemsRequest.decode(value),
+    responseSerialize: (value: MultiRunnerItemResponse): Buffer =>
+      Buffer.from(MultiRunnerItemResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerItemResponse => MultiRunnerItemResponse.decode(value),
+  },
   /**
    * Post back outputs from remote runners
    * since the runner_id is a UUID we can access it directly too.
    */
-  PostRunnerItemOutputs(request: PostRunnerItemOutputsRequest): Promise<MultiRunnerItemOutputResponse>;
+  postRunnerItemOutputs: {
+    path: "/clarifai.api.V2/PostRunnerItemOutputs",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostRunnerItemOutputsRequest): Buffer =>
+      Buffer.from(PostRunnerItemOutputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostRunnerItemOutputsRequest => PostRunnerItemOutputsRequest.decode(value),
+    responseSerialize: (value: MultiRunnerItemOutputResponse): Buffer =>
+      Buffer.from(MultiRunnerItemOutputResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerItemOutputResponse => MultiRunnerItemOutputResponse.decode(value),
+  },
   /**
    * This maintains a single request for asking the API if there is any work to be done, processing
    * it and streaming back results.
@@ -47884,78 +50002,528 @@ export interface V2 {
    * For now there will only be one of those if the model prediction only has one request.
    * NOTE(zeiler): downside of this is you can't use HTTP REST requests to do runner work.
    */
-  ProcessRunnerItems(request: Observable<PostRunnerItemOutputsRequest>): Observable<MultiRunnerItemResponse>;
+  processRunnerItems: {
+    path: "/clarifai.api.V2/ProcessRunnerItems",
+    requestStream: true,
+    responseStream: true,
+    requestSerialize: (value: PostRunnerItemOutputsRequest): Buffer =>
+      Buffer.from(PostRunnerItemOutputsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostRunnerItemOutputsRequest => PostRunnerItemOutputsRequest.decode(value),
+    responseSerialize: (value: MultiRunnerItemResponse): Buffer =>
+      Buffer.from(MultiRunnerItemResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiRunnerItemResponse => MultiRunnerItemResponse.decode(value),
+  },
   /** Get the training time estimate based off train request and estimated input count. */
-  PostModelVersionsTrainingTimeEstimate(
-    request: PostModelVersionsTrainingTimeEstimateRequest,
-  ): Promise<MultiTrainingTimeEstimateResponse>;
+  postModelVersionsTrainingTimeEstimate: {
+    path: "/clarifai.api.V2/PostModelVersionsTrainingTimeEstimate",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostModelVersionsTrainingTimeEstimateRequest): Buffer =>
+      Buffer.from(PostModelVersionsTrainingTimeEstimateRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostModelVersionsTrainingTimeEstimateRequest =>
+      PostModelVersionsTrainingTimeEstimateRequest.decode(value),
+    responseSerialize: (value: MultiTrainingTimeEstimateResponse): Buffer =>
+      Buffer.from(MultiTrainingTimeEstimateResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiTrainingTimeEstimateResponse =>
+      MultiTrainingTimeEstimateResponse.decode(value),
+  },
   /** List Available Cloud Providers */
-  ListCloudProviders(request: ListCloudProvidersRequest): Promise<MultiCloudProviderResponse>;
+  listCloudProviders: {
+    path: "/clarifai.api.V2/ListCloudProviders",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListCloudProvidersRequest): Buffer =>
+      Buffer.from(ListCloudProvidersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListCloudProvidersRequest => ListCloudProvidersRequest.decode(value),
+    responseSerialize: (value: MultiCloudProviderResponse): Buffer =>
+      Buffer.from(MultiCloudProviderResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCloudProviderResponse => MultiCloudProviderResponse.decode(value),
+  },
   /** List Regions for given Cloud Provider */
-  ListCloudRegions(request: ListCloudRegionsRequest): Promise<MultiCloudRegionResponse>;
+  listCloudRegions: {
+    path: "/clarifai.api.V2/ListCloudRegions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListCloudRegionsRequest): Buffer =>
+      Buffer.from(ListCloudRegionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListCloudRegionsRequest => ListCloudRegionsRequest.decode(value),
+    responseSerialize: (value: MultiCloudRegionResponse): Buffer =>
+      Buffer.from(MultiCloudRegionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiCloudRegionResponse => MultiCloudRegionResponse.decode(value),
+  },
   /** Get InstanceTypes given Cloud Provider and Region */
-  ListInstanceTypes(request: ListInstanceTypesRequest): Promise<MultiInstanceTypeResponse>;
+  listInstanceTypes: {
+    path: "/clarifai.api.V2/ListInstanceTypes",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListInstanceTypesRequest): Buffer =>
+      Buffer.from(ListInstanceTypesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListInstanceTypesRequest => ListInstanceTypesRequest.decode(value),
+    responseSerialize: (value: MultiInstanceTypeResponse): Buffer =>
+      Buffer.from(MultiInstanceTypeResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiInstanceTypeResponse => MultiInstanceTypeResponse.decode(value),
+  },
   /** ComputeCluster CRUD */
-  GetComputeCluster(request: GetComputeClusterRequest): Promise<SingleComputeClusterResponse>;
-  ListComputeClusters(request: ListComputeClustersRequest): Promise<MultiComputeClusterResponse>;
-  PostComputeClusters(request: PostComputeClustersRequest): Promise<MultiComputeClusterResponse>;
+  getComputeCluster: {
+    path: "/clarifai.api.V2/GetComputeCluster",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetComputeClusterRequest): Buffer =>
+      Buffer.from(GetComputeClusterRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetComputeClusterRequest => GetComputeClusterRequest.decode(value),
+    responseSerialize: (value: SingleComputeClusterResponse): Buffer =>
+      Buffer.from(SingleComputeClusterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleComputeClusterResponse => SingleComputeClusterResponse.decode(value),
+  },
+  listComputeClusters: {
+    path: "/clarifai.api.V2/ListComputeClusters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListComputeClustersRequest): Buffer =>
+      Buffer.from(ListComputeClustersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListComputeClustersRequest => ListComputeClustersRequest.decode(value),
+    responseSerialize: (value: MultiComputeClusterResponse): Buffer =>
+      Buffer.from(MultiComputeClusterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiComputeClusterResponse => MultiComputeClusterResponse.decode(value),
+  },
+  postComputeClusters: {
+    path: "/clarifai.api.V2/PostComputeClusters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostComputeClustersRequest): Buffer =>
+      Buffer.from(PostComputeClustersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostComputeClustersRequest => PostComputeClustersRequest.decode(value),
+    responseSerialize: (value: MultiComputeClusterResponse): Buffer =>
+      Buffer.from(MultiComputeClusterResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiComputeClusterResponse => MultiComputeClusterResponse.decode(value),
+  },
   /** Delete multiple compute_clusters in one request. */
-  DeleteComputeClusters(request: DeleteComputeClustersRequest): Promise<BaseResponse>;
+  deleteComputeClusters: {
+    path: "/clarifai.api.V2/DeleteComputeClusters",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteComputeClustersRequest): Buffer =>
+      Buffer.from(DeleteComputeClustersRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteComputeClustersRequest => DeleteComputeClustersRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Nodepools CRUD */
-  GetNodepool(request: GetNodepoolRequest): Promise<SingleNodepoolResponse>;
-  ListNodepools(request: ListNodepoolsRequest): Promise<MultiNodepoolResponse>;
-  PostNodepools(request: PostNodepoolsRequest): Promise<MultiNodepoolResponse>;
-  PatchNodepools(request: PatchNodepoolsRequest): Promise<MultiNodepoolResponse>;
+  getNodepool: {
+    path: "/clarifai.api.V2/GetNodepool",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetNodepoolRequest): Buffer => Buffer.from(GetNodepoolRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetNodepoolRequest => GetNodepoolRequest.decode(value),
+    responseSerialize: (value: SingleNodepoolResponse): Buffer =>
+      Buffer.from(SingleNodepoolResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleNodepoolResponse => SingleNodepoolResponse.decode(value),
+  },
+  listNodepools: {
+    path: "/clarifai.api.V2/ListNodepools",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListNodepoolsRequest): Buffer => Buffer.from(ListNodepoolsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListNodepoolsRequest => ListNodepoolsRequest.decode(value),
+    responseSerialize: (value: MultiNodepoolResponse): Buffer =>
+      Buffer.from(MultiNodepoolResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiNodepoolResponse => MultiNodepoolResponse.decode(value),
+  },
+  postNodepools: {
+    path: "/clarifai.api.V2/PostNodepools",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostNodepoolsRequest): Buffer => Buffer.from(PostNodepoolsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostNodepoolsRequest => PostNodepoolsRequest.decode(value),
+    responseSerialize: (value: MultiNodepoolResponse): Buffer =>
+      Buffer.from(MultiNodepoolResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiNodepoolResponse => MultiNodepoolResponse.decode(value),
+  },
+  patchNodepools: {
+    path: "/clarifai.api.V2/PatchNodepools",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchNodepoolsRequest): Buffer =>
+      Buffer.from(PatchNodepoolsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchNodepoolsRequest => PatchNodepoolsRequest.decode(value),
+    responseSerialize: (value: MultiNodepoolResponse): Buffer =>
+      Buffer.from(MultiNodepoolResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiNodepoolResponse => MultiNodepoolResponse.decode(value),
+  },
   /** Delete multiple nodepools in one request. */
-  DeleteNodepools(request: DeleteNodepoolsRequest): Promise<BaseResponse>;
+  deleteNodepools: {
+    path: "/clarifai.api.V2/DeleteNodepools",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteNodepoolsRequest): Buffer =>
+      Buffer.from(DeleteNodepoolsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteNodepoolsRequest => DeleteNodepoolsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
   /** Deployments CRUD */
-  GetDeployment(request: GetDeploymentRequest): Promise<SingleDeploymentResponse>;
-  ListDeployments(request: ListDeploymentsRequest): Promise<MultiDeploymentResponse>;
-  PostDeployments(request: PostDeploymentsRequest): Promise<MultiDeploymentResponse>;
-  PatchDeployments(request: PatchDeploymentsRequest): Promise<MultiDeploymentResponse>;
+  getDeployment: {
+    path: "/clarifai.api.V2/GetDeployment",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetDeploymentRequest): Buffer => Buffer.from(GetDeploymentRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetDeploymentRequest => GetDeploymentRequest.decode(value),
+    responseSerialize: (value: SingleDeploymentResponse): Buffer =>
+      Buffer.from(SingleDeploymentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleDeploymentResponse => SingleDeploymentResponse.decode(value),
+  },
+  listDeployments: {
+    path: "/clarifai.api.V2/ListDeployments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListDeploymentsRequest): Buffer =>
+      Buffer.from(ListDeploymentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListDeploymentsRequest => ListDeploymentsRequest.decode(value),
+    responseSerialize: (value: MultiDeploymentResponse): Buffer =>
+      Buffer.from(MultiDeploymentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDeploymentResponse => MultiDeploymentResponse.decode(value),
+  },
+  postDeployments: {
+    path: "/clarifai.api.V2/PostDeployments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostDeploymentsRequest): Buffer =>
+      Buffer.from(PostDeploymentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostDeploymentsRequest => PostDeploymentsRequest.decode(value),
+    responseSerialize: (value: MultiDeploymentResponse): Buffer =>
+      Buffer.from(MultiDeploymentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDeploymentResponse => MultiDeploymentResponse.decode(value),
+  },
+  patchDeployments: {
+    path: "/clarifai.api.V2/PatchDeployments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchDeploymentsRequest): Buffer =>
+      Buffer.from(PatchDeploymentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchDeploymentsRequest => PatchDeploymentsRequest.decode(value),
+    responseSerialize: (value: MultiDeploymentResponse): Buffer =>
+      Buffer.from(MultiDeploymentResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiDeploymentResponse => MultiDeploymentResponse.decode(value),
+  },
   /** Delete multiple deployments in one request. */
-  DeleteDeployments(request: DeleteDeploymentsRequest): Promise<BaseResponse>;
-  PostAuditLogSearches(request: PostAuditLogSearchesRequest): Promise<MultiAuditLogEntryResponse>;
-  ListWorkflowEvaluationTemplates(
-    request: ListWorkflowEvaluationTemplatesRequest,
-  ): Promise<MultiWorkflowEvaluationTemplateResponse>;
-  PostLogEntries(request: PostLogEntriesRequest): Promise<BaseResponse>;
-  ListLogEntries(request: ListLogEntriesRequest): Promise<MultiLogEntryResponse>;
-  StreamLogEntries(request: StreamLogEntriesRequest): Observable<MultiLogEntryResponse>;
-  PostComputePlaneMetrics(request: PostComputePlaneMetricsRequest): Promise<BaseResponse>;
-  PostWorkflowVersionEvaluations(
-    request: PostWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse>;
-  GetWorkflowVersionEvaluation(
-    request: GetWorkflowVersionEvaluationRequest,
-  ): Promise<SingleWorkflowVersionEvaluationResponse>;
-  ListWorkflowVersionEvaluations(
-    request: ListWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse>;
-  PatchWorkflowVersionEvaluations(
-    request: PatchWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse>;
-  ListWorkflowVersionEvaluationData(
-    request: ListWorkflowVersionEvaluationDataRequest,
-  ): Promise<MultiListWorkflowVersionEvaluationDataResponse>;
-  PostWorkflowVersionEvaluationData(
-    request: PostWorkflowVersionEvaluationDataRequest,
-  ): Promise<MultiListWorkflowVersionEvaluationDataResponse>;
-  PostPipelines(request: PostPipelinesRequest): Promise<MultiPipelineResponse>;
-  GetPipeline(request: GetPipelineRequest): Promise<SinglePipelineResponse>;
-  ListPipelines(request: ListPipelinesRequest): Promise<MultiPipelineResponse>;
-  PatchPipelines(request: PatchPipelinesRequest): Promise<MultiPipelineResponse>;
-  DeletePipelines(request: DeletePipelinesRequest): Promise<BaseResponse>;
-  GetPipelineVersion(request: GetPipelineVersionRequest): Promise<SinglePipelineVersionResponse>;
-  ListPipelineVersions(request: ListPipelineVersionsRequest): Promise<MultiPipelineVersionResponse>;
-  PatchPipelineVersions(request: PatchPipelineVersionsRequest): Promise<MultiPipelineVersionResponse>;
-  DeletePipelineVersions(request: DeletePipelineVersionsRequest): Promise<BaseResponse>;
-  GetPipelineVersionRun(request: GetPipelineVersionRunRequest): Promise<SinglePipelineVersionRunResponse>;
-  PostPipelineVersionRuns(request: PostPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse>;
-  PatchPipelineVersionRuns(request: PatchPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse>;
-  PostPipelineSteps(request: PostPipelineStepsRequest): Promise<MultiPipelineStepResponse>;
-  GetPipelineStep(request: GetPipelineStepRequest): Promise<SinglePipelineStepResponse>;
-  ListPipelineSteps(request: ListPipelineStepsRequest): Promise<MultiPipelineStepResponse>;
+  deleteDeployments: {
+    path: "/clarifai.api.V2/DeleteDeployments",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteDeploymentsRequest): Buffer =>
+      Buffer.from(DeleteDeploymentsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteDeploymentsRequest => DeleteDeploymentsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  postAuditLogSearches: {
+    path: "/clarifai.api.V2/PostAuditLogSearches",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostAuditLogSearchesRequest): Buffer =>
+      Buffer.from(PostAuditLogSearchesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostAuditLogSearchesRequest => PostAuditLogSearchesRequest.decode(value),
+    responseSerialize: (value: MultiAuditLogEntryResponse): Buffer =>
+      Buffer.from(MultiAuditLogEntryResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiAuditLogEntryResponse => MultiAuditLogEntryResponse.decode(value),
+  },
+  listWorkflowEvaluationTemplates: {
+    path: "/clarifai.api.V2/ListWorkflowEvaluationTemplates",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListWorkflowEvaluationTemplatesRequest): Buffer =>
+      Buffer.from(ListWorkflowEvaluationTemplatesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListWorkflowEvaluationTemplatesRequest =>
+      ListWorkflowEvaluationTemplatesRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowEvaluationTemplateResponse): Buffer =>
+      Buffer.from(MultiWorkflowEvaluationTemplateResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowEvaluationTemplateResponse =>
+      MultiWorkflowEvaluationTemplateResponse.decode(value),
+  },
+  postLogEntries: {
+    path: "/clarifai.api.V2/PostLogEntries",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostLogEntriesRequest): Buffer =>
+      Buffer.from(PostLogEntriesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostLogEntriesRequest => PostLogEntriesRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  listLogEntries: {
+    path: "/clarifai.api.V2/ListLogEntries",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListLogEntriesRequest): Buffer =>
+      Buffer.from(ListLogEntriesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListLogEntriesRequest => ListLogEntriesRequest.decode(value),
+    responseSerialize: (value: MultiLogEntryResponse): Buffer =>
+      Buffer.from(MultiLogEntryResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiLogEntryResponse => MultiLogEntryResponse.decode(value),
+  },
+  streamLogEntries: {
+    path: "/clarifai.api.V2/StreamLogEntries",
+    requestStream: false,
+    responseStream: true,
+    requestSerialize: (value: StreamLogEntriesRequest): Buffer =>
+      Buffer.from(StreamLogEntriesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): StreamLogEntriesRequest => StreamLogEntriesRequest.decode(value),
+    responseSerialize: (value: MultiLogEntryResponse): Buffer =>
+      Buffer.from(MultiLogEntryResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiLogEntryResponse => MultiLogEntryResponse.decode(value),
+  },
+  postComputePlaneMetrics: {
+    path: "/clarifai.api.V2/PostComputePlaneMetrics",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostComputePlaneMetricsRequest): Buffer =>
+      Buffer.from(PostComputePlaneMetricsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostComputePlaneMetricsRequest => PostComputePlaneMetricsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  postWorkflowVersionEvaluations: {
+    path: "/clarifai.api.V2/PostWorkflowVersionEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowVersionEvaluationsRequest): Buffer =>
+      Buffer.from(PostWorkflowVersionEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowVersionEvaluationsRequest =>
+      PostWorkflowVersionEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowVersionEvaluationResponse): Buffer =>
+      Buffer.from(MultiWorkflowVersionEvaluationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowVersionEvaluationResponse =>
+      MultiWorkflowVersionEvaluationResponse.decode(value),
+  },
+  getWorkflowVersionEvaluation: {
+    path: "/clarifai.api.V2/GetWorkflowVersionEvaluation",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetWorkflowVersionEvaluationRequest): Buffer =>
+      Buffer.from(GetWorkflowVersionEvaluationRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetWorkflowVersionEvaluationRequest =>
+      GetWorkflowVersionEvaluationRequest.decode(value),
+    responseSerialize: (value: SingleWorkflowVersionEvaluationResponse): Buffer =>
+      Buffer.from(SingleWorkflowVersionEvaluationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleWorkflowVersionEvaluationResponse =>
+      SingleWorkflowVersionEvaluationResponse.decode(value),
+  },
+  listWorkflowVersionEvaluations: {
+    path: "/clarifai.api.V2/ListWorkflowVersionEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListWorkflowVersionEvaluationsRequest): Buffer =>
+      Buffer.from(ListWorkflowVersionEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListWorkflowVersionEvaluationsRequest =>
+      ListWorkflowVersionEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowVersionEvaluationResponse): Buffer =>
+      Buffer.from(MultiWorkflowVersionEvaluationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowVersionEvaluationResponse =>
+      MultiWorkflowVersionEvaluationResponse.decode(value),
+  },
+  patchWorkflowVersionEvaluations: {
+    path: "/clarifai.api.V2/PatchWorkflowVersionEvaluations",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchWorkflowVersionEvaluationsRequest): Buffer =>
+      Buffer.from(PatchWorkflowVersionEvaluationsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchWorkflowVersionEvaluationsRequest =>
+      PatchWorkflowVersionEvaluationsRequest.decode(value),
+    responseSerialize: (value: MultiWorkflowVersionEvaluationResponse): Buffer =>
+      Buffer.from(MultiWorkflowVersionEvaluationResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiWorkflowVersionEvaluationResponse =>
+      MultiWorkflowVersionEvaluationResponse.decode(value),
+  },
+  listWorkflowVersionEvaluationData: {
+    path: "/clarifai.api.V2/ListWorkflowVersionEvaluationData",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListWorkflowVersionEvaluationDataRequest): Buffer =>
+      Buffer.from(ListWorkflowVersionEvaluationDataRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListWorkflowVersionEvaluationDataRequest =>
+      ListWorkflowVersionEvaluationDataRequest.decode(value),
+    responseSerialize: (value: MultiListWorkflowVersionEvaluationDataResponse): Buffer =>
+      Buffer.from(MultiListWorkflowVersionEvaluationDataResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiListWorkflowVersionEvaluationDataResponse =>
+      MultiListWorkflowVersionEvaluationDataResponse.decode(value),
+  },
+  postWorkflowVersionEvaluationData: {
+    path: "/clarifai.api.V2/PostWorkflowVersionEvaluationData",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostWorkflowVersionEvaluationDataRequest): Buffer =>
+      Buffer.from(PostWorkflowVersionEvaluationDataRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostWorkflowVersionEvaluationDataRequest =>
+      PostWorkflowVersionEvaluationDataRequest.decode(value),
+    responseSerialize: (value: MultiListWorkflowVersionEvaluationDataResponse): Buffer =>
+      Buffer.from(MultiListWorkflowVersionEvaluationDataResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiListWorkflowVersionEvaluationDataResponse =>
+      MultiListWorkflowVersionEvaluationDataResponse.decode(value),
+  },
+  postPipelines: {
+    path: "/clarifai.api.V2/PostPipelines",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostPipelinesRequest): Buffer => Buffer.from(PostPipelinesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostPipelinesRequest => PostPipelinesRequest.decode(value),
+    responseSerialize: (value: MultiPipelineResponse): Buffer =>
+      Buffer.from(MultiPipelineResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineResponse => MultiPipelineResponse.decode(value),
+  },
+  getPipeline: {
+    path: "/clarifai.api.V2/GetPipeline",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetPipelineRequest): Buffer => Buffer.from(GetPipelineRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetPipelineRequest => GetPipelineRequest.decode(value),
+    responseSerialize: (value: SinglePipelineResponse): Buffer =>
+      Buffer.from(SinglePipelineResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePipelineResponse => SinglePipelineResponse.decode(value),
+  },
+  listPipelines: {
+    path: "/clarifai.api.V2/ListPipelines",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListPipelinesRequest): Buffer => Buffer.from(ListPipelinesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListPipelinesRequest => ListPipelinesRequest.decode(value),
+    responseSerialize: (value: MultiPipelineResponse): Buffer =>
+      Buffer.from(MultiPipelineResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineResponse => MultiPipelineResponse.decode(value),
+  },
+  patchPipelines: {
+    path: "/clarifai.api.V2/PatchPipelines",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchPipelinesRequest): Buffer =>
+      Buffer.from(PatchPipelinesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchPipelinesRequest => PatchPipelinesRequest.decode(value),
+    responseSerialize: (value: MultiPipelineResponse): Buffer =>
+      Buffer.from(MultiPipelineResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineResponse => MultiPipelineResponse.decode(value),
+  },
+  deletePipelines: {
+    path: "/clarifai.api.V2/DeletePipelines",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeletePipelinesRequest): Buffer =>
+      Buffer.from(DeletePipelinesRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeletePipelinesRequest => DeletePipelinesRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  getPipelineVersion: {
+    path: "/clarifai.api.V2/GetPipelineVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetPipelineVersionRequest): Buffer =>
+      Buffer.from(GetPipelineVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetPipelineVersionRequest => GetPipelineVersionRequest.decode(value),
+    responseSerialize: (value: SinglePipelineVersionResponse): Buffer =>
+      Buffer.from(SinglePipelineVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePipelineVersionResponse => SinglePipelineVersionResponse.decode(value),
+  },
+  listPipelineVersions: {
+    path: "/clarifai.api.V2/ListPipelineVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListPipelineVersionsRequest): Buffer =>
+      Buffer.from(ListPipelineVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListPipelineVersionsRequest => ListPipelineVersionsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineVersionResponse): Buffer =>
+      Buffer.from(MultiPipelineVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineVersionResponse => MultiPipelineVersionResponse.decode(value),
+  },
+  patchPipelineVersions: {
+    path: "/clarifai.api.V2/PatchPipelineVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchPipelineVersionsRequest): Buffer =>
+      Buffer.from(PatchPipelineVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchPipelineVersionsRequest => PatchPipelineVersionsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineVersionResponse): Buffer =>
+      Buffer.from(MultiPipelineVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineVersionResponse => MultiPipelineVersionResponse.decode(value),
+  },
+  deletePipelineVersions: {
+    path: "/clarifai.api.V2/DeletePipelineVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeletePipelineVersionsRequest): Buffer =>
+      Buffer.from(DeletePipelineVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeletePipelineVersionsRequest => DeletePipelineVersionsRequest.decode(value),
+    responseSerialize: (value: BaseResponse): Buffer => Buffer.from(BaseResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): BaseResponse => BaseResponse.decode(value),
+  },
+  getPipelineVersionRun: {
+    path: "/clarifai.api.V2/GetPipelineVersionRun",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetPipelineVersionRunRequest): Buffer =>
+      Buffer.from(GetPipelineVersionRunRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetPipelineVersionRunRequest => GetPipelineVersionRunRequest.decode(value),
+    responseSerialize: (value: SinglePipelineVersionRunResponse): Buffer =>
+      Buffer.from(SinglePipelineVersionRunResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePipelineVersionRunResponse =>
+      SinglePipelineVersionRunResponse.decode(value),
+  },
+  postPipelineVersionRuns: {
+    path: "/clarifai.api.V2/PostPipelineVersionRuns",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostPipelineVersionRunsRequest): Buffer =>
+      Buffer.from(PostPipelineVersionRunsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostPipelineVersionRunsRequest => PostPipelineVersionRunsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineVersionRunResponse): Buffer =>
+      Buffer.from(MultiPipelineVersionRunResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineVersionRunResponse =>
+      MultiPipelineVersionRunResponse.decode(value),
+  },
+  patchPipelineVersionRuns: {
+    path: "/clarifai.api.V2/PatchPipelineVersionRuns",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchPipelineVersionRunsRequest): Buffer =>
+      Buffer.from(PatchPipelineVersionRunsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchPipelineVersionRunsRequest =>
+      PatchPipelineVersionRunsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineVersionRunResponse): Buffer =>
+      Buffer.from(MultiPipelineVersionRunResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineVersionRunResponse =>
+      MultiPipelineVersionRunResponse.decode(value),
+  },
+  postPipelineSteps: {
+    path: "/clarifai.api.V2/PostPipelineSteps",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostPipelineStepsRequest): Buffer =>
+      Buffer.from(PostPipelineStepsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostPipelineStepsRequest => PostPipelineStepsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineStepResponse): Buffer =>
+      Buffer.from(MultiPipelineStepResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineStepResponse => MultiPipelineStepResponse.decode(value),
+  },
+  getPipelineStep: {
+    path: "/clarifai.api.V2/GetPipelineStep",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetPipelineStepRequest): Buffer =>
+      Buffer.from(GetPipelineStepRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetPipelineStepRequest => GetPipelineStepRequest.decode(value),
+    responseSerialize: (value: SinglePipelineStepResponse): Buffer =>
+      Buffer.from(SinglePipelineStepResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePipelineStepResponse => SinglePipelineStepResponse.decode(value),
+  },
+  listPipelineSteps: {
+    path: "/clarifai.api.V2/ListPipelineSteps",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListPipelineStepsRequest): Buffer =>
+      Buffer.from(ListPipelineStepsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListPipelineStepsRequest => ListPipelineStepsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineStepResponse): Buffer =>
+      Buffer.from(MultiPipelineStepResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineStepResponse => MultiPipelineStepResponse.decode(value),
+  },
   /**
    * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
    * The config must be sent first before the pipeline_step_bytes can be uploaded.
@@ -47963,2017 +50531,5444 @@ export interface V2 {
    * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the pipeline_step_version_id specified for your pipeline_step_version.
    * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the pipeline_step_bytes.
    */
-  PostPipelineStepVersionsUpload(
-    request: Observable<PostPipelineStepVersionsUploadRequest>,
-  ): Observable<PostPipelineStepVersionsUploadResponse>;
-  ListPipelineStepVersions(request: ListPipelineStepVersionsRequest): Promise<MultiPipelineStepVersionResponse>;
-  GetPipelineStepVersion(request: GetPipelineStepVersionRequest): Promise<SinglePipelineStepVersionResponse>;
-  GetSecret(request: GetSecretRequest): Promise<SingleSecretResponse>;
-  ListSecrets(request: ListSecretsRequest): Promise<MultiSecretResponse>;
-  PostSecrets(request: PostSecretsRequest): Promise<MultiSecretResponse>;
-  PatchSecrets(request: PatchSecretsRequest): Promise<MultiSecretResponse>;
-  DeleteSecrets(request: DeleteSecretsRequest): Promise<MultiSecretResponse>;
+  postPipelineStepVersionsUpload: {
+    path: "/clarifai.api.V2/PostPipelineStepVersionsUpload",
+    requestStream: true,
+    responseStream: true,
+    requestSerialize: (value: PostPipelineStepVersionsUploadRequest): Buffer =>
+      Buffer.from(PostPipelineStepVersionsUploadRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostPipelineStepVersionsUploadRequest =>
+      PostPipelineStepVersionsUploadRequest.decode(value),
+    responseSerialize: (value: PostPipelineStepVersionsUploadResponse): Buffer =>
+      Buffer.from(PostPipelineStepVersionsUploadResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): PostPipelineStepVersionsUploadResponse =>
+      PostPipelineStepVersionsUploadResponse.decode(value),
+  },
+  listPipelineStepVersions: {
+    path: "/clarifai.api.V2/ListPipelineStepVersions",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListPipelineStepVersionsRequest): Buffer =>
+      Buffer.from(ListPipelineStepVersionsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListPipelineStepVersionsRequest =>
+      ListPipelineStepVersionsRequest.decode(value),
+    responseSerialize: (value: MultiPipelineStepVersionResponse): Buffer =>
+      Buffer.from(MultiPipelineStepVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiPipelineStepVersionResponse =>
+      MultiPipelineStepVersionResponse.decode(value),
+  },
+  getPipelineStepVersion: {
+    path: "/clarifai.api.V2/GetPipelineStepVersion",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetPipelineStepVersionRequest): Buffer =>
+      Buffer.from(GetPipelineStepVersionRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetPipelineStepVersionRequest => GetPipelineStepVersionRequest.decode(value),
+    responseSerialize: (value: SinglePipelineStepVersionResponse): Buffer =>
+      Buffer.from(SinglePipelineStepVersionResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SinglePipelineStepVersionResponse =>
+      SinglePipelineStepVersionResponse.decode(value),
+  },
+  getSecret: {
+    path: "/clarifai.api.V2/GetSecret",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: GetSecretRequest): Buffer => Buffer.from(GetSecretRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetSecretRequest => GetSecretRequest.decode(value),
+    responseSerialize: (value: SingleSecretResponse): Buffer =>
+      Buffer.from(SingleSecretResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): SingleSecretResponse => SingleSecretResponse.decode(value),
+  },
+  listSecrets: {
+    path: "/clarifai.api.V2/ListSecrets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: ListSecretsRequest): Buffer => Buffer.from(ListSecretsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): ListSecretsRequest => ListSecretsRequest.decode(value),
+    responseSerialize: (value: MultiSecretResponse): Buffer => Buffer.from(MultiSecretResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSecretResponse => MultiSecretResponse.decode(value),
+  },
+  postSecrets: {
+    path: "/clarifai.api.V2/PostSecrets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PostSecretsRequest): Buffer => Buffer.from(PostSecretsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PostSecretsRequest => PostSecretsRequest.decode(value),
+    responseSerialize: (value: MultiSecretResponse): Buffer => Buffer.from(MultiSecretResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSecretResponse => MultiSecretResponse.decode(value),
+  },
+  patchSecrets: {
+    path: "/clarifai.api.V2/PatchSecrets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: PatchSecretsRequest): Buffer => Buffer.from(PatchSecretsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): PatchSecretsRequest => PatchSecretsRequest.decode(value),
+    responseSerialize: (value: MultiSecretResponse): Buffer => Buffer.from(MultiSecretResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSecretResponse => MultiSecretResponse.decode(value),
+  },
+  deleteSecrets: {
+    path: "/clarifai.api.V2/DeleteSecrets",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: DeleteSecretsRequest): Buffer => Buffer.from(DeleteSecretsRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): DeleteSecretsRequest => DeleteSecretsRequest.decode(value),
+    responseSerialize: (value: MultiSecretResponse): Buffer => Buffer.from(MultiSecretResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): MultiSecretResponse => MultiSecretResponse.decode(value),
+  },
+} as const;
+
+export interface V2Server extends UntypedServiceImplementation {
+  /**
+   * List concept relations between concepts in the platform.
+   * MUST be above ListConcepts so that if concept_id is empty this will still match
+   * /concepts/relations to list all the concept relations in the app.
+   */
+  listConceptRelations: handleUnaryCall<ListConceptRelationsRequest, MultiConceptRelationResponse>;
+  /** Post concept relations to create relations between concepts in the platform. */
+  postConceptRelations: handleUnaryCall<PostConceptRelationsRequest, MultiConceptRelationResponse>;
+  /** Post concept relations to create relations between concepts in the platform. */
+  deleteConceptRelations: handleUnaryCall<DeleteConceptRelationsRequest, BaseResponse>;
+  /** List all the concepts with their positive and negative counts */
+  getConceptCounts: handleUnaryCall<GetConceptCountsRequest, MultiConceptCountResponse>;
+  /** Get a specific concept from an app. */
+  getConcept: handleUnaryCall<GetConceptRequest, SingleConceptResponse>;
+  /** List all the concepts. */
+  listConcepts: handleUnaryCall<ListConceptsRequest, MultiConceptResponse>;
+  /** List models concepts. */
+  listModelConcepts: handleUnaryCall<ListModelConceptsRequest, MultiConceptResponse>;
+  /**
+   * Search over the concepts to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  postConceptsSearches: handleUnaryCall<PostConceptsSearchesRequest, MultiConceptResponse>;
+  /** Add a concept to an app. */
+  postConcepts: handleUnaryCall<PostConceptsRequest, MultiConceptResponse>;
+  /** Patch one or more concepts. */
+  patchConcepts: handleUnaryCall<PatchConceptsRequest, MultiConceptResponse>;
+  /** Get a specific concept from an app. */
+  getConceptLanguage: handleUnaryCall<GetConceptLanguageRequest, SingleConceptLanguageResponse>;
+  /** List the concept in all the translated languages. */
+  listConceptLanguages: handleUnaryCall<ListConceptLanguagesRequest, MultiConceptLanguageResponse>;
+  /** Add a new translation for this concept. */
+  postConceptLanguages: handleUnaryCall<PostConceptLanguagesRequest, MultiConceptLanguageResponse>;
+  /**
+   * Patch the name for a given language names by passing in a list of concepts with the new names
+   * for the languages.
+   */
+  patchConceptLanguages: handleUnaryCall<PatchConceptLanguagesRequest, MultiConceptLanguageResponse>;
+  /** List all domain graphs. */
+  listKnowledgeGraphs: handleUnaryCall<ListKnowledgeGraphsRequest, MultiKnowledgeGraphResponse>;
+  /** Post domain graphs. */
+  postKnowledgeGraphs: handleUnaryCall<PostKnowledgeGraphsRequest, MultiKnowledgeGraphResponse>;
+  /** Get a specific annotation from an app. */
+  getAnnotation: handleUnaryCall<GetAnnotationRequest, SingleAnnotationResponse>;
+  /** List all the annotation. */
+  listAnnotations: handleUnaryCall<ListAnnotationsRequest, MultiAnnotationResponse>;
+  /** Post annotations. */
+  postAnnotations: handleUnaryCall<PostAnnotationsRequest, MultiAnnotationResponse>;
+  /** Patch one or more annotations. */
+  patchAnnotations: handleUnaryCall<PatchAnnotationsRequest, MultiAnnotationResponse>;
+  /**
+   * Patch annotations status by worker id and task id.
+   * Deprecated: Use PutTaskAssignments to update task annotations.
+   *   For example, you can use PutTaskAssignments with action REVIEW_APPROVE
+   *   to approve task assignments and associated annotations in bulk.
+   */
+  patchAnnotationsStatus: handleUnaryCall<PatchAnnotationsStatusRequest, PatchAnnotationsStatusResponse>;
+  /** Delete a single annotation. */
+  deleteAnnotation: handleUnaryCall<DeleteAnnotationRequest, BaseResponse>;
+  /** Delete multiple annotations in one request. */
+  deleteAnnotations: handleUnaryCall<DeleteAnnotationsRequest, BaseResponse>;
+  /** List all the annotation tracks. */
+  listAnnotationTracks: handleUnaryCall<ListAnnotationTracksRequest, MultiAnnotationTrackResponse>;
+  /** Post annotation tracks. */
+  postAnnotationTracks: handleUnaryCall<PostAnnotationTracksRequest, MultiAnnotationTrackResponse>;
+  /** Patch one or more annotation tracks. */
+  patchAnnotationTracks: handleUnaryCall<PatchAnnotationTracksRequest, MultiAnnotationTrackResponse>;
+  /** Delete multiple annotation tracks in one request. */
+  deleteAnnotationTracks: handleUnaryCall<DeleteAnnotationTracksRequest, BaseResponse>;
+  /** Patch saved annotations searches by ids. */
+  patchAnnotationsSearches: handleUnaryCall<PatchAnnotationsSearchesRequest, MultiSearchResponse>;
+  /** Execute a search over annotations */
+  postAnnotationsSearches: handleUnaryCall<PostAnnotationsSearchesRequest, MultiSearchResponse>;
+  /**
+   * ListAnnotationWorkers lists users, models, and workflows (collectively
+   * known as "workers") that have added annotations to the application.
+   */
+  listAnnotationWorkers: handleUnaryCall<ListAnnotationWorkersRequest, MultiWorkerResponse>;
+  /** Get input count per status. */
+  getInputCount: handleUnaryCall<GetInputCountRequest, SingleInputCountResponse>;
+  /** Streams all the inputs starting from oldest assets. */
+  streamInputs: handleUnaryCall<StreamInputsRequest, MultiInputResponse>;
+  getInputSamples: handleUnaryCall<GetInputSamplesRequest, MultiInputAnnotationResponse>;
+  /** Get a specific input from an app. */
+  getInput: handleUnaryCall<GetInputRequest, SingleInputResponse>;
+  /**
+   * Get a MPEG-DASH manifest for video-type inputs that were added via PostInputs and successfully processed
+   * Experimental. Manifest is used by browser and desktop clients that implement an efficient streaming playback
+   * This means client can switch between low-resolution and high-resolution video streams
+   * Depending on network bandwidth or user's preference
+   * This also means that reencoded video streams are reencoded in a uniform way, not relying on original format
+   * Alternative to MPEG-dash is to stream original file with byte-range header
+   */
+  getInputVideoManifest: handleUnaryCall<GetVideoManifestRequest, GetVideoManifestResponse>;
+  /** List all the inputs. */
+  listInputs: handleUnaryCall<ListInputsRequest, MultiInputResponse>;
+  /**
+   * PostInputs adds one or more inputs to the app.
+   * Takes a list of image/video/audio/text URLs, image/video/audio bytes or raw text
+   * Optionally, include concepts or dataset ids to link them
+   * Optionally, include metadata for search
+   * Note that inputs processing is asynchronous process
+   * See ListInputs, StreamInputs or PostInputSearches to list results
+   */
+  postInputs: handleUnaryCall<PostInputsRequest, MultiInputResponse>;
+  /** Patch one or more inputs. */
+  patchInputs: handleUnaryCall<PatchInputsRequest, MultiInputResponse>;
+  /** Delete a single input asynchronously. */
+  deleteInput: handleUnaryCall<DeleteInputRequest, BaseResponse>;
+  /**
+   * Delete multiple inputs in one request.
+   * This call is asynchronous.
+   */
+  deleteInputs: handleUnaryCall<DeleteInputsRequest, BaseResponse>;
+  /** Patch saved inputs searches by ids. */
+  patchInputsSearches: handleUnaryCall<PatchInputsSearchesRequest, MultiSearchResponse>;
+  /** Execute a search over inputs */
+  postInputsSearches: handleUnaryCall<PostInputsSearchesRequest, MultiSearchResponse>;
+  /** Get predicted outputs from the model. */
+  postModelOutputs: handleUnaryCall<PostModelOutputsRequest, MultiOutputResponse>;
+  /**
+   * TODO(zeiler): will need to
+   * Single request but streaming responses.
+   */
+  generateModelOutputs: handleServerStreamingCall<PostModelOutputsRequest, MultiOutputResponse>;
+  /** Stream of requests and stream of responses */
+  streamModelOutputs: handleBidiStreamingCall<PostModelOutputsRequest, MultiOutputResponse>;
+  /** List all the datasets. */
+  listDatasets: handleUnaryCall<ListDatasetsRequest, MultiDatasetResponse>;
+  /** Get a specific dataset. */
+  getDataset: handleUnaryCall<GetDatasetRequest, SingleDatasetResponse>;
+  /**
+   * Add datasets to an app.
+   * The process is atomic, i.e. either all or no datasets are added.
+   * If there is an error for one dataset,
+   * the process will stop, revert the transaction and return the error.
+   */
+  postDatasets: handleUnaryCall<PostDatasetsRequest, MultiDatasetResponse>;
+  /**
+   * Patch one or more datasets.
+   * The process is atomic, i.e. either all or no datasets are patched.
+   * If there is an error for one dataset,
+   * the process will stop, revert the transaction and return the error.
+   */
+  patchDatasets: handleUnaryCall<PatchDatasetsRequest, MultiDatasetResponse>;
+  /** Delete one or more datasets in a single request. */
+  deleteDatasets: handleUnaryCall<DeleteDatasetsRequest, BaseResponse>;
+  /** List all the dataset inputs in a dataset. */
+  listDatasetInputs: handleUnaryCall<ListDatasetInputsRequest, MultiDatasetInputResponse>;
+  /** Get a specific dataset input. */
+  getDatasetInput: handleUnaryCall<GetDatasetInputRequest, SingleDatasetInputResponse>;
+  /**
+   * Add dataset inputs to a dataset.
+   * The process is not atomic, i.e. if there are errors with some dataset
+   * inputs, others might still be added. The response reports
+   *   - SUCCESS if all dataset inputs were added,
+   *   - MIXED_STATUS if only some dataset inputs were added, and
+   *   - FAILURE if no dataset inputs were added.
+   * Each individual dataset input in the response has the status set to
+   * indicate if it was successful or if there was an error.
+   */
+  postDatasetInputs: handleUnaryCall<PostDatasetInputsRequest, MultiDatasetInputResponse>;
+  /** Delete one or more dataset inputs in a single request. */
+  deleteDatasetInputs: handleUnaryCall<DeleteDatasetInputsRequest, BaseResponse>;
+  /** List all the dataset versions. */
+  listDatasetVersions: handleUnaryCall<ListDatasetVersionsRequest, MultiDatasetVersionResponse>;
+  /** Get a specific dataset version. */
+  getDatasetVersion: handleUnaryCall<GetDatasetVersionRequest, SingleDatasetVersionResponse>;
+  listDatasetVersionMetricsGroups: handleUnaryCall<
+    ListDatasetVersionMetricsGroupsRequest,
+    MultiDatasetVersionMetricsGroupResponse
+  >;
+  /** Add dataset versions to a dataset. */
+  postDatasetVersions: handleUnaryCall<PostDatasetVersionsRequest, MultiDatasetVersionResponse>;
+  /** Patch one or more dataset versions. */
+  patchDatasetVersions: handleUnaryCall<PatchDatasetVersionsRequest, MultiDatasetVersionResponse>;
+  /** Delete one or more dataset versions in a single request. */
+  deleteDatasetVersions: handleUnaryCall<DeleteDatasetVersionsRequest, BaseResponse>;
+  /** Create export of a dataset version. */
+  putDatasetVersionExports: handleUnaryCall<PutDatasetVersionExportsRequest, MultiDatasetVersionExportResponse>;
+  /** Get a specific model type. */
+  getModelType: handleUnaryCall<GetModelTypeRequest, SingleModelTypeResponse>;
+  /** List all the supported open source licenses in the platform. */
+  listOpenSourceLicenses: handleUnaryCall<ListOpenSourceLicensesRequest, ListOpenSourceLicensesResponse>;
+  /**
+   * List all the model types available in the platform.
+   * This MUST be above ListModels so that the /models/types endpoint takes precedence.
+   */
+  listModelTypes: handleUnaryCall<ListModelTypesRequest, MultiModelTypeResponse>;
+  /** Get a specific model from an app. */
+  getModel: handleUnaryCall<GetModelRequest, SingleModelResponse>;
+  /**
+   * Get a the output info for a given model_id or model_id/version_id
+   * combo.
+   */
+  getModelOutputInfo: handleUnaryCall<GetModelRequest, SingleModelResponse>;
+  /** List all the models. */
+  listModels: handleUnaryCall<ListModelsRequest, MultiModelResponse>;
+  /** List the resource counts for the app. */
+  getResourceCounts: handleUnaryCall<GetResourceCountsRequest, GetResourceCountsResponse>;
+  /**
+   * Search over the models to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  postModelsSearches: handleUnaryCall<PostModelsSearchesRequest, MultiModelResponse>;
+  /** Add a models to an app. */
+  postModels: handleUnaryCall<PostModelsRequest, SingleModelResponse>;
+  /** Patch one or more models. */
+  patchModels: handleUnaryCall<PatchModelsRequest, MultiModelResponse>;
+  /** Patch one or more models ids. */
+  patchModelIds: handleUnaryCall<PatchModelIdsRequest, MultiModelResponse>;
+  /** Delete a single model. */
+  deleteModel: handleUnaryCall<DeleteModelRequest, BaseResponse>;
+  /** Delete multiple models in one request. */
+  deleteModels: handleUnaryCall<DeleteModelsRequest, BaseResponse>;
+  /** Update model check consents */
+  patchModelCheckConsents: handleUnaryCall<PatchModelCheckConsentsRequest, MultiModelCheckConsentResponse>;
+  /** Update model toolkits tags */
+  patchModelToolkits: handleUnaryCall<PatchModelToolkitsRequest, MultiModelToolkitResponse>;
+  /** Update model use_cases tags */
+  patchModelUseCases: handleUnaryCall<PatchModelUseCasesRequest, MultiModelUseCaseResponse>;
+  /** Update model languages tags */
+  patchModelLanguages: handleUnaryCall<PatchModelLanguagesRequest, MultiModelLanguageResponse>;
+  /**
+   * Deprecated: Unmaintained and ideally replaced with usage of datasets
+   *   The server may refuse to accept requests to this endpoint.
+   *
+   * @deprecated
+   */
+  listModelInputs: handleUnaryCall<ListModelInputsRequest, MultiInputResponse>;
+  /** Get a specific model from an app. */
+  getModelVersion: handleUnaryCall<GetModelVersionRequest, SingleModelVersionResponse>;
+  /** List all the models. */
+  listModelVersions: handleUnaryCall<ListModelVersionsRequest, MultiModelVersionResponse>;
+  postWorkflowVersionsUnPublish: handleUnaryCall<PostWorkflowVersionsUnPublishRequest, BaseResponse>;
+  postWorkflowVersionsPublish: handleUnaryCall<PostWorkflowVersionsPublishRequest, BaseResponse>;
+  /** PostModelVersionsPublish */
+  postModelVersionsPublish: handleUnaryCall<PostModelVersionsPublishRequest, BaseResponse>;
+  /** PostModelVersionsUnPublish */
+  postModelVersionsUnPublish: handleUnaryCall<PostModelVersionsUnPublishRequest, BaseResponse>;
+  /** Create a new model version to trigger training of the model. */
+  postModelVersions: handleUnaryCall<PostModelVersionsRequest, SingleModelResponse>;
+  /** PatchModelVersions */
+  patchModelVersions: handleUnaryCall<PatchModelVersionsRequest, MultiModelVersionResponse>;
+  /** Delete a single model. */
+  deleteModelVersion: handleUnaryCall<DeleteModelVersionRequest, BaseResponse>;
+  /**
+   * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
+   * The config must be sent first before the model_bytes can be uploaded.
+   * Once the config has been sent, the server will respond with a confirmation containing the model_version_id.
+   * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the model_version_id specified for your model_version.
+   * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the model_bytes.
+   */
+  postModelVersionsUpload: handleBidiStreamingCall<PostModelVersionsUploadRequest, PostModelVersionsUploadResponse>;
+  /** Kicks off conversion from the old Triton model format to the new Docker model format. */
+  postModelMigration: handleUnaryCall<PostModelMigrationRequest, SingleModelResponse>;
+  /** Export a model */
+  putModelVersionExports: handleUnaryCall<PutModelVersionExportsRequest, SingleModelVersionExportResponse>;
+  /** GetModelVersionExport */
+  getModelVersionExport: handleUnaryCall<GetModelVersionExportRequest, SingleModelVersionExportResponse>;
+  /**
+   * Get the evaluation metrics for a model version.
+   * Deprecated: Use GetEvaluation instead
+   *   The server may refuse to accept requests to this endpoint.
+   */
+  getModelVersionMetrics: handleUnaryCall<GetModelVersionMetricsRequest, SingleModelVersionResponse>;
+  /**
+   * Deprecated, use PostEvaluations instead
+   * Run the evaluation metrics for a model version.
+   */
+  postModelVersionMetrics: handleUnaryCall<PostModelVersionMetricsRequest, SingleModelVersionResponse>;
+  /** Deprecated, use PostEvaluations instead */
+  postModelVersionEvaluations: handleUnaryCall<PostModelVersionEvaluationsRequest, MultiEvalMetricsResponse>;
+  /**
+   * Deprecated, use GetEvaluation instead
+   * List the evaluation metrics for a model version.
+   */
+  listModelVersionEvaluations: handleUnaryCall<ListModelVersionEvaluationsRequest, MultiEvalMetricsResponse>;
+  /**
+   * Deprecated, use GetEvaluation instead
+   * Get an evaluation metrics for a model version.
+   */
+  getModelVersionEvaluation: handleUnaryCall<GetModelVersionEvaluationRequest, SingleEvalMetricsResponse>;
+  postEvaluations: handleUnaryCall<PostEvaluationsRequest, MultiEvalMetricsResponse>;
+  listEvaluations: handleUnaryCall<ListEvaluationsRequest, MultiEvalMetricsResponse>;
+  getEvaluation: handleUnaryCall<GetEvaluationRequest, SingleEvalMetricsResponse>;
+  /** Lists model references tied to a particular model id. */
+  listModelReferences: handleUnaryCall<ListModelReferencesRequest, MultiModelReferenceResponse>;
+  /** GetModelVersionInputExample */
+  getModelVersionInputExample: handleUnaryCall<
+    GetModelVersionInputExampleRequest,
+    SingleModelVersionInputExampleResponse
+  >;
+  /** ListModelVersionInputExamples */
+  listModelVersionInputExamples: handleUnaryCall<
+    ListModelVersionInputExamplesRequest,
+    MultiModelVersionInputExampleResponse
+  >;
+  /** Get a specific workflow from an app. */
+  getWorkflow: handleUnaryCall<GetWorkflowRequest, SingleWorkflowResponse>;
+  /** List all the workflows. */
+  listWorkflows: handleUnaryCall<ListWorkflowsRequest, MultiWorkflowResponse>;
+  /**
+   * Add a workflow to an app.
+   * Note(zeiler): the order of the workflows that are returned from this endpoint
+   * may be different than the order in which the user provides them. This is because
+   * we reorder by a sort that optimizes for performance of the graph and its dependencies.
+   * When using the workflow in any future call the order returned by this endpoint
+   * will be used.
+   */
+  postWorkflows: handleUnaryCall<PostWorkflowsRequest, MultiWorkflowResponse>;
+  /** Patch one or more workflows. */
+  patchWorkflows: handleUnaryCall<PatchWorkflowsRequest, MultiWorkflowResponse>;
+  /** Patch one or more workflows ids. */
+  patchWorkflowIds: handleUnaryCall<PatchWorkflowIdsRequest, MultiWorkflowResponse>;
+  /** Delete a single workflow. */
+  deleteWorkflow: handleUnaryCall<DeleteWorkflowRequest, BaseResponse>;
+  /** Delete multiple workflows in one request. */
+  deleteWorkflows: handleUnaryCall<DeleteWorkflowsRequest, BaseResponse>;
+  /** Predict using a workflow. */
+  postWorkflowResults: handleUnaryCall<PostWorkflowResultsRequest, PostWorkflowResultsResponse>;
+  /** List workflow versions. */
+  listWorkflowVersions: handleUnaryCall<ListWorkflowVersionsRequest, MultiWorkflowVersionResponse>;
+  /** Get single workflow version. */
+  getWorkflowVersion: handleUnaryCall<GetWorkflowVersionRequest, SingleWorkflowVersionResponse>;
+  /** Delete workflow versions. */
+  deleteWorkflowVersions: handleUnaryCall<DeleteWorkflowVersionsRequest, BaseResponse>;
+  /** Patch workflow versions. */
+  patchWorkflowVersions: handleUnaryCall<PatchWorkflowVersionsRequest, MultiWorkflowVersionResponse>;
+  /** Get a specific key from an app. */
+  getKey: handleUnaryCall<GetKeyRequest, SingleKeyResponse>;
+  /** List all the keys. */
+  listKeys: handleUnaryCall<ListKeysRequest, MultiKeyResponse>;
+  /** List keys by app_id */
+  listAppKeys: handleUnaryCall<ListAppKeysRequest, MultiKeyResponse>;
+  /**
+   * Search over the keys to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  deleteKey: handleUnaryCall<DeleteKeyRequest, BaseResponse>;
+  /** Add a key to an app. */
+  postKeys: handleUnaryCall<PostKeysRequest, MultiKeyResponse>;
+  /** Patch one or more keys. */
+  patchKeys: handleUnaryCall<PatchKeysRequest, MultiKeyResponse>;
+  /**
+   * API Keys in the public API -- request is itself Key authorized, and will tell
+   * the user the scopes/access of the key/credential they're providing, as computed by
+   * our authorizer:
+   */
+  myScopes: handleUnaryCall<MyScopesRequest, MultiScopeResponse>;
+  myScopesUser: handleUnaryCall<MyScopesUserRequest, MultiScopeUserResponse>;
+  myScopesRoot: handleUnaryCall<MyScopesRootRequest, MultiScopeRootResponse>;
+  /** List all auth scopes available to me as a user. */
+  listScopes: handleUnaryCall<ListScopesRequest, MultiScopeDepsResponse>;
+  /** Get a specific app from an app. */
+  getApp: handleUnaryCall<GetAppRequest, SingleAppResponse>;
+  /** List all the apps. */
+  listApps: handleUnaryCall<ListAppsRequest, MultiAppResponse>;
+  /**
+   * Search over the apps to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  deleteApp: handleUnaryCall<DeleteAppRequest, BaseResponse>;
+  /**
+   * Add a app to an app.
+   * This needs to load the default workflow to make a copy, validating all the models in it, and
+   * then writing the new workflow back to this new app.
+   */
+  postApps: handleUnaryCall<PostAppsRequest, MultiAppResponse>;
+  /** Patch one or more apps. */
+  patchApps: handleUnaryCall<PatchAppsRequest, MultiAppResponse>;
+  /**
+   * Allows to Patch only the below fields in one or more apps.
+   * Allowed fields are notes, description and image
+   */
+  patchAppsDetails: handleUnaryCall<PatchAppsDetailsRequest, MultiAppResponse>;
+  /** Patch apps ids. */
+  patchAppsIds: handleUnaryCall<PatchAppsIdsRequest, MultiAppResponse>;
+  /** Patch one app. */
+  patchApp: handleUnaryCall<PatchAppRequest, SingleAppResponse>;
+  /** Search over the applications to find one or more you're looking for. */
+  postAppsSearches: handleUnaryCall<PostAppsSearchesRequest, MultiAppResponse>;
+  /** Get user information */
+  getUser: handleUnaryCall<GetUserRequest, SingleUserResponse>;
+  /** Validate new password in real-time for a user */
+  postValidatePassword: handleUnaryCall<PostValidatePasswordRequest, SinglePasswordValidationResponse>;
+  /** Get a saved legacy search. */
+  getSearch: handleUnaryCall<GetSearchRequest, SingleSearchResponse>;
+  /** List all saved legacy searches. */
+  listSearches: handleUnaryCall<ListSearchesRequest, MultiSearchResponse>;
+  /** Patch saved legacy searches by ids. */
+  patchSearches: handleUnaryCall<PatchSearchesRequest, MultiSearchResponse>;
+  /**
+   * Execute a new search and optionally save it.
+   *
+   * Deprecated: Use PostInputsSearches or PostAnnotationsSearches instead.
+   *  The server may refuse to accept requests to this endpoint.
+   *
+   * @deprecated
+   */
+  postSearches: handleUnaryCall<PostSearchesRequest, MultiSearchResponse>;
+  /** Execute a previously saved legacy search. */
+  postSearchesById: handleUnaryCall<PostSearchesByIDRequest, MultiSearchResponse>;
+  /** Evaluate the results of two search requests */
+  postAnnotationSearchMetrics: handleUnaryCall<
+    PostAnnotationSearchMetricsRequest,
+    MultiAnnotationSearchMetricsResponse
+  >;
+  /** Get the evaluation results between two search requests */
+  getAnnotationSearchMetrics: handleUnaryCall<GetAnnotationSearchMetricsRequest, MultiAnnotationSearchMetricsResponse>;
+  /** List the evaluation results between two search requests */
+  listAnnotationSearchMetrics: handleUnaryCall<
+    ListAnnotationSearchMetricsRequest,
+    MultiAnnotationSearchMetricsResponse
+  >;
+  /** DeleteAnnotationSearchMetrics */
+  deleteAnnotationSearchMetrics: handleUnaryCall<DeleteAnnotationSearchMetricsRequest, BaseResponse>;
+  /** Delete a saved search. */
+  deleteSearch: handleUnaryCall<DeleteSearchRequest, BaseResponse>;
+  /** List all the annotation filters. */
+  listAnnotationFilters: handleUnaryCall<ListAnnotationFiltersRequest, MultiAnnotationFilterResponse>;
+  /** Get a specific annotation filter. */
+  getAnnotationFilter: handleUnaryCall<GetAnnotationFilterRequest, SingleAnnotationFilterResponse>;
+  /** Add annotation filters. */
+  postAnnotationFilters: handleUnaryCall<PostAnnotationFiltersRequest, MultiAnnotationFilterResponse>;
+  /** Patch one or more annotation filters. */
+  patchAnnotationFilters: handleUnaryCall<PatchAnnotationFiltersRequest, MultiAnnotationFilterResponse>;
+  /** Delete one or more annotation filters in a single request. */
+  deleteAnnotationFilters: handleUnaryCall<DeleteAnnotationFiltersRequest, BaseResponse>;
+  /** List all status codes. */
+  listStatusCodes: handleUnaryCall<ListStatusCodesRequest, MultiStatusCodeResponse>;
+  /** Get more details for a status code. */
+  getStatusCode: handleUnaryCall<GetStatusCodeRequest, SingleStatusCodeResponse>;
+  /** owner list users who the app is shared with */
+  listCollaborators: handleUnaryCall<ListCollaboratorsRequest, MultiCollaboratorsResponse>;
+  /** add collaborators to an app. */
+  postCollaborators: handleUnaryCall<PostCollaboratorsRequest, MultiCollaboratorsResponse>;
+  /** Patch existing collaborators. */
+  patchCollaborators: handleUnaryCall<PatchCollaboratorsRequest, MultiCollaboratorsResponse>;
+  /** Delete existing collaborators. */
+  deleteCollaborators: handleUnaryCall<DeleteCollaboratorsRequest, BaseResponse>;
+  /** Collaboration includes the app user are invitied to work on */
+  listCollaborations: handleUnaryCall<ListCollaborationsRequest, MultiCollaborationsResponse>;
+  /**
+   * PostAppDuplications starts async app duplication jobs which copy resources
+   * (inputs, annotations, models etc) from one application to another. It can
+   * also create the destination application if it does not exist, with fields
+   * (description, metadata etc) copied from the source application.
+   *
+   * A duplication job can be started by any user that can read from the source
+   * application (the target of this call) and can create and write to the
+   * destination application. The duplication is associated with the user that
+   * created it, so in order to read the status and progress of the job, that
+   * user's ID has to be used in the call to GetAppDuplication, which might be
+   * different to the source application owner ID in this call.
+   */
+  postAppDuplications: handleUnaryCall<PostAppDuplicationsRequest, MultiAppDuplicationsResponse>;
+  /** ListAppDuplications lists all app duplication jobs created by the user. */
+  listAppDuplications: handleUnaryCall<ListAppDuplicationsRequest, MultiAppDuplicationsResponse>;
+  /** GetAppDuplication returns an app duplication job created by the user. */
+  getAppDuplication: handleUnaryCall<GetAppDuplicationRequest, SingleAppDuplicationResponse>;
+  /** Add tasks to an app. */
+  postTasks: handleUnaryCall<PostTasksRequest, MultiTaskResponse>;
+  /** Task annotation count */
+  getTaskAnnotationCount: handleUnaryCall<GetTaskCountRequest, SingleTaskCountResponse>;
+  /** Task Input count */
+  getTaskInputCount: handleUnaryCall<GetTaskCountRequest, SingleTaskCountResponse>;
+  /** Get a specific task from an app. */
+  getTask: handleUnaryCall<GetTaskRequest, SingleTaskResponse>;
+  /** List tasks from an app. */
+  listTasks: handleUnaryCall<ListTasksRequest, MultiTaskResponse>;
+  /** Patch one or more tasks. */
+  patchTasks: handleUnaryCall<PatchTasksRequest, MultiTaskResponse>;
+  /** Delete multiple tasks in one request. */
+  deleteTasks: handleUnaryCall<DeleteTasksRequest, BaseResponse>;
+  /** Add Label orders. */
+  postLabelOrders: handleUnaryCall<PostLabelOrdersRequest, MultiLabelOrderResponse>;
+  /** Get a label order. */
+  getLabelOrder: handleUnaryCall<GetLabelOrderRequest, SingleLabelOrderResponse>;
+  /** List label orders. */
+  listLabelOrders: handleUnaryCall<ListLabelOrdersRequest, MultiLabelOrderResponse>;
+  /** Patch one or more label orders. */
+  patchLabelOrders: handleUnaryCall<PatchLabelOrdersRequest, MultiLabelOrderResponse>;
+  /**
+   * Delete multiple label orders in one request.
+   * this do not change task status
+   */
+  deleteLabelOrders: handleUnaryCall<DeleteLabelOrdersRequest, BaseResponse>;
+  /**
+   * Add a list of Collectors to an app.
+   * In the handler of this endpoint we also check for all the scopes of the  POST /inputs
+   * endpoint.
+   * Those current scopes are listed here as a hard requirement.
+   * They are needed when adding the collectors just so we now that you have permission with
+   * that key at least to do the writing to this app with POST /inputs.
+   */
+  postCollectors: handleUnaryCall<PostCollectorsRequest, MultiCollectorResponse>;
+  /** Get a specific collector from an app. */
+  getCollector: handleUnaryCall<GetCollectorRequest, SingleCollectorResponse>;
+  /** List all the collectors. */
+  listCollectors: handleUnaryCall<ListCollectorsRequest, MultiCollectorResponse>;
+  /** Patch one or more collectors. */
+  patchCollectors: handleUnaryCall<PatchCollectorsRequest, MultiCollectorResponse>;
+  /**
+   * Delete multiple collectors in one request.
+   * This call is asynchronous. Use DeleteCollector if you want a synchronous version.
+   */
+  deleteCollectors: handleUnaryCall<DeleteCollectorsRequest, BaseResponse>;
+  /** PostStatValues */
+  postStatValues: handleUnaryCall<PostStatValuesRequest, MultiStatValueResponse>;
+  /** PostStatValuesAggregate */
+  postStatValuesAggregate: handleUnaryCall<PostStatValuesAggregateRequest, MultiStatValueAggregateResponse>;
+  /** Get a specific module from an app. */
+  getModule: handleUnaryCall<GetModuleRequest, SingleModuleResponse>;
+  /** List all the modules in community, by user or by app. */
+  listModules: handleUnaryCall<ListModulesRequest, MultiModuleResponse>;
+  /** Add a modules to an app. */
+  postModules: handleUnaryCall<PostModulesRequest, MultiModuleResponse>;
+  /** Patch one or more modules. */
+  patchModules: handleUnaryCall<PatchModulesRequest, MultiModuleResponse>;
+  /** Delete multiple modules in one request. */
+  deleteModules: handleUnaryCall<DeleteModulesRequest, BaseResponse>;
+  /** Get a specific module version for a module. */
+  getModuleVersion: handleUnaryCall<GetModuleVersionRequest, SingleModuleVersionResponse>;
+  /** List all the modules versions for a given module. */
+  listModuleVersions: handleUnaryCall<ListModuleVersionsRequest, MultiModuleVersionResponse>;
+  /** Create a new module version to trigger training of the module. */
+  postModuleVersions: handleUnaryCall<PostModuleVersionsRequest, MultiModuleVersionResponse>;
+  /** Modify details of an existing module version. */
+  patchModuleVersions: handleUnaryCall<PatchModuleVersionsRequest, MultiModuleVersionResponse>;
+  /** Delete a multiple module version. */
+  deleteModuleVersions: handleUnaryCall<DeleteModuleVersionsRequest, BaseResponse>;
+  /** Get usage count for specific module version. */
+  getModuleVersionUsageCount: handleUnaryCall<GetModuleVersionUsageCountRequest, SingleModuleVersionUsageCountResponse>;
+  /** Get installed modules vesrions for an app. */
+  getInstalledModuleVersion: handleUnaryCall<GetInstalledModuleVersionRequest, SingleInstalledModuleVersionResponse>;
+  /** List installed modules vesrions for an app. */
+  listInstalledModuleVersions: handleUnaryCall<ListInstalledModuleVersionsRequest, MultiInstalledModuleVersionResponse>;
+  /** Install a new module version which will deploy the specific ModuleVersion to the app in the url. */
+  postInstalledModuleVersions: handleUnaryCall<PostInstalledModuleVersionsRequest, MultiInstalledModuleVersionResponse>;
+  /**
+   * Uninstall an installed module version which will deploy the specific ModuleVersion to the app
+   * in the url.
+   * This cleaned up any associated caller keys so needs the Keys_Delete scope.
+   */
+  deleteInstalledModuleVersions: handleUnaryCall<DeleteInstalledModuleVersionsRequest, BaseResponse>;
+  /**
+   * Assign a key that the caller owns to be used when accessing this installed module version
+   * If this endpoint is called with a different key then it overwrites what is there.
+   */
+  postInstalledModuleVersionsKey: handleUnaryCall<PostInstalledModuleVersionsKeyRequest, SingleKeyResponse>;
+  /**
+   * Perform bulk operations on a list of inputs based on input source.
+   * Operation include add, update, delete of concepts, metadata and geo data.
+   * This is an Asynchronous process. Use ListBulkOperations or GetBulkOperation to check the status.
+   */
+  postBulkOperations: handleUnaryCall<PostBulkOperationsRequest, MultiBulkOperationsResponse>;
+  /** List all the bulk operations */
+  listBulkOperations: handleUnaryCall<ListBulkOperationsRequest, MultiBulkOperationsResponse>;
+  /** Get the bulk operation details by ID */
+  getBulkOperation: handleUnaryCall<GetBulkOperationRequest, SingleBulkOperationsResponse>;
+  /** Cancel one or more bulk operations */
+  cancelBulkOperations: handleUnaryCall<CancelBulkOperationRequest, MultiBulkOperationsResponse>;
+  /** delete one or more terminated bulk operations */
+  deleteBulkOperations: handleUnaryCall<DeleteBulkOperationRequest, BaseResponse>;
+  /**
+   * Deprecated: Use PutTaskAssignments with action=LABEL_START.
+   *   This endpoint has initially been designed as a GET request,
+   *   but has been re-designed to serve a PUT logic.
+   *   In order to clearly highlight that this endpoint serves a PUT request,
+   *   this endpoint has been deprecated and replaced by PutTaskAssignments with action=LABEL_START.
+   */
+  listNextTaskAssignments: handleUnaryCall<ListNextTaskAssignmentsRequest, MultiInputResponse>;
+  /**
+   * PutTaskAssignments performs an idempotent action for the task assignments in given task.
+   * See PutTaskAssignmentsRequestAction for more details about possible actions.
+   */
+  putTaskAssignments: handleUnaryCall<PutTaskAssignmentsRequest, MultiTaskAssignmentResponse>;
+  /** List all the inputs add jobs */
+  listInputsAddJobs: handleUnaryCall<ListInputsAddJobsRequest, MultiInputsAddJobResponse>;
+  /** Get the input add job details by ID */
+  getInputsAddJob: handleUnaryCall<GetInputsAddJobRequest, SingleInputsAddJobResponse>;
+  /** cancel the input add job by ID */
+  cancelInputsAddJob: handleUnaryCall<CancelInputsAddJobRequest, SingleInputsAddJobResponse>;
+  /**
+   * PostUploads is used to upload files. Note that this does not create inputs.
+   * returns job with uploadID, job has UPLOAD_IN_PROGRESS status
+   * Actual upload content can be done in multiple calls with PutUploadContentParts
+   * You can get status of upload with GetUpload or ListUploads endpoints
+   * See also PostInputsUploads
+   */
+  postUploads: handleUnaryCall<PostUploadsRequest, MultiUploadResponse>;
+  /**
+   * Upload a part of a multipart upload.
+   * Behaviour on completion depends on the endpoint that was used to initiate the upload.
+   */
+  putUploadContentParts: handleUnaryCall<PutUploadContentPartsRequest, SingleUploadResponse>;
+  getUpload: handleUnaryCall<GetUploadRequest, SingleUploadResponse>;
+  listUploads: handleUnaryCall<ListUploadsRequest, MultiUploadResponse>;
+  deleteUploads: handleUnaryCall<DeleteUploadsRequest, BaseResponse>;
+  /**
+   * Initiates retrieval of inputs from cloud storage from a user provided data source.
+   * Will create and return an inputs-add-job for tracking progress.
+   * Archives will be extracted and their contents will be processed as inputs.
+   *
+   * The cloud URL will be treated as a filter prefix. For example s3:/bucket/images_folder/abc will process
+   * files in the images_folder beginning with abc or in a subfolder beginning with abc.
+   * For example:
+   * bucket/images_folder/abcImage.png
+   * bucket/images_folder/abc-1/Data.zip
+   *
+   * If given URL is for a private bucket or file, then credentials should be provided to access the bucket.
+   * Credentials should include rights to list the objects in the bucket, except when pointed directly at a file archive,
+   * in which case it only requires rights to access that particular file.
+   */
+  postInputsDataSources: handleUnaryCall<PostInputsDataSourcesRequest, MultiInputsAddJobResponse>;
+  /** Get the input extraction job details by ID */
+  getInputsExtractionJob: handleUnaryCall<GetInputsExtractionJobRequest, SingleInputsExtractionJobResponse>;
+  /** List all the input extraction jobs */
+  listInputsExtractionJobs: handleUnaryCall<ListInputsExtractionJobsRequest, MultiInputsExtractionJobResponse>;
+  cancelInputsExtractionJobs: handleUnaryCall<CancelInputsExtractionJobsRequest, MultiInputsExtractionJobResponse>;
+  /**
+   * Create new upload job with a file archive containing inputs (images, videos, text, audio)
+   * Actual file upload happens in next steps by calling `PutUploadContentParts` endpoint
+   * and providing the file content in the request body.
+   * This endpoint creates and return an inputs-add-job which contains an upload id needed for upload and further status tracking
+   * Completing the upload will automatically begin unpacking the archive and uploading the contents as inputs.
+   * See also GetInputsAddJob and then GetInputsExtractionJob
+   */
+  postInputsUploads: handleUnaryCall<PostInputsUploadsRequest, MultiInputsAddJobResponse>;
+  /** putting above the Get Nodepool endpoint to make it appear above the other one */
+  listPipelineVersionRuns: handleUnaryCall<ListPipelineVersionRunsRequest, MultiPipelineVersionRunResponse>;
+  /**
+   * Get a specific runner.
+   * TODO(zeiler): runner_id is a UUID so can list globally as well.
+   */
+  getRunner: handleUnaryCall<GetRunnerRequest, SingleRunnerResponse>;
+  /** List all the runners for the user. */
+  listRunners: handleUnaryCall<ListRunnersRequest, MultiRunnerResponse>;
+  /** Add a runners to a user. */
+  postRunners: handleUnaryCall<PostRunnersRequest, MultiRunnerResponse>;
+  /** Patch runners of a user. */
+  patchRunners: handleUnaryCall<PatchRunnersRequest, MultiRunnerResponse>;
+  /** Delete multiple runners in one request. */
+  deleteRunners: handleUnaryCall<DeleteRunnersRequest, BaseResponse>;
+  /**
+   * List items for the remote runner to work on.
+   * since the runner_id is a UUID we can access it directly too.
+   */
+  listRunnerItems: handleUnaryCall<ListRunnerItemsRequest, MultiRunnerItemResponse>;
+  /**
+   * Post back outputs from remote runners
+   * since the runner_id is a UUID we can access it directly too.
+   */
+  postRunnerItemOutputs: handleUnaryCall<PostRunnerItemOutputsRequest, MultiRunnerItemOutputResponse>;
+  /**
+   * This maintains a single request for asking the API if there is any work to be done, processing
+   * it and streaming back results.
+   * To do that first handshake the MultiRunnerItemOutputResponse will have RUNNER_STREAM_START
+   * status filled in so that the API knows to respond with a MultiRunnerItemResponse.
+   * For now there will only be one of those if the model prediction only has one request.
+   * NOTE(zeiler): downside of this is you can't use HTTP REST requests to do runner work.
+   */
+  processRunnerItems: handleBidiStreamingCall<PostRunnerItemOutputsRequest, MultiRunnerItemResponse>;
+  /** Get the training time estimate based off train request and estimated input count. */
+  postModelVersionsTrainingTimeEstimate: handleUnaryCall<
+    PostModelVersionsTrainingTimeEstimateRequest,
+    MultiTrainingTimeEstimateResponse
+  >;
+  /** List Available Cloud Providers */
+  listCloudProviders: handleUnaryCall<ListCloudProvidersRequest, MultiCloudProviderResponse>;
+  /** List Regions for given Cloud Provider */
+  listCloudRegions: handleUnaryCall<ListCloudRegionsRequest, MultiCloudRegionResponse>;
+  /** Get InstanceTypes given Cloud Provider and Region */
+  listInstanceTypes: handleUnaryCall<ListInstanceTypesRequest, MultiInstanceTypeResponse>;
+  /** ComputeCluster CRUD */
+  getComputeCluster: handleUnaryCall<GetComputeClusterRequest, SingleComputeClusterResponse>;
+  listComputeClusters: handleUnaryCall<ListComputeClustersRequest, MultiComputeClusterResponse>;
+  postComputeClusters: handleUnaryCall<PostComputeClustersRequest, MultiComputeClusterResponse>;
+  /** Delete multiple compute_clusters in one request. */
+  deleteComputeClusters: handleUnaryCall<DeleteComputeClustersRequest, BaseResponse>;
+  /** Nodepools CRUD */
+  getNodepool: handleUnaryCall<GetNodepoolRequest, SingleNodepoolResponse>;
+  listNodepools: handleUnaryCall<ListNodepoolsRequest, MultiNodepoolResponse>;
+  postNodepools: handleUnaryCall<PostNodepoolsRequest, MultiNodepoolResponse>;
+  patchNodepools: handleUnaryCall<PatchNodepoolsRequest, MultiNodepoolResponse>;
+  /** Delete multiple nodepools in one request. */
+  deleteNodepools: handleUnaryCall<DeleteNodepoolsRequest, BaseResponse>;
+  /** Deployments CRUD */
+  getDeployment: handleUnaryCall<GetDeploymentRequest, SingleDeploymentResponse>;
+  listDeployments: handleUnaryCall<ListDeploymentsRequest, MultiDeploymentResponse>;
+  postDeployments: handleUnaryCall<PostDeploymentsRequest, MultiDeploymentResponse>;
+  patchDeployments: handleUnaryCall<PatchDeploymentsRequest, MultiDeploymentResponse>;
+  /** Delete multiple deployments in one request. */
+  deleteDeployments: handleUnaryCall<DeleteDeploymentsRequest, BaseResponse>;
+  postAuditLogSearches: handleUnaryCall<PostAuditLogSearchesRequest, MultiAuditLogEntryResponse>;
+  listWorkflowEvaluationTemplates: handleUnaryCall<
+    ListWorkflowEvaluationTemplatesRequest,
+    MultiWorkflowEvaluationTemplateResponse
+  >;
+  postLogEntries: handleUnaryCall<PostLogEntriesRequest, BaseResponse>;
+  listLogEntries: handleUnaryCall<ListLogEntriesRequest, MultiLogEntryResponse>;
+  streamLogEntries: handleServerStreamingCall<StreamLogEntriesRequest, MultiLogEntryResponse>;
+  postComputePlaneMetrics: handleUnaryCall<PostComputePlaneMetricsRequest, BaseResponse>;
+  postWorkflowVersionEvaluations: handleUnaryCall<
+    PostWorkflowVersionEvaluationsRequest,
+    MultiWorkflowVersionEvaluationResponse
+  >;
+  getWorkflowVersionEvaluation: handleUnaryCall<
+    GetWorkflowVersionEvaluationRequest,
+    SingleWorkflowVersionEvaluationResponse
+  >;
+  listWorkflowVersionEvaluations: handleUnaryCall<
+    ListWorkflowVersionEvaluationsRequest,
+    MultiWorkflowVersionEvaluationResponse
+  >;
+  patchWorkflowVersionEvaluations: handleUnaryCall<
+    PatchWorkflowVersionEvaluationsRequest,
+    MultiWorkflowVersionEvaluationResponse
+  >;
+  listWorkflowVersionEvaluationData: handleUnaryCall<
+    ListWorkflowVersionEvaluationDataRequest,
+    MultiListWorkflowVersionEvaluationDataResponse
+  >;
+  postWorkflowVersionEvaluationData: handleUnaryCall<
+    PostWorkflowVersionEvaluationDataRequest,
+    MultiListWorkflowVersionEvaluationDataResponse
+  >;
+  postPipelines: handleUnaryCall<PostPipelinesRequest, MultiPipelineResponse>;
+  getPipeline: handleUnaryCall<GetPipelineRequest, SinglePipelineResponse>;
+  listPipelines: handleUnaryCall<ListPipelinesRequest, MultiPipelineResponse>;
+  patchPipelines: handleUnaryCall<PatchPipelinesRequest, MultiPipelineResponse>;
+  deletePipelines: handleUnaryCall<DeletePipelinesRequest, BaseResponse>;
+  getPipelineVersion: handleUnaryCall<GetPipelineVersionRequest, SinglePipelineVersionResponse>;
+  listPipelineVersions: handleUnaryCall<ListPipelineVersionsRequest, MultiPipelineVersionResponse>;
+  patchPipelineVersions: handleUnaryCall<PatchPipelineVersionsRequest, MultiPipelineVersionResponse>;
+  deletePipelineVersions: handleUnaryCall<DeletePipelineVersionsRequest, BaseResponse>;
+  getPipelineVersionRun: handleUnaryCall<GetPipelineVersionRunRequest, SinglePipelineVersionRunResponse>;
+  postPipelineVersionRuns: handleUnaryCall<PostPipelineVersionRunsRequest, MultiPipelineVersionRunResponse>;
+  patchPipelineVersionRuns: handleUnaryCall<PatchPipelineVersionRunsRequest, MultiPipelineVersionRunResponse>;
+  postPipelineSteps: handleUnaryCall<PostPipelineStepsRequest, MultiPipelineStepResponse>;
+  getPipelineStep: handleUnaryCall<GetPipelineStepRequest, SinglePipelineStepResponse>;
+  listPipelineSteps: handleUnaryCall<ListPipelineStepsRequest, MultiPipelineStepResponse>;
+  /**
+   * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
+   * The config must be sent first before the pipeline_step_bytes can be uploaded.
+   * Once the config has been sent, the server will respond with a confirmation containing the pipeline_step_version_id.
+   * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the pipeline_step_version_id specified for your pipeline_step_version.
+   * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the pipeline_step_bytes.
+   */
+  postPipelineStepVersionsUpload: handleBidiStreamingCall<
+    PostPipelineStepVersionsUploadRequest,
+    PostPipelineStepVersionsUploadResponse
+  >;
+  listPipelineStepVersions: handleUnaryCall<ListPipelineStepVersionsRequest, MultiPipelineStepVersionResponse>;
+  getPipelineStepVersion: handleUnaryCall<GetPipelineStepVersionRequest, SinglePipelineStepVersionResponse>;
+  getSecret: handleUnaryCall<GetSecretRequest, SingleSecretResponse>;
+  listSecrets: handleUnaryCall<ListSecretsRequest, MultiSecretResponse>;
+  postSecrets: handleUnaryCall<PostSecretsRequest, MultiSecretResponse>;
+  patchSecrets: handleUnaryCall<PatchSecretsRequest, MultiSecretResponse>;
+  deleteSecrets: handleUnaryCall<DeleteSecretsRequest, MultiSecretResponse>;
 }
 
-export const V2ServiceName = "clarifai.api.V2";
-export class V2ClientImpl implements V2 {
-  private readonly rpc: Rpc;
-  private readonly service: string;
-  constructor(rpc: Rpc, opts?: { service?: string }) {
-    this.service = opts?.service || V2ServiceName;
-    this.rpc = rpc;
-    this.ListConceptRelations = this.ListConceptRelations.bind(this);
-    this.PostConceptRelations = this.PostConceptRelations.bind(this);
-    this.DeleteConceptRelations = this.DeleteConceptRelations.bind(this);
-    this.GetConceptCounts = this.GetConceptCounts.bind(this);
-    this.GetConcept = this.GetConcept.bind(this);
-    this.ListConcepts = this.ListConcepts.bind(this);
-    this.ListModelConcepts = this.ListModelConcepts.bind(this);
-    this.PostConceptsSearches = this.PostConceptsSearches.bind(this);
-    this.PostConcepts = this.PostConcepts.bind(this);
-    this.PatchConcepts = this.PatchConcepts.bind(this);
-    this.GetConceptLanguage = this.GetConceptLanguage.bind(this);
-    this.ListConceptLanguages = this.ListConceptLanguages.bind(this);
-    this.PostConceptLanguages = this.PostConceptLanguages.bind(this);
-    this.PatchConceptLanguages = this.PatchConceptLanguages.bind(this);
-    this.ListKnowledgeGraphs = this.ListKnowledgeGraphs.bind(this);
-    this.PostKnowledgeGraphs = this.PostKnowledgeGraphs.bind(this);
-    this.GetAnnotation = this.GetAnnotation.bind(this);
-    this.ListAnnotations = this.ListAnnotations.bind(this);
-    this.PostAnnotations = this.PostAnnotations.bind(this);
-    this.PatchAnnotations = this.PatchAnnotations.bind(this);
-    this.PatchAnnotationsStatus = this.PatchAnnotationsStatus.bind(this);
-    this.DeleteAnnotation = this.DeleteAnnotation.bind(this);
-    this.DeleteAnnotations = this.DeleteAnnotations.bind(this);
-    this.ListAnnotationTracks = this.ListAnnotationTracks.bind(this);
-    this.PostAnnotationTracks = this.PostAnnotationTracks.bind(this);
-    this.PatchAnnotationTracks = this.PatchAnnotationTracks.bind(this);
-    this.DeleteAnnotationTracks = this.DeleteAnnotationTracks.bind(this);
-    this.PatchAnnotationsSearches = this.PatchAnnotationsSearches.bind(this);
-    this.PostAnnotationsSearches = this.PostAnnotationsSearches.bind(this);
-    this.ListAnnotationWorkers = this.ListAnnotationWorkers.bind(this);
-    this.GetInputCount = this.GetInputCount.bind(this);
-    this.StreamInputs = this.StreamInputs.bind(this);
-    this.GetInputSamples = this.GetInputSamples.bind(this);
-    this.GetInput = this.GetInput.bind(this);
-    this.GetInputVideoManifest = this.GetInputVideoManifest.bind(this);
-    this.ListInputs = this.ListInputs.bind(this);
-    this.PostInputs = this.PostInputs.bind(this);
-    this.PatchInputs = this.PatchInputs.bind(this);
-    this.DeleteInput = this.DeleteInput.bind(this);
-    this.DeleteInputs = this.DeleteInputs.bind(this);
-    this.PatchInputsSearches = this.PatchInputsSearches.bind(this);
-    this.PostInputsSearches = this.PostInputsSearches.bind(this);
-    this.PostModelOutputs = this.PostModelOutputs.bind(this);
-    this.GenerateModelOutputs = this.GenerateModelOutputs.bind(this);
-    this.StreamModelOutputs = this.StreamModelOutputs.bind(this);
-    this.ListDatasets = this.ListDatasets.bind(this);
-    this.GetDataset = this.GetDataset.bind(this);
-    this.PostDatasets = this.PostDatasets.bind(this);
-    this.PatchDatasets = this.PatchDatasets.bind(this);
-    this.DeleteDatasets = this.DeleteDatasets.bind(this);
-    this.ListDatasetInputs = this.ListDatasetInputs.bind(this);
-    this.GetDatasetInput = this.GetDatasetInput.bind(this);
-    this.PostDatasetInputs = this.PostDatasetInputs.bind(this);
-    this.DeleteDatasetInputs = this.DeleteDatasetInputs.bind(this);
-    this.ListDatasetVersions = this.ListDatasetVersions.bind(this);
-    this.GetDatasetVersion = this.GetDatasetVersion.bind(this);
-    this.ListDatasetVersionMetricsGroups = this.ListDatasetVersionMetricsGroups.bind(this);
-    this.PostDatasetVersions = this.PostDatasetVersions.bind(this);
-    this.PatchDatasetVersions = this.PatchDatasetVersions.bind(this);
-    this.DeleteDatasetVersions = this.DeleteDatasetVersions.bind(this);
-    this.PutDatasetVersionExports = this.PutDatasetVersionExports.bind(this);
-    this.GetModelType = this.GetModelType.bind(this);
-    this.ListOpenSourceLicenses = this.ListOpenSourceLicenses.bind(this);
-    this.ListModelTypes = this.ListModelTypes.bind(this);
-    this.GetModel = this.GetModel.bind(this);
-    this.GetModelOutputInfo = this.GetModelOutputInfo.bind(this);
-    this.ListModels = this.ListModels.bind(this);
-    this.GetResourceCounts = this.GetResourceCounts.bind(this);
-    this.PostModelsSearches = this.PostModelsSearches.bind(this);
-    this.PostModels = this.PostModels.bind(this);
-    this.PatchModels = this.PatchModels.bind(this);
-    this.PatchModelIds = this.PatchModelIds.bind(this);
-    this.DeleteModel = this.DeleteModel.bind(this);
-    this.DeleteModels = this.DeleteModels.bind(this);
-    this.PatchModelCheckConsents = this.PatchModelCheckConsents.bind(this);
-    this.PatchModelToolkits = this.PatchModelToolkits.bind(this);
-    this.PatchModelUseCases = this.PatchModelUseCases.bind(this);
-    this.PatchModelLanguages = this.PatchModelLanguages.bind(this);
-    this.ListModelInputs = this.ListModelInputs.bind(this);
-    this.GetModelVersion = this.GetModelVersion.bind(this);
-    this.ListModelVersions = this.ListModelVersions.bind(this);
-    this.PostWorkflowVersionsUnPublish = this.PostWorkflowVersionsUnPublish.bind(this);
-    this.PostWorkflowVersionsPublish = this.PostWorkflowVersionsPublish.bind(this);
-    this.PostModelVersionsPublish = this.PostModelVersionsPublish.bind(this);
-    this.PostModelVersionsUnPublish = this.PostModelVersionsUnPublish.bind(this);
-    this.PostModelVersions = this.PostModelVersions.bind(this);
-    this.PatchModelVersions = this.PatchModelVersions.bind(this);
-    this.DeleteModelVersion = this.DeleteModelVersion.bind(this);
-    this.PostModelVersionsUpload = this.PostModelVersionsUpload.bind(this);
-    this.PostModelMigration = this.PostModelMigration.bind(this);
-    this.PutModelVersionExports = this.PutModelVersionExports.bind(this);
-    this.GetModelVersionExport = this.GetModelVersionExport.bind(this);
-    this.GetModelVersionMetrics = this.GetModelVersionMetrics.bind(this);
-    this.PostModelVersionMetrics = this.PostModelVersionMetrics.bind(this);
-    this.PostModelVersionEvaluations = this.PostModelVersionEvaluations.bind(this);
-    this.ListModelVersionEvaluations = this.ListModelVersionEvaluations.bind(this);
-    this.GetModelVersionEvaluation = this.GetModelVersionEvaluation.bind(this);
-    this.PostEvaluations = this.PostEvaluations.bind(this);
-    this.ListEvaluations = this.ListEvaluations.bind(this);
-    this.GetEvaluation = this.GetEvaluation.bind(this);
-    this.ListModelReferences = this.ListModelReferences.bind(this);
-    this.GetModelVersionInputExample = this.GetModelVersionInputExample.bind(this);
-    this.ListModelVersionInputExamples = this.ListModelVersionInputExamples.bind(this);
-    this.GetWorkflow = this.GetWorkflow.bind(this);
-    this.ListWorkflows = this.ListWorkflows.bind(this);
-    this.PostWorkflows = this.PostWorkflows.bind(this);
-    this.PatchWorkflows = this.PatchWorkflows.bind(this);
-    this.PatchWorkflowIds = this.PatchWorkflowIds.bind(this);
-    this.DeleteWorkflow = this.DeleteWorkflow.bind(this);
-    this.DeleteWorkflows = this.DeleteWorkflows.bind(this);
-    this.PostWorkflowResults = this.PostWorkflowResults.bind(this);
-    this.ListWorkflowVersions = this.ListWorkflowVersions.bind(this);
-    this.GetWorkflowVersion = this.GetWorkflowVersion.bind(this);
-    this.DeleteWorkflowVersions = this.DeleteWorkflowVersions.bind(this);
-    this.PatchWorkflowVersions = this.PatchWorkflowVersions.bind(this);
-    this.GetKey = this.GetKey.bind(this);
-    this.ListKeys = this.ListKeys.bind(this);
-    this.ListAppKeys = this.ListAppKeys.bind(this);
-    this.DeleteKey = this.DeleteKey.bind(this);
-    this.PostKeys = this.PostKeys.bind(this);
-    this.PatchKeys = this.PatchKeys.bind(this);
-    this.MyScopes = this.MyScopes.bind(this);
-    this.MyScopesUser = this.MyScopesUser.bind(this);
-    this.MyScopesRoot = this.MyScopesRoot.bind(this);
-    this.ListScopes = this.ListScopes.bind(this);
-    this.GetApp = this.GetApp.bind(this);
-    this.ListApps = this.ListApps.bind(this);
-    this.DeleteApp = this.DeleteApp.bind(this);
-    this.PostApps = this.PostApps.bind(this);
-    this.PatchApps = this.PatchApps.bind(this);
-    this.PatchAppsDetails = this.PatchAppsDetails.bind(this);
-    this.PatchAppsIds = this.PatchAppsIds.bind(this);
-    this.PatchApp = this.PatchApp.bind(this);
-    this.PostAppsSearches = this.PostAppsSearches.bind(this);
-    this.GetUser = this.GetUser.bind(this);
-    this.PostValidatePassword = this.PostValidatePassword.bind(this);
-    this.GetSearch = this.GetSearch.bind(this);
-    this.ListSearches = this.ListSearches.bind(this);
-    this.PatchSearches = this.PatchSearches.bind(this);
-    this.PostSearches = this.PostSearches.bind(this);
-    this.PostSearchesByID = this.PostSearchesByID.bind(this);
-    this.PostAnnotationSearchMetrics = this.PostAnnotationSearchMetrics.bind(this);
-    this.GetAnnotationSearchMetrics = this.GetAnnotationSearchMetrics.bind(this);
-    this.ListAnnotationSearchMetrics = this.ListAnnotationSearchMetrics.bind(this);
-    this.DeleteAnnotationSearchMetrics = this.DeleteAnnotationSearchMetrics.bind(this);
-    this.DeleteSearch = this.DeleteSearch.bind(this);
-    this.ListAnnotationFilters = this.ListAnnotationFilters.bind(this);
-    this.GetAnnotationFilter = this.GetAnnotationFilter.bind(this);
-    this.PostAnnotationFilters = this.PostAnnotationFilters.bind(this);
-    this.PatchAnnotationFilters = this.PatchAnnotationFilters.bind(this);
-    this.DeleteAnnotationFilters = this.DeleteAnnotationFilters.bind(this);
-    this.ListStatusCodes = this.ListStatusCodes.bind(this);
-    this.GetStatusCode = this.GetStatusCode.bind(this);
-    this.ListCollaborators = this.ListCollaborators.bind(this);
-    this.PostCollaborators = this.PostCollaborators.bind(this);
-    this.PatchCollaborators = this.PatchCollaborators.bind(this);
-    this.DeleteCollaborators = this.DeleteCollaborators.bind(this);
-    this.ListCollaborations = this.ListCollaborations.bind(this);
-    this.PostAppDuplications = this.PostAppDuplications.bind(this);
-    this.ListAppDuplications = this.ListAppDuplications.bind(this);
-    this.GetAppDuplication = this.GetAppDuplication.bind(this);
-    this.PostTasks = this.PostTasks.bind(this);
-    this.GetTaskAnnotationCount = this.GetTaskAnnotationCount.bind(this);
-    this.GetTaskInputCount = this.GetTaskInputCount.bind(this);
-    this.GetTask = this.GetTask.bind(this);
-    this.ListTasks = this.ListTasks.bind(this);
-    this.PatchTasks = this.PatchTasks.bind(this);
-    this.DeleteTasks = this.DeleteTasks.bind(this);
-    this.PostLabelOrders = this.PostLabelOrders.bind(this);
-    this.GetLabelOrder = this.GetLabelOrder.bind(this);
-    this.ListLabelOrders = this.ListLabelOrders.bind(this);
-    this.PatchLabelOrders = this.PatchLabelOrders.bind(this);
-    this.DeleteLabelOrders = this.DeleteLabelOrders.bind(this);
-    this.PostCollectors = this.PostCollectors.bind(this);
-    this.GetCollector = this.GetCollector.bind(this);
-    this.ListCollectors = this.ListCollectors.bind(this);
-    this.PatchCollectors = this.PatchCollectors.bind(this);
-    this.DeleteCollectors = this.DeleteCollectors.bind(this);
-    this.PostStatValues = this.PostStatValues.bind(this);
-    this.PostStatValuesAggregate = this.PostStatValuesAggregate.bind(this);
-    this.GetModule = this.GetModule.bind(this);
-    this.ListModules = this.ListModules.bind(this);
-    this.PostModules = this.PostModules.bind(this);
-    this.PatchModules = this.PatchModules.bind(this);
-    this.DeleteModules = this.DeleteModules.bind(this);
-    this.GetModuleVersion = this.GetModuleVersion.bind(this);
-    this.ListModuleVersions = this.ListModuleVersions.bind(this);
-    this.PostModuleVersions = this.PostModuleVersions.bind(this);
-    this.PatchModuleVersions = this.PatchModuleVersions.bind(this);
-    this.DeleteModuleVersions = this.DeleteModuleVersions.bind(this);
-    this.GetModuleVersionUsageCount = this.GetModuleVersionUsageCount.bind(this);
-    this.GetInstalledModuleVersion = this.GetInstalledModuleVersion.bind(this);
-    this.ListInstalledModuleVersions = this.ListInstalledModuleVersions.bind(this);
-    this.PostInstalledModuleVersions = this.PostInstalledModuleVersions.bind(this);
-    this.DeleteInstalledModuleVersions = this.DeleteInstalledModuleVersions.bind(this);
-    this.PostInstalledModuleVersionsKey = this.PostInstalledModuleVersionsKey.bind(this);
-    this.PostBulkOperations = this.PostBulkOperations.bind(this);
-    this.ListBulkOperations = this.ListBulkOperations.bind(this);
-    this.GetBulkOperation = this.GetBulkOperation.bind(this);
-    this.CancelBulkOperations = this.CancelBulkOperations.bind(this);
-    this.DeleteBulkOperations = this.DeleteBulkOperations.bind(this);
-    this.ListNextTaskAssignments = this.ListNextTaskAssignments.bind(this);
-    this.PutTaskAssignments = this.PutTaskAssignments.bind(this);
-    this.ListInputsAddJobs = this.ListInputsAddJobs.bind(this);
-    this.GetInputsAddJob = this.GetInputsAddJob.bind(this);
-    this.CancelInputsAddJob = this.CancelInputsAddJob.bind(this);
-    this.PostUploads = this.PostUploads.bind(this);
-    this.PutUploadContentParts = this.PutUploadContentParts.bind(this);
-    this.GetUpload = this.GetUpload.bind(this);
-    this.ListUploads = this.ListUploads.bind(this);
-    this.DeleteUploads = this.DeleteUploads.bind(this);
-    this.PostInputsDataSources = this.PostInputsDataSources.bind(this);
-    this.GetInputsExtractionJob = this.GetInputsExtractionJob.bind(this);
-    this.ListInputsExtractionJobs = this.ListInputsExtractionJobs.bind(this);
-    this.CancelInputsExtractionJobs = this.CancelInputsExtractionJobs.bind(this);
-    this.PostInputsUploads = this.PostInputsUploads.bind(this);
-    this.ListPipelineVersionRuns = this.ListPipelineVersionRuns.bind(this);
-    this.GetRunner = this.GetRunner.bind(this);
-    this.ListRunners = this.ListRunners.bind(this);
-    this.PostRunners = this.PostRunners.bind(this);
-    this.PatchRunners = this.PatchRunners.bind(this);
-    this.DeleteRunners = this.DeleteRunners.bind(this);
-    this.ListRunnerItems = this.ListRunnerItems.bind(this);
-    this.PostRunnerItemOutputs = this.PostRunnerItemOutputs.bind(this);
-    this.ProcessRunnerItems = this.ProcessRunnerItems.bind(this);
-    this.PostModelVersionsTrainingTimeEstimate = this.PostModelVersionsTrainingTimeEstimate.bind(this);
-    this.ListCloudProviders = this.ListCloudProviders.bind(this);
-    this.ListCloudRegions = this.ListCloudRegions.bind(this);
-    this.ListInstanceTypes = this.ListInstanceTypes.bind(this);
-    this.GetComputeCluster = this.GetComputeCluster.bind(this);
-    this.ListComputeClusters = this.ListComputeClusters.bind(this);
-    this.PostComputeClusters = this.PostComputeClusters.bind(this);
-    this.DeleteComputeClusters = this.DeleteComputeClusters.bind(this);
-    this.GetNodepool = this.GetNodepool.bind(this);
-    this.ListNodepools = this.ListNodepools.bind(this);
-    this.PostNodepools = this.PostNodepools.bind(this);
-    this.PatchNodepools = this.PatchNodepools.bind(this);
-    this.DeleteNodepools = this.DeleteNodepools.bind(this);
-    this.GetDeployment = this.GetDeployment.bind(this);
-    this.ListDeployments = this.ListDeployments.bind(this);
-    this.PostDeployments = this.PostDeployments.bind(this);
-    this.PatchDeployments = this.PatchDeployments.bind(this);
-    this.DeleteDeployments = this.DeleteDeployments.bind(this);
-    this.PostAuditLogSearches = this.PostAuditLogSearches.bind(this);
-    this.ListWorkflowEvaluationTemplates = this.ListWorkflowEvaluationTemplates.bind(this);
-    this.PostLogEntries = this.PostLogEntries.bind(this);
-    this.ListLogEntries = this.ListLogEntries.bind(this);
-    this.StreamLogEntries = this.StreamLogEntries.bind(this);
-    this.PostComputePlaneMetrics = this.PostComputePlaneMetrics.bind(this);
-    this.PostWorkflowVersionEvaluations = this.PostWorkflowVersionEvaluations.bind(this);
-    this.GetWorkflowVersionEvaluation = this.GetWorkflowVersionEvaluation.bind(this);
-    this.ListWorkflowVersionEvaluations = this.ListWorkflowVersionEvaluations.bind(this);
-    this.PatchWorkflowVersionEvaluations = this.PatchWorkflowVersionEvaluations.bind(this);
-    this.ListWorkflowVersionEvaluationData = this.ListWorkflowVersionEvaluationData.bind(this);
-    this.PostWorkflowVersionEvaluationData = this.PostWorkflowVersionEvaluationData.bind(this);
-    this.PostPipelines = this.PostPipelines.bind(this);
-    this.GetPipeline = this.GetPipeline.bind(this);
-    this.ListPipelines = this.ListPipelines.bind(this);
-    this.PatchPipelines = this.PatchPipelines.bind(this);
-    this.DeletePipelines = this.DeletePipelines.bind(this);
-    this.GetPipelineVersion = this.GetPipelineVersion.bind(this);
-    this.ListPipelineVersions = this.ListPipelineVersions.bind(this);
-    this.PatchPipelineVersions = this.PatchPipelineVersions.bind(this);
-    this.DeletePipelineVersions = this.DeletePipelineVersions.bind(this);
-    this.GetPipelineVersionRun = this.GetPipelineVersionRun.bind(this);
-    this.PostPipelineVersionRuns = this.PostPipelineVersionRuns.bind(this);
-    this.PatchPipelineVersionRuns = this.PatchPipelineVersionRuns.bind(this);
-    this.PostPipelineSteps = this.PostPipelineSteps.bind(this);
-    this.GetPipelineStep = this.GetPipelineStep.bind(this);
-    this.ListPipelineSteps = this.ListPipelineSteps.bind(this);
-    this.PostPipelineStepVersionsUpload = this.PostPipelineStepVersionsUpload.bind(this);
-    this.ListPipelineStepVersions = this.ListPipelineStepVersions.bind(this);
-    this.GetPipelineStepVersion = this.GetPipelineStepVersion.bind(this);
-    this.GetSecret = this.GetSecret.bind(this);
-    this.ListSecrets = this.ListSecrets.bind(this);
-    this.PostSecrets = this.PostSecrets.bind(this);
-    this.PatchSecrets = this.PatchSecrets.bind(this);
-    this.DeleteSecrets = this.DeleteSecrets.bind(this);
-  }
-  ListConceptRelations(request: ListConceptRelationsRequest): Promise<MultiConceptRelationResponse> {
-    const data = ListConceptRelationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListConceptRelations", data);
-    return promise.then((data) => MultiConceptRelationResponse.decode(new BinaryReader(data)));
-  }
-
-  PostConceptRelations(request: PostConceptRelationsRequest): Promise<MultiConceptRelationResponse> {
-    const data = PostConceptRelationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostConceptRelations", data);
-    return promise.then((data) => MultiConceptRelationResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteConceptRelations(request: DeleteConceptRelationsRequest): Promise<BaseResponse> {
-    const data = DeleteConceptRelationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteConceptRelations", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetConceptCounts(request: GetConceptCountsRequest): Promise<MultiConceptCountResponse> {
-    const data = GetConceptCountsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetConceptCounts", data);
-    return promise.then((data) => MultiConceptCountResponse.decode(new BinaryReader(data)));
-  }
-
-  GetConcept(request: GetConceptRequest): Promise<SingleConceptResponse> {
-    const data = GetConceptRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetConcept", data);
-    return promise.then((data) => SingleConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  ListConcepts(request: ListConceptsRequest): Promise<MultiConceptResponse> {
-    const data = ListConceptsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListConcepts", data);
-    return promise.then((data) => MultiConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelConcepts(request: ListModelConceptsRequest): Promise<MultiConceptResponse> {
-    const data = ListModelConceptsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelConcepts", data);
-    return promise.then((data) => MultiConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  PostConceptsSearches(request: PostConceptsSearchesRequest): Promise<MultiConceptResponse> {
-    const data = PostConceptsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostConceptsSearches", data);
-    return promise.then((data) => MultiConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  PostConcepts(request: PostConceptsRequest): Promise<MultiConceptResponse> {
-    const data = PostConceptsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostConcepts", data);
-    return promise.then((data) => MultiConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchConcepts(request: PatchConceptsRequest): Promise<MultiConceptResponse> {
-    const data = PatchConceptsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchConcepts", data);
-    return promise.then((data) => MultiConceptResponse.decode(new BinaryReader(data)));
-  }
-
-  GetConceptLanguage(request: GetConceptLanguageRequest): Promise<SingleConceptLanguageResponse> {
-    const data = GetConceptLanguageRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetConceptLanguage", data);
-    return promise.then((data) => SingleConceptLanguageResponse.decode(new BinaryReader(data)));
-  }
-
-  ListConceptLanguages(request: ListConceptLanguagesRequest): Promise<MultiConceptLanguageResponse> {
-    const data = ListConceptLanguagesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListConceptLanguages", data);
-    return promise.then((data) => MultiConceptLanguageResponse.decode(new BinaryReader(data)));
-  }
-
-  PostConceptLanguages(request: PostConceptLanguagesRequest): Promise<MultiConceptLanguageResponse> {
-    const data = PostConceptLanguagesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostConceptLanguages", data);
-    return promise.then((data) => MultiConceptLanguageResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchConceptLanguages(request: PatchConceptLanguagesRequest): Promise<MultiConceptLanguageResponse> {
-    const data = PatchConceptLanguagesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchConceptLanguages", data);
-    return promise.then((data) => MultiConceptLanguageResponse.decode(new BinaryReader(data)));
-  }
-
-  ListKnowledgeGraphs(request: ListKnowledgeGraphsRequest): Promise<MultiKnowledgeGraphResponse> {
-    const data = ListKnowledgeGraphsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListKnowledgeGraphs", data);
-    return promise.then((data) => MultiKnowledgeGraphResponse.decode(new BinaryReader(data)));
-  }
-
-  PostKnowledgeGraphs(request: PostKnowledgeGraphsRequest): Promise<MultiKnowledgeGraphResponse> {
-    const data = PostKnowledgeGraphsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostKnowledgeGraphs", data);
-    return promise.then((data) => MultiKnowledgeGraphResponse.decode(new BinaryReader(data)));
-  }
-
-  GetAnnotation(request: GetAnnotationRequest): Promise<SingleAnnotationResponse> {
-    const data = GetAnnotationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetAnnotation", data);
-    return promise.then((data) => SingleAnnotationResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAnnotations(request: ListAnnotationsRequest): Promise<MultiAnnotationResponse> {
-    const data = ListAnnotationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAnnotations", data);
-    return promise.then((data) => MultiAnnotationResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAnnotations(request: PostAnnotationsRequest): Promise<MultiAnnotationResponse> {
-    const data = PostAnnotationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAnnotations", data);
-    return promise.then((data) => MultiAnnotationResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAnnotations(request: PatchAnnotationsRequest): Promise<MultiAnnotationResponse> {
-    const data = PatchAnnotationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAnnotations", data);
-    return promise.then((data) => MultiAnnotationResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAnnotationsStatus(request: PatchAnnotationsStatusRequest): Promise<PatchAnnotationsStatusResponse> {
-    const data = PatchAnnotationsStatusRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAnnotationsStatus", data);
-    return promise.then((data) => PatchAnnotationsStatusResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteAnnotation(request: DeleteAnnotationRequest): Promise<BaseResponse> {
-    const data = DeleteAnnotationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteAnnotation", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteAnnotations(request: DeleteAnnotationsRequest): Promise<BaseResponse> {
-    const data = DeleteAnnotationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteAnnotations", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAnnotationTracks(request: ListAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse> {
-    const data = ListAnnotationTracksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAnnotationTracks", data);
-    return promise.then((data) => MultiAnnotationTrackResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAnnotationTracks(request: PostAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse> {
-    const data = PostAnnotationTracksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAnnotationTracks", data);
-    return promise.then((data) => MultiAnnotationTrackResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAnnotationTracks(request: PatchAnnotationTracksRequest): Promise<MultiAnnotationTrackResponse> {
-    const data = PatchAnnotationTracksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAnnotationTracks", data);
-    return promise.then((data) => MultiAnnotationTrackResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteAnnotationTracks(request: DeleteAnnotationTracksRequest): Promise<BaseResponse> {
-    const data = DeleteAnnotationTracksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteAnnotationTracks", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAnnotationsSearches(request: PatchAnnotationsSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PatchAnnotationsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAnnotationsSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAnnotationsSearches(request: PostAnnotationsSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PostAnnotationsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAnnotationsSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAnnotationWorkers(request: ListAnnotationWorkersRequest): Promise<MultiWorkerResponse> {
-    const data = ListAnnotationWorkersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAnnotationWorkers", data);
-    return promise.then((data) => MultiWorkerResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInputCount(request: GetInputCountRequest): Promise<SingleInputCountResponse> {
-    const data = GetInputCountRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInputCount", data);
-    return promise.then((data) => SingleInputCountResponse.decode(new BinaryReader(data)));
-  }
-
-  StreamInputs(request: StreamInputsRequest): Promise<MultiInputResponse> {
-    const data = StreamInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "StreamInputs", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInputSamples(request: GetInputSamplesRequest): Promise<MultiInputAnnotationResponse> {
-    const data = GetInputSamplesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInputSamples", data);
-    return promise.then((data) => MultiInputAnnotationResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInput(request: GetInputRequest): Promise<SingleInputResponse> {
-    const data = GetInputRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInput", data);
-    return promise.then((data) => SingleInputResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInputVideoManifest(request: GetVideoManifestRequest): Promise<GetVideoManifestResponse> {
-    const data = GetVideoManifestRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInputVideoManifest", data);
-    return promise.then((data) => GetVideoManifestResponse.decode(new BinaryReader(data)));
-  }
-
-  ListInputs(request: ListInputsRequest): Promise<MultiInputResponse> {
-    const data = ListInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListInputs", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInputs(request: PostInputsRequest): Promise<MultiInputResponse> {
-    const data = PostInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInputs", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchInputs(request: PatchInputsRequest): Promise<MultiInputResponse> {
-    const data = PatchInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchInputs", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteInput(request: DeleteInputRequest): Promise<BaseResponse> {
-    const data = DeleteInputRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteInput", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteInputs(request: DeleteInputsRequest): Promise<BaseResponse> {
-    const data = DeleteInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteInputs", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchInputsSearches(request: PatchInputsSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PatchInputsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchInputsSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInputsSearches(request: PostInputsSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PostInputsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInputsSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelOutputs(request: PostModelOutputsRequest): Promise<MultiOutputResponse> {
-    const data = PostModelOutputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelOutputs", data);
-    return promise.then((data) => MultiOutputResponse.decode(new BinaryReader(data)));
-  }
-
-  GenerateModelOutputs(request: PostModelOutputsRequest): Observable<MultiOutputResponse> {
-    const data = PostModelOutputsRequest.encode(request).finish();
-    const result = this.rpc.serverStreamingRequest(this.service, "GenerateModelOutputs", data);
-    return result.pipe(map((data) => MultiOutputResponse.decode(new BinaryReader(data))));
-  }
-
-  StreamModelOutputs(request: Observable<PostModelOutputsRequest>): Observable<MultiOutputResponse> {
-    const data = request.pipe(map((request) => PostModelOutputsRequest.encode(request).finish()));
-    const result = this.rpc.bidirectionalStreamingRequest(this.service, "StreamModelOutputs", data);
-    return result.pipe(map((data) => MultiOutputResponse.decode(new BinaryReader(data))));
-  }
-
-  ListDatasets(request: ListDatasetsRequest): Promise<MultiDatasetResponse> {
-    const data = ListDatasetsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListDatasets", data);
-    return promise.then((data) => MultiDatasetResponse.decode(new BinaryReader(data)));
-  }
-
-  GetDataset(request: GetDatasetRequest): Promise<SingleDatasetResponse> {
-    const data = GetDatasetRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetDataset", data);
-    return promise.then((data) => SingleDatasetResponse.decode(new BinaryReader(data)));
-  }
-
-  PostDatasets(request: PostDatasetsRequest): Promise<MultiDatasetResponse> {
-    const data = PostDatasetsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostDatasets", data);
-    return promise.then((data) => MultiDatasetResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchDatasets(request: PatchDatasetsRequest): Promise<MultiDatasetResponse> {
-    const data = PatchDatasetsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchDatasets", data);
-    return promise.then((data) => MultiDatasetResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteDatasets(request: DeleteDatasetsRequest): Promise<BaseResponse> {
-    const data = DeleteDatasetsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteDatasets", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListDatasetInputs(request: ListDatasetInputsRequest): Promise<MultiDatasetInputResponse> {
-    const data = ListDatasetInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListDatasetInputs", data);
-    return promise.then((data) => MultiDatasetInputResponse.decode(new BinaryReader(data)));
-  }
-
-  GetDatasetInput(request: GetDatasetInputRequest): Promise<SingleDatasetInputResponse> {
-    const data = GetDatasetInputRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetDatasetInput", data);
-    return promise.then((data) => SingleDatasetInputResponse.decode(new BinaryReader(data)));
-  }
-
-  PostDatasetInputs(request: PostDatasetInputsRequest): Promise<MultiDatasetInputResponse> {
-    const data = PostDatasetInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostDatasetInputs", data);
-    return promise.then((data) => MultiDatasetInputResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteDatasetInputs(request: DeleteDatasetInputsRequest): Promise<BaseResponse> {
-    const data = DeleteDatasetInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteDatasetInputs", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListDatasetVersions(request: ListDatasetVersionsRequest): Promise<MultiDatasetVersionResponse> {
-    const data = ListDatasetVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListDatasetVersions", data);
-    return promise.then((data) => MultiDatasetVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  GetDatasetVersion(request: GetDatasetVersionRequest): Promise<SingleDatasetVersionResponse> {
-    const data = GetDatasetVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetDatasetVersion", data);
-    return promise.then((data) => SingleDatasetVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListDatasetVersionMetricsGroups(
+export interface V2Client extends Client {
+  /**
+   * List concept relations between concepts in the platform.
+   * MUST be above ListConcepts so that if concept_id is empty this will still match
+   * /concepts/relations to list all the concept relations in the app.
+   */
+  listConceptRelations(
+    request: ListConceptRelationsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  listConceptRelations(
+    request: ListConceptRelationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  listConceptRelations(
+    request: ListConceptRelationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  /** Post concept relations to create relations between concepts in the platform. */
+  postConceptRelations(
+    request: PostConceptRelationsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  postConceptRelations(
+    request: PostConceptRelationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  postConceptRelations(
+    request: PostConceptRelationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptRelationResponse) => void,
+  ): ClientUnaryCall;
+  /** Post concept relations to create relations between concepts in the platform. */
+  deleteConceptRelations(
+    request: DeleteConceptRelationsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteConceptRelations(
+    request: DeleteConceptRelationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteConceptRelations(
+    request: DeleteConceptRelationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the concepts with their positive and negative counts */
+  getConceptCounts(
+    request: GetConceptCountsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptCountResponse) => void,
+  ): ClientUnaryCall;
+  getConceptCounts(
+    request: GetConceptCountsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptCountResponse) => void,
+  ): ClientUnaryCall;
+  getConceptCounts(
+    request: GetConceptCountsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptCountResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific concept from an app. */
+  getConcept(
+    request: GetConceptRequest,
+    callback: (error: ServiceError | null, response: SingleConceptResponse) => void,
+  ): ClientUnaryCall;
+  getConcept(
+    request: GetConceptRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleConceptResponse) => void,
+  ): ClientUnaryCall;
+  getConcept(
+    request: GetConceptRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleConceptResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the concepts. */
+  listConcepts(
+    request: ListConceptsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  listConcepts(
+    request: ListConceptsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  listConcepts(
+    request: ListConceptsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  /** List models concepts. */
+  listModelConcepts(
+    request: ListModelConceptsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  listModelConcepts(
+    request: ListModelConceptsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  listModelConcepts(
+    request: ListModelConceptsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Search over the concepts to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  postConceptsSearches(
+    request: PostConceptsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  postConceptsSearches(
+    request: PostConceptsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  postConceptsSearches(
+    request: PostConceptsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a concept to an app. */
+  postConcepts(
+    request: PostConceptsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  postConcepts(
+    request: PostConceptsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  postConcepts(
+    request: PostConceptsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more concepts. */
+  patchConcepts(
+    request: PatchConceptsRequest,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  patchConcepts(
+    request: PatchConceptsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  patchConcepts(
+    request: PatchConceptsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific concept from an app. */
+  getConceptLanguage(
+    request: GetConceptLanguageRequest,
+    callback: (error: ServiceError | null, response: SingleConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  getConceptLanguage(
+    request: GetConceptLanguageRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  getConceptLanguage(
+    request: GetConceptLanguageRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  /** List the concept in all the translated languages. */
+  listConceptLanguages(
+    request: ListConceptLanguagesRequest,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  listConceptLanguages(
+    request: ListConceptLanguagesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  listConceptLanguages(
+    request: ListConceptLanguagesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a new translation for this concept. */
+  postConceptLanguages(
+    request: PostConceptLanguagesRequest,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  postConceptLanguages(
+    request: PostConceptLanguagesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  postConceptLanguages(
+    request: PostConceptLanguagesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Patch the name for a given language names by passing in a list of concepts with the new names
+   * for the languages.
+   */
+  patchConceptLanguages(
+    request: PatchConceptLanguagesRequest,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  patchConceptLanguages(
+    request: PatchConceptLanguagesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  patchConceptLanguages(
+    request: PatchConceptLanguagesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiConceptLanguageResponse) => void,
+  ): ClientUnaryCall;
+  /** List all domain graphs. */
+  listKnowledgeGraphs(
+    request: ListKnowledgeGraphsRequest,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  listKnowledgeGraphs(
+    request: ListKnowledgeGraphsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  listKnowledgeGraphs(
+    request: ListKnowledgeGraphsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  /** Post domain graphs. */
+  postKnowledgeGraphs(
+    request: PostKnowledgeGraphsRequest,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  postKnowledgeGraphs(
+    request: PostKnowledgeGraphsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  postKnowledgeGraphs(
+    request: PostKnowledgeGraphsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKnowledgeGraphResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific annotation from an app. */
+  getAnnotation(
+    request: GetAnnotationRequest,
+    callback: (error: ServiceError | null, response: SingleAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotation(
+    request: GetAnnotationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotation(
+    request: GetAnnotationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the annotation. */
+  listAnnotations(
+    request: ListAnnotationsRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotations(
+    request: ListAnnotationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotations(
+    request: ListAnnotationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  /** Post annotations. */
+  postAnnotations(
+    request: PostAnnotationsRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotations(
+    request: PostAnnotationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotations(
+    request: PostAnnotationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more annotations. */
+  patchAnnotations(
+    request: PatchAnnotationsRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotations(
+    request: PatchAnnotationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotations(
+    request: PatchAnnotationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Patch annotations status by worker id and task id.
+   * Deprecated: Use PutTaskAssignments to update task annotations.
+   *   For example, you can use PutTaskAssignments with action REVIEW_APPROVE
+   *   to approve task assignments and associated annotations in bulk.
+   */
+  patchAnnotationsStatus(
+    request: PatchAnnotationsStatusRequest,
+    callback: (error: ServiceError | null, response: PatchAnnotationsStatusResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationsStatus(
+    request: PatchAnnotationsStatusRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: PatchAnnotationsStatusResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationsStatus(
+    request: PatchAnnotationsStatusRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: PatchAnnotationsStatusResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a single annotation. */
+  deleteAnnotation(
+    request: DeleteAnnotationRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotation(
+    request: DeleteAnnotationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotation(
+    request: DeleteAnnotationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple annotations in one request. */
+  deleteAnnotations(
+    request: DeleteAnnotationsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotations(
+    request: DeleteAnnotationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotations(
+    request: DeleteAnnotationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the annotation tracks. */
+  listAnnotationTracks(
+    request: ListAnnotationTracksRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationTracks(
+    request: ListAnnotationTracksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationTracks(
+    request: ListAnnotationTracksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  /** Post annotation tracks. */
+  postAnnotationTracks(
+    request: PostAnnotationTracksRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationTracks(
+    request: PostAnnotationTracksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationTracks(
+    request: PostAnnotationTracksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more annotation tracks. */
+  patchAnnotationTracks(
+    request: PatchAnnotationTracksRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationTracks(
+    request: PatchAnnotationTracksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationTracks(
+    request: PatchAnnotationTracksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationTrackResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple annotation tracks in one request. */
+  deleteAnnotationTracks(
+    request: DeleteAnnotationTracksRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationTracks(
+    request: DeleteAnnotationTracksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationTracks(
+    request: DeleteAnnotationTracksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch saved annotations searches by ids. */
+  patchAnnotationsSearches(
+    request: PatchAnnotationsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationsSearches(
+    request: PatchAnnotationsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationsSearches(
+    request: PatchAnnotationsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Execute a search over annotations */
+  postAnnotationsSearches(
+    request: PostAnnotationsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationsSearches(
+    request: PostAnnotationsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationsSearches(
+    request: PostAnnotationsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * ListAnnotationWorkers lists users, models, and workflows (collectively
+   * known as "workers") that have added annotations to the application.
+   */
+  listAnnotationWorkers(
+    request: ListAnnotationWorkersRequest,
+    callback: (error: ServiceError | null, response: MultiWorkerResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationWorkers(
+    request: ListAnnotationWorkersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkerResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationWorkers(
+    request: ListAnnotationWorkersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkerResponse) => void,
+  ): ClientUnaryCall;
+  /** Get input count per status. */
+  getInputCount(
+    request: GetInputCountRequest,
+    callback: (error: ServiceError | null, response: SingleInputCountResponse) => void,
+  ): ClientUnaryCall;
+  getInputCount(
+    request: GetInputCountRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInputCountResponse) => void,
+  ): ClientUnaryCall;
+  getInputCount(
+    request: GetInputCountRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInputCountResponse) => void,
+  ): ClientUnaryCall;
+  /** Streams all the inputs starting from oldest assets. */
+  streamInputs(
+    request: StreamInputsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  streamInputs(
+    request: StreamInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  streamInputs(
+    request: StreamInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  getInputSamples(
+    request: GetInputSamplesRequest,
+    callback: (error: ServiceError | null, response: MultiInputAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  getInputSamples(
+    request: GetInputSamplesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  getInputSamples(
+    request: GetInputSamplesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputAnnotationResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific input from an app. */
+  getInput(
+    request: GetInputRequest,
+    callback: (error: ServiceError | null, response: SingleInputResponse) => void,
+  ): ClientUnaryCall;
+  getInput(
+    request: GetInputRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInputResponse) => void,
+  ): ClientUnaryCall;
+  getInput(
+    request: GetInputRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Get a MPEG-DASH manifest for video-type inputs that were added via PostInputs and successfully processed
+   * Experimental. Manifest is used by browser and desktop clients that implement an efficient streaming playback
+   * This means client can switch between low-resolution and high-resolution video streams
+   * Depending on network bandwidth or user's preference
+   * This also means that reencoded video streams are reencoded in a uniform way, not relying on original format
+   * Alternative to MPEG-dash is to stream original file with byte-range header
+   */
+  getInputVideoManifest(
+    request: GetVideoManifestRequest,
+    callback: (error: ServiceError | null, response: GetVideoManifestResponse) => void,
+  ): ClientUnaryCall;
+  getInputVideoManifest(
+    request: GetVideoManifestRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetVideoManifestResponse) => void,
+  ): ClientUnaryCall;
+  getInputVideoManifest(
+    request: GetVideoManifestRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetVideoManifestResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the inputs. */
+  listInputs(
+    request: ListInputsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listInputs(
+    request: ListInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listInputs(
+    request: ListInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * PostInputs adds one or more inputs to the app.
+   * Takes a list of image/video/audio/text URLs, image/video/audio bytes or raw text
+   * Optionally, include concepts or dataset ids to link them
+   * Optionally, include metadata for search
+   * Note that inputs processing is asynchronous process
+   * See ListInputs, StreamInputs or PostInputSearches to list results
+   */
+  postInputs(
+    request: PostInputsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  postInputs(
+    request: PostInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  postInputs(
+    request: PostInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more inputs. */
+  patchInputs(
+    request: PatchInputsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  patchInputs(
+    request: PatchInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  patchInputs(
+    request: PatchInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a single input asynchronously. */
+  deleteInput(
+    request: DeleteInputRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInput(
+    request: DeleteInputRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInput(
+    request: DeleteInputRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Delete multiple inputs in one request.
+   * This call is asynchronous.
+   */
+  deleteInputs(
+    request: DeleteInputsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInputs(
+    request: DeleteInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInputs(
+    request: DeleteInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch saved inputs searches by ids. */
+  patchInputsSearches(
+    request: PatchInputsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchInputsSearches(
+    request: PatchInputsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchInputsSearches(
+    request: PatchInputsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Execute a search over inputs */
+  postInputsSearches(
+    request: PostInputsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postInputsSearches(
+    request: PostInputsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postInputsSearches(
+    request: PostInputsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Get predicted outputs from the model. */
+  postModelOutputs(
+    request: PostModelOutputsRequest,
+    callback: (error: ServiceError | null, response: MultiOutputResponse) => void,
+  ): ClientUnaryCall;
+  postModelOutputs(
+    request: PostModelOutputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiOutputResponse) => void,
+  ): ClientUnaryCall;
+  postModelOutputs(
+    request: PostModelOutputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiOutputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * TODO(zeiler): will need to
+   * Single request but streaming responses.
+   */
+  generateModelOutputs(
+    request: PostModelOutputsRequest,
+    options?: Partial<CallOptions>,
+  ): ClientReadableStream<MultiOutputResponse>;
+  generateModelOutputs(
+    request: PostModelOutputsRequest,
+    metadata?: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientReadableStream<MultiOutputResponse>;
+  /** Stream of requests and stream of responses */
+  streamModelOutputs(): ClientDuplexStream<PostModelOutputsRequest, MultiOutputResponse>;
+  streamModelOutputs(options: Partial<CallOptions>): ClientDuplexStream<PostModelOutputsRequest, MultiOutputResponse>;
+  streamModelOutputs(
+    metadata: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientDuplexStream<PostModelOutputsRequest, MultiOutputResponse>;
+  /** List all the datasets. */
+  listDatasets(
+    request: ListDatasetsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  listDatasets(
+    request: ListDatasetsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  listDatasets(
+    request: ListDatasetsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific dataset. */
+  getDataset(
+    request: GetDatasetRequest,
+    callback: (error: ServiceError | null, response: SingleDatasetResponse) => void,
+  ): ClientUnaryCall;
+  getDataset(
+    request: GetDatasetRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleDatasetResponse) => void,
+  ): ClientUnaryCall;
+  getDataset(
+    request: GetDatasetRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleDatasetResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Add datasets to an app.
+   * The process is atomic, i.e. either all or no datasets are added.
+   * If there is an error for one dataset,
+   * the process will stop, revert the transaction and return the error.
+   */
+  postDatasets(
+    request: PostDatasetsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  postDatasets(
+    request: PostDatasetsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  postDatasets(
+    request: PostDatasetsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Patch one or more datasets.
+   * The process is atomic, i.e. either all or no datasets are patched.
+   * If there is an error for one dataset,
+   * the process will stop, revert the transaction and return the error.
+   */
+  patchDatasets(
+    request: PatchDatasetsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  patchDatasets(
+    request: PatchDatasetsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  patchDatasets(
+    request: PatchDatasetsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete one or more datasets in a single request. */
+  deleteDatasets(
+    request: DeleteDatasetsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasets(
+    request: DeleteDatasetsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasets(
+    request: DeleteDatasetsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the dataset inputs in a dataset. */
+  listDatasetInputs(
+    request: ListDatasetInputsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetInputs(
+    request: ListDatasetInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetInputs(
+    request: ListDatasetInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific dataset input. */
+  getDatasetInput(
+    request: GetDatasetInputRequest,
+    callback: (error: ServiceError | null, response: SingleDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  getDatasetInput(
+    request: GetDatasetInputRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  getDatasetInput(
+    request: GetDatasetInputRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Add dataset inputs to a dataset.
+   * The process is not atomic, i.e. if there are errors with some dataset
+   * inputs, others might still be added. The response reports
+   *   - SUCCESS if all dataset inputs were added,
+   *   - MIXED_STATUS if only some dataset inputs were added, and
+   *   - FAILURE if no dataset inputs were added.
+   * Each individual dataset input in the response has the status set to
+   * indicate if it was successful or if there was an error.
+   */
+  postDatasetInputs(
+    request: PostDatasetInputsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  postDatasetInputs(
+    request: PostDatasetInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  postDatasetInputs(
+    request: PostDatasetInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetInputResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete one or more dataset inputs in a single request. */
+  deleteDatasetInputs(
+    request: DeleteDatasetInputsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasetInputs(
+    request: DeleteDatasetInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasetInputs(
+    request: DeleteDatasetInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the dataset versions. */
+  listDatasetVersions(
+    request: ListDatasetVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetVersions(
+    request: ListDatasetVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetVersions(
+    request: ListDatasetVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific dataset version. */
+  getDatasetVersion(
+    request: GetDatasetVersionRequest,
+    callback: (error: ServiceError | null, response: SingleDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  getDatasetVersion(
+    request: GetDatasetVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  getDatasetVersion(
+    request: GetDatasetVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetVersionMetricsGroups(
     request: ListDatasetVersionMetricsGroupsRequest,
-  ): Promise<MultiDatasetVersionMetricsGroupResponse> {
-    const data = ListDatasetVersionMetricsGroupsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListDatasetVersionMetricsGroups", data);
-    return promise.then((data) => MultiDatasetVersionMetricsGroupResponse.decode(new BinaryReader(data)));
-  }
-
-  PostDatasetVersions(request: PostDatasetVersionsRequest): Promise<MultiDatasetVersionResponse> {
-    const data = PostDatasetVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostDatasetVersions", data);
-    return promise.then((data) => MultiDatasetVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchDatasetVersions(request: PatchDatasetVersionsRequest): Promise<MultiDatasetVersionResponse> {
-    const data = PatchDatasetVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchDatasetVersions", data);
-    return promise.then((data) => MultiDatasetVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteDatasetVersions(request: DeleteDatasetVersionsRequest): Promise<BaseResponse> {
-    const data = DeleteDatasetVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteDatasetVersions", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PutDatasetVersionExports(request: PutDatasetVersionExportsRequest): Promise<MultiDatasetVersionExportResponse> {
-    const data = PutDatasetVersionExportsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PutDatasetVersionExports", data);
-    return promise.then((data) => MultiDatasetVersionExportResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelType(request: GetModelTypeRequest): Promise<SingleModelTypeResponse> {
-    const data = GetModelTypeRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelType", data);
-    return promise.then((data) => SingleModelTypeResponse.decode(new BinaryReader(data)));
-  }
-
-  ListOpenSourceLicenses(request: ListOpenSourceLicensesRequest): Promise<ListOpenSourceLicensesResponse> {
-    const data = ListOpenSourceLicensesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListOpenSourceLicenses", data);
-    return promise.then((data) => ListOpenSourceLicensesResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelTypes(request: ListModelTypesRequest): Promise<MultiModelTypeResponse> {
-    const data = ListModelTypesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelTypes", data);
-    return promise.then((data) => MultiModelTypeResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModel(request: GetModelRequest): Promise<SingleModelResponse> {
-    const data = GetModelRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModel", data);
-    return promise.then((data) => SingleModelResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelOutputInfo(request: GetModelRequest): Promise<SingleModelResponse> {
-    const data = GetModelRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelOutputInfo", data);
-    return promise.then((data) => SingleModelResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModels(request: ListModelsRequest): Promise<MultiModelResponse> {
-    const data = ListModelsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModels", data);
-    return promise.then((data) => MultiModelResponse.decode(new BinaryReader(data)));
-  }
-
-  GetResourceCounts(request: GetResourceCountsRequest): Promise<GetResourceCountsResponse> {
-    const data = GetResourceCountsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetResourceCounts", data);
-    return promise.then((data) => GetResourceCountsResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelsSearches(request: PostModelsSearchesRequest): Promise<MultiModelResponse> {
-    const data = PostModelsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelsSearches", data);
-    return promise.then((data) => MultiModelResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModels(request: PostModelsRequest): Promise<SingleModelResponse> {
-    const data = PostModelsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModels", data);
-    return promise.then((data) => SingleModelResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModels(request: PatchModelsRequest): Promise<MultiModelResponse> {
-    const data = PatchModelsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModels", data);
-    return promise.then((data) => MultiModelResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelIds(request: PatchModelIdsRequest): Promise<MultiModelResponse> {
-    const data = PatchModelIdsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelIds", data);
-    return promise.then((data) => MultiModelResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteModel(request: DeleteModelRequest): Promise<BaseResponse> {
-    const data = DeleteModelRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteModel", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteModels(request: DeleteModelsRequest): Promise<BaseResponse> {
-    const data = DeleteModelsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteModels", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelCheckConsents(request: PatchModelCheckConsentsRequest): Promise<MultiModelCheckConsentResponse> {
-    const data = PatchModelCheckConsentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelCheckConsents", data);
-    return promise.then((data) => MultiModelCheckConsentResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelToolkits(request: PatchModelToolkitsRequest): Promise<MultiModelToolkitResponse> {
-    const data = PatchModelToolkitsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelToolkits", data);
-    return promise.then((data) => MultiModelToolkitResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelUseCases(request: PatchModelUseCasesRequest): Promise<MultiModelUseCaseResponse> {
-    const data = PatchModelUseCasesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelUseCases", data);
-    return promise.then((data) => MultiModelUseCaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelLanguages(request: PatchModelLanguagesRequest): Promise<MultiModelLanguageResponse> {
-    const data = PatchModelLanguagesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelLanguages", data);
-    return promise.then((data) => MultiModelLanguageResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelInputs(request: ListModelInputsRequest): Promise<MultiInputResponse> {
-    const data = ListModelInputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelInputs", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelVersion(request: GetModelVersionRequest): Promise<SingleModelVersionResponse> {
-    const data = GetModelVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelVersion", data);
-    return promise.then((data) => SingleModelVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelVersions(request: ListModelVersionsRequest): Promise<MultiModelVersionResponse> {
-    const data = ListModelVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelVersions", data);
-    return promise.then((data) => MultiModelVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflowVersionsUnPublish(request: PostWorkflowVersionsUnPublishRequest): Promise<BaseResponse> {
-    const data = PostWorkflowVersionsUnPublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflowVersionsUnPublish", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflowVersionsPublish(request: PostWorkflowVersionsPublishRequest): Promise<BaseResponse> {
-    const data = PostWorkflowVersionsPublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflowVersionsPublish", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersionsPublish(request: PostModelVersionsPublishRequest): Promise<BaseResponse> {
-    const data = PostModelVersionsPublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersionsPublish", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersionsUnPublish(request: PostModelVersionsUnPublishRequest): Promise<BaseResponse> {
-    const data = PostModelVersionsUnPublishRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersionsUnPublish", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersions(request: PostModelVersionsRequest): Promise<SingleModelResponse> {
-    const data = PostModelVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersions", data);
-    return promise.then((data) => SingleModelResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModelVersions(request: PatchModelVersionsRequest): Promise<MultiModelVersionResponse> {
-    const data = PatchModelVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModelVersions", data);
-    return promise.then((data) => MultiModelVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteModelVersion(request: DeleteModelVersionRequest): Promise<BaseResponse> {
-    const data = DeleteModelVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteModelVersion", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersionsUpload(
-    request: Observable<PostModelVersionsUploadRequest>,
-  ): Observable<PostModelVersionsUploadResponse> {
-    const data = request.pipe(map((request) => PostModelVersionsUploadRequest.encode(request).finish()));
-    const result = this.rpc.bidirectionalStreamingRequest(this.service, "PostModelVersionsUpload", data);
-    return result.pipe(map((data) => PostModelVersionsUploadResponse.decode(new BinaryReader(data))));
-  }
-
-  PostModelMigration(request: PostModelMigrationRequest): Promise<SingleModelResponse> {
-    const data = PostModelMigrationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelMigration", data);
-    return promise.then((data) => SingleModelResponse.decode(new BinaryReader(data)));
-  }
-
-  PutModelVersionExports(request: PutModelVersionExportsRequest): Promise<SingleModelVersionExportResponse> {
-    const data = PutModelVersionExportsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PutModelVersionExports", data);
-    return promise.then((data) => SingleModelVersionExportResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelVersionExport(request: GetModelVersionExportRequest): Promise<SingleModelVersionExportResponse> {
-    const data = GetModelVersionExportRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelVersionExport", data);
-    return promise.then((data) => SingleModelVersionExportResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelVersionMetrics(request: GetModelVersionMetricsRequest): Promise<SingleModelVersionResponse> {
-    const data = GetModelVersionMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelVersionMetrics", data);
-    return promise.then((data) => SingleModelVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersionMetrics(request: PostModelVersionMetricsRequest): Promise<SingleModelVersionResponse> {
-    const data = PostModelVersionMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersionMetrics", data);
-    return promise.then((data) => SingleModelVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModelVersionEvaluations(request: PostModelVersionEvaluationsRequest): Promise<MultiEvalMetricsResponse> {
-    const data = PostModelVersionEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersionEvaluations", data);
-    return promise.then((data) => MultiEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelVersionEvaluations(request: ListModelVersionEvaluationsRequest): Promise<MultiEvalMetricsResponse> {
-    const data = ListModelVersionEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelVersionEvaluations", data);
-    return promise.then((data) => MultiEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelVersionEvaluation(request: GetModelVersionEvaluationRequest): Promise<SingleEvalMetricsResponse> {
-    const data = GetModelVersionEvaluationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelVersionEvaluation", data);
-    return promise.then((data) => SingleEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  PostEvaluations(request: PostEvaluationsRequest): Promise<MultiEvalMetricsResponse> {
-    const data = PostEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostEvaluations", data);
-    return promise.then((data) => MultiEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListEvaluations(request: ListEvaluationsRequest): Promise<MultiEvalMetricsResponse> {
-    const data = ListEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListEvaluations", data);
-    return promise.then((data) => MultiEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetEvaluation(request: GetEvaluationRequest): Promise<SingleEvalMetricsResponse> {
-    const data = GetEvaluationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetEvaluation", data);
-    return promise.then((data) => SingleEvalMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelReferences(request: ListModelReferencesRequest): Promise<MultiModelReferenceResponse> {
-    const data = ListModelReferencesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelReferences", data);
-    return promise.then((data) => MultiModelReferenceResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModelVersionInputExample(
+    callback: (error: ServiceError | null, response: MultiDatasetVersionMetricsGroupResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetVersionMetricsGroups(
+    request: ListDatasetVersionMetricsGroupsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionMetricsGroupResponse) => void,
+  ): ClientUnaryCall;
+  listDatasetVersionMetricsGroups(
+    request: ListDatasetVersionMetricsGroupsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionMetricsGroupResponse) => void,
+  ): ClientUnaryCall;
+  /** Add dataset versions to a dataset. */
+  postDatasetVersions(
+    request: PostDatasetVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  postDatasetVersions(
+    request: PostDatasetVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  postDatasetVersions(
+    request: PostDatasetVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more dataset versions. */
+  patchDatasetVersions(
+    request: PatchDatasetVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchDatasetVersions(
+    request: PatchDatasetVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchDatasetVersions(
+    request: PatchDatasetVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete one or more dataset versions in a single request. */
+  deleteDatasetVersions(
+    request: DeleteDatasetVersionsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasetVersions(
+    request: DeleteDatasetVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDatasetVersions(
+    request: DeleteDatasetVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Create export of a dataset version. */
+  putDatasetVersionExports(
+    request: PutDatasetVersionExportsRequest,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  putDatasetVersionExports(
+    request: PutDatasetVersionExportsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  putDatasetVersionExports(
+    request: PutDatasetVersionExportsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDatasetVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific model type. */
+  getModelType(
+    request: GetModelTypeRequest,
+    callback: (error: ServiceError | null, response: SingleModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  getModelType(
+    request: GetModelTypeRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  getModelType(
+    request: GetModelTypeRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the supported open source licenses in the platform. */
+  listOpenSourceLicenses(
+    request: ListOpenSourceLicensesRequest,
+    callback: (error: ServiceError | null, response: ListOpenSourceLicensesResponse) => void,
+  ): ClientUnaryCall;
+  listOpenSourceLicenses(
+    request: ListOpenSourceLicensesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: ListOpenSourceLicensesResponse) => void,
+  ): ClientUnaryCall;
+  listOpenSourceLicenses(
+    request: ListOpenSourceLicensesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: ListOpenSourceLicensesResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * List all the model types available in the platform.
+   * This MUST be above ListModels so that the /models/types endpoint takes precedence.
+   */
+  listModelTypes(
+    request: ListModelTypesRequest,
+    callback: (error: ServiceError | null, response: MultiModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  listModelTypes(
+    request: ListModelTypesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  listModelTypes(
+    request: ListModelTypesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelTypeResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific model from an app. */
+  getModel(
+    request: GetModelRequest,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  getModel(
+    request: GetModelRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  getModel(
+    request: GetModelRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Get a the output info for a given model_id or model_id/version_id
+   * combo.
+   */
+  getModelOutputInfo(
+    request: GetModelRequest,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  getModelOutputInfo(
+    request: GetModelRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  getModelOutputInfo(
+    request: GetModelRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the models. */
+  listModels(
+    request: ListModelsRequest,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  listModels(
+    request: ListModelsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  listModels(
+    request: ListModelsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  /** List the resource counts for the app. */
+  getResourceCounts(
+    request: GetResourceCountsRequest,
+    callback: (error: ServiceError | null, response: GetResourceCountsResponse) => void,
+  ): ClientUnaryCall;
+  getResourceCounts(
+    request: GetResourceCountsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetResourceCountsResponse) => void,
+  ): ClientUnaryCall;
+  getResourceCounts(
+    request: GetResourceCountsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetResourceCountsResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Search over the models to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  postModelsSearches(
+    request: PostModelsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelsSearches(
+    request: PostModelsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelsSearches(
+    request: PostModelsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a models to an app. */
+  postModels(
+    request: PostModelsRequest,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModels(
+    request: PostModelsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModels(
+    request: PostModelsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more models. */
+  patchModels(
+    request: PatchModelsRequest,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  patchModels(
+    request: PatchModelsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  patchModels(
+    request: PatchModelsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more models ids. */
+  patchModelIds(
+    request: PatchModelIdsRequest,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  patchModelIds(
+    request: PatchModelIdsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  patchModelIds(
+    request: PatchModelIdsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a single model. */
+  deleteModel(
+    request: DeleteModelRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModel(
+    request: DeleteModelRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModel(
+    request: DeleteModelRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple models in one request. */
+  deleteModels(
+    request: DeleteModelsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModels(
+    request: DeleteModelsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModels(
+    request: DeleteModelsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Update model check consents */
+  patchModelCheckConsents(
+    request: PatchModelCheckConsentsRequest,
+    callback: (error: ServiceError | null, response: MultiModelCheckConsentResponse) => void,
+  ): ClientUnaryCall;
+  patchModelCheckConsents(
+    request: PatchModelCheckConsentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelCheckConsentResponse) => void,
+  ): ClientUnaryCall;
+  patchModelCheckConsents(
+    request: PatchModelCheckConsentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelCheckConsentResponse) => void,
+  ): ClientUnaryCall;
+  /** Update model toolkits tags */
+  patchModelToolkits(
+    request: PatchModelToolkitsRequest,
+    callback: (error: ServiceError | null, response: MultiModelToolkitResponse) => void,
+  ): ClientUnaryCall;
+  patchModelToolkits(
+    request: PatchModelToolkitsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelToolkitResponse) => void,
+  ): ClientUnaryCall;
+  patchModelToolkits(
+    request: PatchModelToolkitsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelToolkitResponse) => void,
+  ): ClientUnaryCall;
+  /** Update model use_cases tags */
+  patchModelUseCases(
+    request: PatchModelUseCasesRequest,
+    callback: (error: ServiceError | null, response: MultiModelUseCaseResponse) => void,
+  ): ClientUnaryCall;
+  patchModelUseCases(
+    request: PatchModelUseCasesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelUseCaseResponse) => void,
+  ): ClientUnaryCall;
+  patchModelUseCases(
+    request: PatchModelUseCasesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelUseCaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Update model languages tags */
+  patchModelLanguages(
+    request: PatchModelLanguagesRequest,
+    callback: (error: ServiceError | null, response: MultiModelLanguageResponse) => void,
+  ): ClientUnaryCall;
+  patchModelLanguages(
+    request: PatchModelLanguagesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelLanguageResponse) => void,
+  ): ClientUnaryCall;
+  patchModelLanguages(
+    request: PatchModelLanguagesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelLanguageResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Deprecated: Unmaintained and ideally replaced with usage of datasets
+   *   The server may refuse to accept requests to this endpoint.
+   *
+   * @deprecated
+   */
+  listModelInputs(
+    request: ListModelInputsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listModelInputs(
+    request: ListModelInputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listModelInputs(
+    request: ListModelInputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific model from an app. */
+  getModelVersion(
+    request: GetModelVersionRequest,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersion(
+    request: GetModelVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersion(
+    request: GetModelVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the models. */
+  listModelVersions(
+    request: ListModelVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersions(
+    request: ListModelVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersions(
+    request: ListModelVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsUnPublish(
+    request: PostWorkflowVersionsUnPublishRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsUnPublish(
+    request: PostWorkflowVersionsUnPublishRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsUnPublish(
+    request: PostWorkflowVersionsUnPublishRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsPublish(
+    request: PostWorkflowVersionsPublishRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsPublish(
+    request: PostWorkflowVersionsPublishRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionsPublish(
+    request: PostWorkflowVersionsPublishRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** PostModelVersionsPublish */
+  postModelVersionsPublish(
+    request: PostModelVersionsPublishRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsPublish(
+    request: PostModelVersionsPublishRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsPublish(
+    request: PostModelVersionsPublishRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** PostModelVersionsUnPublish */
+  postModelVersionsUnPublish(
+    request: PostModelVersionsUnPublishRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsUnPublish(
+    request: PostModelVersionsUnPublishRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsUnPublish(
+    request: PostModelVersionsUnPublishRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Create a new model version to trigger training of the model. */
+  postModelVersions(
+    request: PostModelVersionsRequest,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersions(
+    request: PostModelVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersions(
+    request: PostModelVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  /** PatchModelVersions */
+  patchModelVersions(
+    request: PatchModelVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchModelVersions(
+    request: PatchModelVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchModelVersions(
+    request: PatchModelVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a single model. */
+  deleteModelVersion(
+    request: DeleteModelVersionRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModelVersion(
+    request: DeleteModelVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModelVersion(
+    request: DeleteModelVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
+   * The config must be sent first before the model_bytes can be uploaded.
+   * Once the config has been sent, the server will respond with a confirmation containing the model_version_id.
+   * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the model_version_id specified for your model_version.
+   * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the model_bytes.
+   */
+  postModelVersionsUpload(): ClientDuplexStream<PostModelVersionsUploadRequest, PostModelVersionsUploadResponse>;
+  postModelVersionsUpload(
+    options: Partial<CallOptions>,
+  ): ClientDuplexStream<PostModelVersionsUploadRequest, PostModelVersionsUploadResponse>;
+  postModelVersionsUpload(
+    metadata: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientDuplexStream<PostModelVersionsUploadRequest, PostModelVersionsUploadResponse>;
+  /** Kicks off conversion from the old Triton model format to the new Docker model format. */
+  postModelMigration(
+    request: PostModelMigrationRequest,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelMigration(
+    request: PostModelMigrationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  postModelMigration(
+    request: PostModelMigrationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelResponse) => void,
+  ): ClientUnaryCall;
+  /** Export a model */
+  putModelVersionExports(
+    request: PutModelVersionExportsRequest,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  putModelVersionExports(
+    request: PutModelVersionExportsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  putModelVersionExports(
+    request: PutModelVersionExportsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  /** GetModelVersionExport */
+  getModelVersionExport(
+    request: GetModelVersionExportRequest,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionExport(
+    request: GetModelVersionExportRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionExport(
+    request: GetModelVersionExportRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionExportResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Get the evaluation metrics for a model version.
+   * Deprecated: Use GetEvaluation instead
+   *   The server may refuse to accept requests to this endpoint.
+   */
+  getModelVersionMetrics(
+    request: GetModelVersionMetricsRequest,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionMetrics(
+    request: GetModelVersionMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionMetrics(
+    request: GetModelVersionMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Deprecated, use PostEvaluations instead
+   * Run the evaluation metrics for a model version.
+   */
+  postModelVersionMetrics(
+    request: PostModelVersionMetricsRequest,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionMetrics(
+    request: PostModelVersionMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionMetrics(
+    request: PostModelVersionMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Deprecated, use PostEvaluations instead */
+  postModelVersionEvaluations(
+    request: PostModelVersionEvaluationsRequest,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionEvaluations(
+    request: PostModelVersionEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionEvaluations(
+    request: PostModelVersionEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Deprecated, use GetEvaluation instead
+   * List the evaluation metrics for a model version.
+   */
+  listModelVersionEvaluations(
+    request: ListModelVersionEvaluationsRequest,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersionEvaluations(
+    request: ListModelVersionEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersionEvaluations(
+    request: ListModelVersionEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Deprecated, use GetEvaluation instead
+   * Get an evaluation metrics for a model version.
+   */
+  getModelVersionEvaluation(
+    request: GetModelVersionEvaluationRequest,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionEvaluation(
+    request: GetModelVersionEvaluationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionEvaluation(
+    request: GetModelVersionEvaluationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postEvaluations(
+    request: PostEvaluationsRequest,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postEvaluations(
+    request: PostEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postEvaluations(
+    request: PostEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listEvaluations(
+    request: ListEvaluationsRequest,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listEvaluations(
+    request: ListEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listEvaluations(
+    request: ListEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getEvaluation(
+    request: GetEvaluationRequest,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getEvaluation(
+    request: GetEvaluationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getEvaluation(
+    request: GetEvaluationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleEvalMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /** Lists model references tied to a particular model id. */
+  listModelReferences(
+    request: ListModelReferencesRequest,
+    callback: (error: ServiceError | null, response: MultiModelReferenceResponse) => void,
+  ): ClientUnaryCall;
+  listModelReferences(
+    request: ListModelReferencesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelReferenceResponse) => void,
+  ): ClientUnaryCall;
+  listModelReferences(
+    request: ListModelReferencesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelReferenceResponse) => void,
+  ): ClientUnaryCall;
+  /** GetModelVersionInputExample */
+  getModelVersionInputExample(
     request: GetModelVersionInputExampleRequest,
-  ): Promise<SingleModelVersionInputExampleResponse> {
-    const data = GetModelVersionInputExampleRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModelVersionInputExample", data);
-    return promise.then((data) => SingleModelVersionInputExampleResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModelVersionInputExamples(
+    callback: (error: ServiceError | null, response: SingleModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionInputExample(
+    request: GetModelVersionInputExampleRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  getModelVersionInputExample(
+    request: GetModelVersionInputExampleRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  /** ListModelVersionInputExamples */
+  listModelVersionInputExamples(
     request: ListModelVersionInputExamplesRequest,
-  ): Promise<MultiModelVersionInputExampleResponse> {
-    const data = ListModelVersionInputExamplesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModelVersionInputExamples", data);
-    return promise.then((data) => MultiModelVersionInputExampleResponse.decode(new BinaryReader(data)));
-  }
-
-  GetWorkflow(request: GetWorkflowRequest): Promise<SingleWorkflowResponse> {
-    const data = GetWorkflowRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetWorkflow", data);
-    return promise.then((data) => SingleWorkflowResponse.decode(new BinaryReader(data)));
-  }
-
-  ListWorkflows(request: ListWorkflowsRequest): Promise<MultiWorkflowResponse> {
-    const data = ListWorkflowsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListWorkflows", data);
-    return promise.then((data) => MultiWorkflowResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflows(request: PostWorkflowsRequest): Promise<MultiWorkflowResponse> {
-    const data = PostWorkflowsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflows", data);
-    return promise.then((data) => MultiWorkflowResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchWorkflows(request: PatchWorkflowsRequest): Promise<MultiWorkflowResponse> {
-    const data = PatchWorkflowsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchWorkflows", data);
-    return promise.then((data) => MultiWorkflowResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchWorkflowIds(request: PatchWorkflowIdsRequest): Promise<MultiWorkflowResponse> {
-    const data = PatchWorkflowIdsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchWorkflowIds", data);
-    return promise.then((data) => MultiWorkflowResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteWorkflow(request: DeleteWorkflowRequest): Promise<BaseResponse> {
-    const data = DeleteWorkflowRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteWorkflow", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteWorkflows(request: DeleteWorkflowsRequest): Promise<BaseResponse> {
-    const data = DeleteWorkflowsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteWorkflows", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflowResults(request: PostWorkflowResultsRequest): Promise<PostWorkflowResultsResponse> {
-    const data = PostWorkflowResultsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflowResults", data);
-    return promise.then((data) => PostWorkflowResultsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListWorkflowVersions(request: ListWorkflowVersionsRequest): Promise<MultiWorkflowVersionResponse> {
-    const data = ListWorkflowVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListWorkflowVersions", data);
-    return promise.then((data) => MultiWorkflowVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  GetWorkflowVersion(request: GetWorkflowVersionRequest): Promise<SingleWorkflowVersionResponse> {
-    const data = GetWorkflowVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetWorkflowVersion", data);
-    return promise.then((data) => SingleWorkflowVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteWorkflowVersions(request: DeleteWorkflowVersionsRequest): Promise<BaseResponse> {
-    const data = DeleteWorkflowVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteWorkflowVersions", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchWorkflowVersions(request: PatchWorkflowVersionsRequest): Promise<MultiWorkflowVersionResponse> {
-    const data = PatchWorkflowVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchWorkflowVersions", data);
-    return promise.then((data) => MultiWorkflowVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  GetKey(request: GetKeyRequest): Promise<SingleKeyResponse> {
-    const data = GetKeyRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetKey", data);
-    return promise.then((data) => SingleKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  ListKeys(request: ListKeysRequest): Promise<MultiKeyResponse> {
-    const data = ListKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListKeys", data);
-    return promise.then((data) => MultiKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAppKeys(request: ListAppKeysRequest): Promise<MultiKeyResponse> {
-    const data = ListAppKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAppKeys", data);
-    return promise.then((data) => MultiKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteKey(request: DeleteKeyRequest): Promise<BaseResponse> {
-    const data = DeleteKeyRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteKey", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostKeys(request: PostKeysRequest): Promise<MultiKeyResponse> {
-    const data = PostKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostKeys", data);
-    return promise.then((data) => MultiKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchKeys(request: PatchKeysRequest): Promise<MultiKeyResponse> {
-    const data = PatchKeysRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchKeys", data);
-    return promise.then((data) => MultiKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  MyScopes(request: MyScopesRequest): Promise<MultiScopeResponse> {
-    const data = MyScopesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "MyScopes", data);
-    return promise.then((data) => MultiScopeResponse.decode(new BinaryReader(data)));
-  }
-
-  MyScopesUser(request: MyScopesUserRequest): Promise<MultiScopeUserResponse> {
-    const data = MyScopesUserRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "MyScopesUser", data);
-    return promise.then((data) => MultiScopeUserResponse.decode(new BinaryReader(data)));
-  }
-
-  MyScopesRoot(request: MyScopesRootRequest): Promise<MultiScopeRootResponse> {
-    const data = MyScopesRootRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "MyScopesRoot", data);
-    return promise.then((data) => MultiScopeRootResponse.decode(new BinaryReader(data)));
-  }
-
-  ListScopes(request: ListScopesRequest): Promise<MultiScopeDepsResponse> {
-    const data = ListScopesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListScopes", data);
-    return promise.then((data) => MultiScopeDepsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetApp(request: GetAppRequest): Promise<SingleAppResponse> {
-    const data = GetAppRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetApp", data);
-    return promise.then((data) => SingleAppResponse.decode(new BinaryReader(data)));
-  }
-
-  ListApps(request: ListAppsRequest): Promise<MultiAppResponse> {
-    const data = ListAppsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListApps", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteApp(request: DeleteAppRequest): Promise<BaseResponse> {
-    const data = DeleteAppRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteApp", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostApps(request: PostAppsRequest): Promise<MultiAppResponse> {
-    const data = PostAppsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostApps", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchApps(request: PatchAppsRequest): Promise<MultiAppResponse> {
-    const data = PatchAppsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchApps", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAppsDetails(request: PatchAppsDetailsRequest): Promise<MultiAppResponse> {
-    const data = PatchAppsDetailsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAppsDetails", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAppsIds(request: PatchAppsIdsRequest): Promise<MultiAppResponse> {
-    const data = PatchAppsIdsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAppsIds", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchApp(request: PatchAppRequest): Promise<SingleAppResponse> {
-    const data = PatchAppRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchApp", data);
-    return promise.then((data) => SingleAppResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAppsSearches(request: PostAppsSearchesRequest): Promise<MultiAppResponse> {
-    const data = PostAppsSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAppsSearches", data);
-    return promise.then((data) => MultiAppResponse.decode(new BinaryReader(data)));
-  }
-
-  GetUser(request: GetUserRequest): Promise<SingleUserResponse> {
-    const data = GetUserRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetUser", data);
-    return promise.then((data) => SingleUserResponse.decode(new BinaryReader(data)));
-  }
-
-  PostValidatePassword(request: PostValidatePasswordRequest): Promise<SinglePasswordValidationResponse> {
-    const data = PostValidatePasswordRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostValidatePassword", data);
-    return promise.then((data) => SinglePasswordValidationResponse.decode(new BinaryReader(data)));
-  }
-
-  GetSearch(request: GetSearchRequest): Promise<SingleSearchResponse> {
-    const data = GetSearchRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSearch", data);
-    return promise.then((data) => SingleSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  ListSearches(request: ListSearchesRequest): Promise<MultiSearchResponse> {
-    const data = ListSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchSearches(request: PatchSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PatchSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostSearches(request: PostSearchesRequest): Promise<MultiSearchResponse> {
-    const data = PostSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostSearches", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostSearchesByID(request: PostSearchesByIDRequest): Promise<MultiSearchResponse> {
-    const data = PostSearchesByIDRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostSearchesByID", data);
-    return promise.then((data) => MultiSearchResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAnnotationSearchMetrics(
+    callback: (error: ServiceError | null, response: MultiModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersionInputExamples(
+    request: ListModelVersionInputExamplesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  listModelVersionInputExamples(
+    request: ListModelVersionInputExamplesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModelVersionInputExampleResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific workflow from an app. */
+  getWorkflow(
+    request: GetWorkflowRequest,
+    callback: (error: ServiceError | null, response: SingleWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflow(
+    request: GetWorkflowRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflow(
+    request: GetWorkflowRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the workflows. */
+  listWorkflows(
+    request: ListWorkflowsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflows(
+    request: ListWorkflowsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflows(
+    request: ListWorkflowsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Add a workflow to an app.
+   * Note(zeiler): the order of the workflows that are returned from this endpoint
+   * may be different than the order in which the user provides them. This is because
+   * we reorder by a sort that optimizes for performance of the graph and its dependencies.
+   * When using the workflow in any future call the order returned by this endpoint
+   * will be used.
+   */
+  postWorkflows(
+    request: PostWorkflowsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflows(
+    request: PostWorkflowsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflows(
+    request: PostWorkflowsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more workflows. */
+  patchWorkflows(
+    request: PatchWorkflowsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflows(
+    request: PatchWorkflowsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflows(
+    request: PatchWorkflowsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more workflows ids. */
+  patchWorkflowIds(
+    request: PatchWorkflowIdsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowIds(
+    request: PatchWorkflowIdsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowIds(
+    request: PatchWorkflowIdsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a single workflow. */
+  deleteWorkflow(
+    request: DeleteWorkflowRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflow(
+    request: DeleteWorkflowRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflow(
+    request: DeleteWorkflowRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple workflows in one request. */
+  deleteWorkflows(
+    request: DeleteWorkflowsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflows(
+    request: DeleteWorkflowsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflows(
+    request: DeleteWorkflowsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Predict using a workflow. */
+  postWorkflowResults(
+    request: PostWorkflowResultsRequest,
+    callback: (error: ServiceError | null, response: PostWorkflowResultsResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowResults(
+    request: PostWorkflowResultsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: PostWorkflowResultsResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowResults(
+    request: PostWorkflowResultsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: PostWorkflowResultsResponse) => void,
+  ): ClientUnaryCall;
+  /** List workflow versions. */
+  listWorkflowVersions(
+    request: ListWorkflowVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersions(
+    request: ListWorkflowVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersions(
+    request: ListWorkflowVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Get single workflow version. */
+  getWorkflowVersion(
+    request: GetWorkflowVersionRequest,
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflowVersion(
+    request: GetWorkflowVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflowVersion(
+    request: GetWorkflowVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete workflow versions. */
+  deleteWorkflowVersions(
+    request: DeleteWorkflowVersionsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflowVersions(
+    request: DeleteWorkflowVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteWorkflowVersions(
+    request: DeleteWorkflowVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch workflow versions. */
+  patchWorkflowVersions(
+    request: PatchWorkflowVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowVersions(
+    request: PatchWorkflowVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowVersions(
+    request: PatchWorkflowVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific key from an app. */
+  getKey(
+    request: GetKeyRequest,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  getKey(
+    request: GetKeyRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  getKey(
+    request: GetKeyRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the keys. */
+  listKeys(
+    request: ListKeysRequest,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  listKeys(
+    request: ListKeysRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  listKeys(
+    request: ListKeysRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  /** List keys by app_id */
+  listAppKeys(
+    request: ListAppKeysRequest,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  listAppKeys(
+    request: ListAppKeysRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  listAppKeys(
+    request: ListAppKeysRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Search over the keys to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  deleteKey(
+    request: DeleteKeyRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteKey(
+    request: DeleteKeyRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteKey(
+    request: DeleteKeyRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a key to an app. */
+  postKeys(
+    request: PostKeysRequest,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  postKeys(
+    request: PostKeysRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  postKeys(
+    request: PostKeysRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more keys. */
+  patchKeys(
+    request: PatchKeysRequest,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  patchKeys(
+    request: PatchKeysRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  patchKeys(
+    request: PatchKeysRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiKeyResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * API Keys in the public API -- request is itself Key authorized, and will tell
+   * the user the scopes/access of the key/credential they're providing, as computed by
+   * our authorizer:
+   */
+  myScopes(
+    request: MyScopesRequest,
+    callback: (error: ServiceError | null, response: MultiScopeResponse) => void,
+  ): ClientUnaryCall;
+  myScopes(
+    request: MyScopesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiScopeResponse) => void,
+  ): ClientUnaryCall;
+  myScopes(
+    request: MyScopesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiScopeResponse) => void,
+  ): ClientUnaryCall;
+  myScopesUser(
+    request: MyScopesUserRequest,
+    callback: (error: ServiceError | null, response: MultiScopeUserResponse) => void,
+  ): ClientUnaryCall;
+  myScopesUser(
+    request: MyScopesUserRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiScopeUserResponse) => void,
+  ): ClientUnaryCall;
+  myScopesUser(
+    request: MyScopesUserRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiScopeUserResponse) => void,
+  ): ClientUnaryCall;
+  myScopesRoot(
+    request: MyScopesRootRequest,
+    callback: (error: ServiceError | null, response: MultiScopeRootResponse) => void,
+  ): ClientUnaryCall;
+  myScopesRoot(
+    request: MyScopesRootRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiScopeRootResponse) => void,
+  ): ClientUnaryCall;
+  myScopesRoot(
+    request: MyScopesRootRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiScopeRootResponse) => void,
+  ): ClientUnaryCall;
+  /** List all auth scopes available to me as a user. */
+  listScopes(
+    request: ListScopesRequest,
+    callback: (error: ServiceError | null, response: MultiScopeDepsResponse) => void,
+  ): ClientUnaryCall;
+  listScopes(
+    request: ListScopesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiScopeDepsResponse) => void,
+  ): ClientUnaryCall;
+  listScopes(
+    request: ListScopesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiScopeDepsResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific app from an app. */
+  getApp(
+    request: GetAppRequest,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  getApp(
+    request: GetAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  getApp(
+    request: GetAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the apps. */
+  listApps(
+    request: ListAppsRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  listApps(
+    request: ListAppsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  listApps(
+    request: ListAppsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Search over the apps to find one or more you're looking for.
+   * This leverage the "body" parameter because we also have page and
+   * per_page as url query param variables in this request.
+   */
+  deleteApp(
+    request: DeleteAppRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteApp(
+    request: DeleteAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteApp(
+    request: DeleteAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Add a app to an app.
+   * This needs to load the default workflow to make a copy, validating all the models in it, and
+   * then writing the new workflow back to this new app.
+   */
+  postApps(
+    request: PostAppsRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  postApps(
+    request: PostAppsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  postApps(
+    request: PostAppsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more apps. */
+  patchApps(
+    request: PatchAppsRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchApps(
+    request: PatchAppsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchApps(
+    request: PatchAppsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Allows to Patch only the below fields in one or more apps.
+   * Allowed fields are notes, description and image
+   */
+  patchAppsDetails(
+    request: PatchAppsDetailsRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchAppsDetails(
+    request: PatchAppsDetailsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchAppsDetails(
+    request: PatchAppsDetailsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch apps ids. */
+  patchAppsIds(
+    request: PatchAppsIdsRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchAppsIds(
+    request: PatchAppsIdsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  patchAppsIds(
+    request: PatchAppsIdsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one app. */
+  patchApp(
+    request: PatchAppRequest,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  patchApp(
+    request: PatchAppRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  patchApp(
+    request: PatchAppRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleAppResponse) => void,
+  ): ClientUnaryCall;
+  /** Search over the applications to find one or more you're looking for. */
+  postAppsSearches(
+    request: PostAppsSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  postAppsSearches(
+    request: PostAppsSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  postAppsSearches(
+    request: PostAppsSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppResponse) => void,
+  ): ClientUnaryCall;
+  /** Get user information */
+  getUser(
+    request: GetUserRequest,
+    callback: (error: ServiceError | null, response: SingleUserResponse) => void,
+  ): ClientUnaryCall;
+  getUser(
+    request: GetUserRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleUserResponse) => void,
+  ): ClientUnaryCall;
+  getUser(
+    request: GetUserRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleUserResponse) => void,
+  ): ClientUnaryCall;
+  /** Validate new password in real-time for a user */
+  postValidatePassword(
+    request: PostValidatePasswordRequest,
+    callback: (error: ServiceError | null, response: SinglePasswordValidationResponse) => void,
+  ): ClientUnaryCall;
+  postValidatePassword(
+    request: PostValidatePasswordRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePasswordValidationResponse) => void,
+  ): ClientUnaryCall;
+  postValidatePassword(
+    request: PostValidatePasswordRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePasswordValidationResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a saved legacy search. */
+  getSearch(
+    request: GetSearchRequest,
+    callback: (error: ServiceError | null, response: SingleSearchResponse) => void,
+  ): ClientUnaryCall;
+  getSearch(
+    request: GetSearchRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleSearchResponse) => void,
+  ): ClientUnaryCall;
+  getSearch(
+    request: GetSearchRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** List all saved legacy searches. */
+  listSearches(
+    request: ListSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  listSearches(
+    request: ListSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  listSearches(
+    request: ListSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch saved legacy searches by ids. */
+  patchSearches(
+    request: PatchSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchSearches(
+    request: PatchSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  patchSearches(
+    request: PatchSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Execute a new search and optionally save it.
+   *
+   * Deprecated: Use PostInputsSearches or PostAnnotationsSearches instead.
+   *  The server may refuse to accept requests to this endpoint.
+   *
+   * @deprecated
+   */
+  postSearches(
+    request: PostSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postSearches(
+    request: PostSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postSearches(
+    request: PostSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Execute a previously saved legacy search. */
+  postSearchesById(
+    request: PostSearchesByIDRequest,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postSearchesById(
+    request: PostSearchesByIDRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  postSearchesById(
+    request: PostSearchesByIDRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSearchResponse) => void,
+  ): ClientUnaryCall;
+  /** Evaluate the results of two search requests */
+  postAnnotationSearchMetrics(
     request: PostAnnotationSearchMetricsRequest,
-  ): Promise<MultiAnnotationSearchMetricsResponse> {
-    const data = PostAnnotationSearchMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAnnotationSearchMetrics", data);
-    return promise.then((data) => MultiAnnotationSearchMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetAnnotationSearchMetrics(
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationSearchMetrics(
+    request: PostAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationSearchMetrics(
+    request: PostAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /** Get the evaluation results between two search requests */
+  getAnnotationSearchMetrics(
     request: GetAnnotationSearchMetricsRequest,
-  ): Promise<MultiAnnotationSearchMetricsResponse> {
-    const data = GetAnnotationSearchMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetAnnotationSearchMetrics", data);
-    return promise.then((data) => MultiAnnotationSearchMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAnnotationSearchMetrics(
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotationSearchMetrics(
+    request: GetAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotationSearchMetrics(
+    request: GetAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /** List the evaluation results between two search requests */
+  listAnnotationSearchMetrics(
     request: ListAnnotationSearchMetricsRequest,
-  ): Promise<MultiAnnotationSearchMetricsResponse> {
-    const data = ListAnnotationSearchMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAnnotationSearchMetrics", data);
-    return promise.then((data) => MultiAnnotationSearchMetricsResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteAnnotationSearchMetrics(request: DeleteAnnotationSearchMetricsRequest): Promise<BaseResponse> {
-    const data = DeleteAnnotationSearchMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteAnnotationSearchMetrics", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteSearch(request: DeleteSearchRequest): Promise<BaseResponse> {
-    const data = DeleteSearchRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteSearch", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAnnotationFilters(request: ListAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse> {
-    const data = ListAnnotationFiltersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAnnotationFilters", data);
-    return promise.then((data) => MultiAnnotationFilterResponse.decode(new BinaryReader(data)));
-  }
-
-  GetAnnotationFilter(request: GetAnnotationFilterRequest): Promise<SingleAnnotationFilterResponse> {
-    const data = GetAnnotationFilterRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetAnnotationFilter", data);
-    return promise.then((data) => SingleAnnotationFilterResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAnnotationFilters(request: PostAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse> {
-    const data = PostAnnotationFiltersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAnnotationFilters", data);
-    return promise.then((data) => MultiAnnotationFilterResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchAnnotationFilters(request: PatchAnnotationFiltersRequest): Promise<MultiAnnotationFilterResponse> {
-    const data = PatchAnnotationFiltersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchAnnotationFilters", data);
-    return promise.then((data) => MultiAnnotationFilterResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteAnnotationFilters(request: DeleteAnnotationFiltersRequest): Promise<BaseResponse> {
-    const data = DeleteAnnotationFiltersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteAnnotationFilters", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListStatusCodes(request: ListStatusCodesRequest): Promise<MultiStatusCodeResponse> {
-    const data = ListStatusCodesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListStatusCodes", data);
-    return promise.then((data) => MultiStatusCodeResponse.decode(new BinaryReader(data)));
-  }
-
-  GetStatusCode(request: GetStatusCodeRequest): Promise<SingleStatusCodeResponse> {
-    const data = GetStatusCodeRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetStatusCode", data);
-    return promise.then((data) => SingleStatusCodeResponse.decode(new BinaryReader(data)));
-  }
-
-  ListCollaborators(request: ListCollaboratorsRequest): Promise<MultiCollaboratorsResponse> {
-    const data = ListCollaboratorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListCollaborators", data);
-    return promise.then((data) => MultiCollaboratorsResponse.decode(new BinaryReader(data)));
-  }
-
-  PostCollaborators(request: PostCollaboratorsRequest): Promise<MultiCollaboratorsResponse> {
-    const data = PostCollaboratorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostCollaborators", data);
-    return promise.then((data) => MultiCollaboratorsResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchCollaborators(request: PatchCollaboratorsRequest): Promise<MultiCollaboratorsResponse> {
-    const data = PatchCollaboratorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchCollaborators", data);
-    return promise.then((data) => MultiCollaboratorsResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteCollaborators(request: DeleteCollaboratorsRequest): Promise<BaseResponse> {
-    const data = DeleteCollaboratorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteCollaborators", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListCollaborations(request: ListCollaborationsRequest): Promise<MultiCollaborationsResponse> {
-    const data = ListCollaborationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListCollaborations", data);
-    return promise.then((data) => MultiCollaborationsResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAppDuplications(request: PostAppDuplicationsRequest): Promise<MultiAppDuplicationsResponse> {
-    const data = PostAppDuplicationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAppDuplications", data);
-    return promise.then((data) => MultiAppDuplicationsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListAppDuplications(request: ListAppDuplicationsRequest): Promise<MultiAppDuplicationsResponse> {
-    const data = ListAppDuplicationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListAppDuplications", data);
-    return promise.then((data) => MultiAppDuplicationsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetAppDuplication(request: GetAppDuplicationRequest): Promise<SingleAppDuplicationResponse> {
-    const data = GetAppDuplicationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetAppDuplication", data);
-    return promise.then((data) => SingleAppDuplicationResponse.decode(new BinaryReader(data)));
-  }
-
-  PostTasks(request: PostTasksRequest): Promise<MultiTaskResponse> {
-    const data = PostTasksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostTasks", data);
-    return promise.then((data) => MultiTaskResponse.decode(new BinaryReader(data)));
-  }
-
-  GetTaskAnnotationCount(request: GetTaskCountRequest): Promise<SingleTaskCountResponse> {
-    const data = GetTaskCountRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetTaskAnnotationCount", data);
-    return promise.then((data) => SingleTaskCountResponse.decode(new BinaryReader(data)));
-  }
-
-  GetTaskInputCount(request: GetTaskCountRequest): Promise<SingleTaskCountResponse> {
-    const data = GetTaskCountRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetTaskInputCount", data);
-    return promise.then((data) => SingleTaskCountResponse.decode(new BinaryReader(data)));
-  }
-
-  GetTask(request: GetTaskRequest): Promise<SingleTaskResponse> {
-    const data = GetTaskRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetTask", data);
-    return promise.then((data) => SingleTaskResponse.decode(new BinaryReader(data)));
-  }
-
-  ListTasks(request: ListTasksRequest): Promise<MultiTaskResponse> {
-    const data = ListTasksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListTasks", data);
-    return promise.then((data) => MultiTaskResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchTasks(request: PatchTasksRequest): Promise<MultiTaskResponse> {
-    const data = PatchTasksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchTasks", data);
-    return promise.then((data) => MultiTaskResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteTasks(request: DeleteTasksRequest): Promise<BaseResponse> {
-    const data = DeleteTasksRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteTasks", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostLabelOrders(request: PostLabelOrdersRequest): Promise<MultiLabelOrderResponse> {
-    const data = PostLabelOrdersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostLabelOrders", data);
-    return promise.then((data) => MultiLabelOrderResponse.decode(new BinaryReader(data)));
-  }
-
-  GetLabelOrder(request: GetLabelOrderRequest): Promise<SingleLabelOrderResponse> {
-    const data = GetLabelOrderRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetLabelOrder", data);
-    return promise.then((data) => SingleLabelOrderResponse.decode(new BinaryReader(data)));
-  }
-
-  ListLabelOrders(request: ListLabelOrdersRequest): Promise<MultiLabelOrderResponse> {
-    const data = ListLabelOrdersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListLabelOrders", data);
-    return promise.then((data) => MultiLabelOrderResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchLabelOrders(request: PatchLabelOrdersRequest): Promise<MultiLabelOrderResponse> {
-    const data = PatchLabelOrdersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchLabelOrders", data);
-    return promise.then((data) => MultiLabelOrderResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteLabelOrders(request: DeleteLabelOrdersRequest): Promise<BaseResponse> {
-    const data = DeleteLabelOrdersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteLabelOrders", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostCollectors(request: PostCollectorsRequest): Promise<MultiCollectorResponse> {
-    const data = PostCollectorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostCollectors", data);
-    return promise.then((data) => MultiCollectorResponse.decode(new BinaryReader(data)));
-  }
-
-  GetCollector(request: GetCollectorRequest): Promise<SingleCollectorResponse> {
-    const data = GetCollectorRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetCollector", data);
-    return promise.then((data) => SingleCollectorResponse.decode(new BinaryReader(data)));
-  }
-
-  ListCollectors(request: ListCollectorsRequest): Promise<MultiCollectorResponse> {
-    const data = ListCollectorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListCollectors", data);
-    return promise.then((data) => MultiCollectorResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchCollectors(request: PatchCollectorsRequest): Promise<MultiCollectorResponse> {
-    const data = PatchCollectorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchCollectors", data);
-    return promise.then((data) => MultiCollectorResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteCollectors(request: DeleteCollectorsRequest): Promise<BaseResponse> {
-    const data = DeleteCollectorsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteCollectors", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostStatValues(request: PostStatValuesRequest): Promise<MultiStatValueResponse> {
-    const data = PostStatValuesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostStatValues", data);
-    return promise.then((data) => MultiStatValueResponse.decode(new BinaryReader(data)));
-  }
-
-  PostStatValuesAggregate(request: PostStatValuesAggregateRequest): Promise<MultiStatValueAggregateResponse> {
-    const data = PostStatValuesAggregateRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostStatValuesAggregate", data);
-    return promise.then((data) => MultiStatValueAggregateResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModule(request: GetModuleRequest): Promise<SingleModuleResponse> {
-    const data = GetModuleRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModule", data);
-    return promise.then((data) => SingleModuleResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModules(request: ListModulesRequest): Promise<MultiModuleResponse> {
-    const data = ListModulesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModules", data);
-    return promise.then((data) => MultiModuleResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModules(request: PostModulesRequest): Promise<MultiModuleResponse> {
-    const data = PostModulesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModules", data);
-    return promise.then((data) => MultiModuleResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModules(request: PatchModulesRequest): Promise<MultiModuleResponse> {
-    const data = PatchModulesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModules", data);
-    return promise.then((data) => MultiModuleResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteModules(request: DeleteModulesRequest): Promise<BaseResponse> {
-    const data = DeleteModulesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteModules", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModuleVersion(request: GetModuleVersionRequest): Promise<SingleModuleVersionResponse> {
-    const data = GetModuleVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModuleVersion", data);
-    return promise.then((data) => SingleModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListModuleVersions(request: ListModuleVersionsRequest): Promise<MultiModuleVersionResponse> {
-    const data = ListModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListModuleVersions", data);
-    return promise.then((data) => MultiModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PostModuleVersions(request: PostModuleVersionsRequest): Promise<MultiModuleVersionResponse> {
-    const data = PostModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModuleVersions", data);
-    return promise.then((data) => MultiModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchModuleVersions(request: PatchModuleVersionsRequest): Promise<MultiModuleVersionResponse> {
-    const data = PatchModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchModuleVersions", data);
-    return promise.then((data) => MultiModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteModuleVersions(request: DeleteModuleVersionsRequest): Promise<BaseResponse> {
-    const data = DeleteModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteModuleVersions", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetModuleVersionUsageCount(
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationSearchMetrics(
+    request: ListAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationSearchMetrics(
+    request: ListAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationSearchMetricsResponse) => void,
+  ): ClientUnaryCall;
+  /** DeleteAnnotationSearchMetrics */
+  deleteAnnotationSearchMetrics(
+    request: DeleteAnnotationSearchMetricsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationSearchMetrics(
+    request: DeleteAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationSearchMetrics(
+    request: DeleteAnnotationSearchMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a saved search. */
+  deleteSearch(
+    request: DeleteSearchRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteSearch(
+    request: DeleteSearchRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteSearch(
+    request: DeleteSearchRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the annotation filters. */
+  listAnnotationFilters(
+    request: ListAnnotationFiltersRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationFilters(
+    request: ListAnnotationFiltersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  listAnnotationFilters(
+    request: ListAnnotationFiltersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific annotation filter. */
+  getAnnotationFilter(
+    request: GetAnnotationFilterRequest,
+    callback: (error: ServiceError | null, response: SingleAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotationFilter(
+    request: GetAnnotationFilterRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  getAnnotationFilter(
+    request: GetAnnotationFilterRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  /** Add annotation filters. */
+  postAnnotationFilters(
+    request: PostAnnotationFiltersRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationFilters(
+    request: PostAnnotationFiltersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  postAnnotationFilters(
+    request: PostAnnotationFiltersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more annotation filters. */
+  patchAnnotationFilters(
+    request: PatchAnnotationFiltersRequest,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationFilters(
+    request: PatchAnnotationFiltersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  patchAnnotationFilters(
+    request: PatchAnnotationFiltersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAnnotationFilterResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete one or more annotation filters in a single request. */
+  deleteAnnotationFilters(
+    request: DeleteAnnotationFiltersRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationFilters(
+    request: DeleteAnnotationFiltersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteAnnotationFilters(
+    request: DeleteAnnotationFiltersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** List all status codes. */
+  listStatusCodes(
+    request: ListStatusCodesRequest,
+    callback: (error: ServiceError | null, response: MultiStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  listStatusCodes(
+    request: ListStatusCodesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  listStatusCodes(
+    request: ListStatusCodesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  /** Get more details for a status code. */
+  getStatusCode(
+    request: GetStatusCodeRequest,
+    callback: (error: ServiceError | null, response: SingleStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  getStatusCode(
+    request: GetStatusCodeRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  getStatusCode(
+    request: GetStatusCodeRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleStatusCodeResponse) => void,
+  ): ClientUnaryCall;
+  /** owner list users who the app is shared with */
+  listCollaborators(
+    request: ListCollaboratorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  listCollaborators(
+    request: ListCollaboratorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  listCollaborators(
+    request: ListCollaboratorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  /** add collaborators to an app. */
+  postCollaborators(
+    request: PostCollaboratorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  postCollaborators(
+    request: PostCollaboratorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  postCollaborators(
+    request: PostCollaboratorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch existing collaborators. */
+  patchCollaborators(
+    request: PatchCollaboratorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  patchCollaborators(
+    request: PatchCollaboratorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  patchCollaborators(
+    request: PatchCollaboratorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollaboratorsResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete existing collaborators. */
+  deleteCollaborators(
+    request: DeleteCollaboratorsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteCollaborators(
+    request: DeleteCollaboratorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteCollaborators(
+    request: DeleteCollaboratorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Collaboration includes the app user are invitied to work on */
+  listCollaborations(
+    request: ListCollaborationsRequest,
+    callback: (error: ServiceError | null, response: MultiCollaborationsResponse) => void,
+  ): ClientUnaryCall;
+  listCollaborations(
+    request: ListCollaborationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollaborationsResponse) => void,
+  ): ClientUnaryCall;
+  listCollaborations(
+    request: ListCollaborationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollaborationsResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * PostAppDuplications starts async app duplication jobs which copy resources
+   * (inputs, annotations, models etc) from one application to another. It can
+   * also create the destination application if it does not exist, with fields
+   * (description, metadata etc) copied from the source application.
+   *
+   * A duplication job can be started by any user that can read from the source
+   * application (the target of this call) and can create and write to the
+   * destination application. The duplication is associated with the user that
+   * created it, so in order to read the status and progress of the job, that
+   * user's ID has to be used in the call to GetAppDuplication, which might be
+   * different to the source application owner ID in this call.
+   */
+  postAppDuplications(
+    request: PostAppDuplicationsRequest,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  postAppDuplications(
+    request: PostAppDuplicationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  postAppDuplications(
+    request: PostAppDuplicationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  /** ListAppDuplications lists all app duplication jobs created by the user. */
+  listAppDuplications(
+    request: ListAppDuplicationsRequest,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  listAppDuplications(
+    request: ListAppDuplicationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  listAppDuplications(
+    request: ListAppDuplicationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAppDuplicationsResponse) => void,
+  ): ClientUnaryCall;
+  /** GetAppDuplication returns an app duplication job created by the user. */
+  getAppDuplication(
+    request: GetAppDuplicationRequest,
+    callback: (error: ServiceError | null, response: SingleAppDuplicationResponse) => void,
+  ): ClientUnaryCall;
+  getAppDuplication(
+    request: GetAppDuplicationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleAppDuplicationResponse) => void,
+  ): ClientUnaryCall;
+  getAppDuplication(
+    request: GetAppDuplicationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleAppDuplicationResponse) => void,
+  ): ClientUnaryCall;
+  /** Add tasks to an app. */
+  postTasks(
+    request: PostTasksRequest,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  postTasks(
+    request: PostTasksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  postTasks(
+    request: PostTasksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  /** Task annotation count */
+  getTaskAnnotationCount(
+    request: GetTaskCountRequest,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  getTaskAnnotationCount(
+    request: GetTaskCountRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  getTaskAnnotationCount(
+    request: GetTaskCountRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  /** Task Input count */
+  getTaskInputCount(
+    request: GetTaskCountRequest,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  getTaskInputCount(
+    request: GetTaskCountRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  getTaskInputCount(
+    request: GetTaskCountRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleTaskCountResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific task from an app. */
+  getTask(
+    request: GetTaskRequest,
+    callback: (error: ServiceError | null, response: SingleTaskResponse) => void,
+  ): ClientUnaryCall;
+  getTask(
+    request: GetTaskRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleTaskResponse) => void,
+  ): ClientUnaryCall;
+  getTask(
+    request: GetTaskRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleTaskResponse) => void,
+  ): ClientUnaryCall;
+  /** List tasks from an app. */
+  listTasks(
+    request: ListTasksRequest,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  listTasks(
+    request: ListTasksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  listTasks(
+    request: ListTasksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more tasks. */
+  patchTasks(
+    request: PatchTasksRequest,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  patchTasks(
+    request: PatchTasksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  patchTasks(
+    request: PatchTasksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiTaskResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple tasks in one request. */
+  deleteTasks(
+    request: DeleteTasksRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteTasks(
+    request: DeleteTasksRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteTasks(
+    request: DeleteTasksRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Add Label orders. */
+  postLabelOrders(
+    request: PostLabelOrdersRequest,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  postLabelOrders(
+    request: PostLabelOrdersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  postLabelOrders(
+    request: PostLabelOrdersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a label order. */
+  getLabelOrder(
+    request: GetLabelOrderRequest,
+    callback: (error: ServiceError | null, response: SingleLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  getLabelOrder(
+    request: GetLabelOrderRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  getLabelOrder(
+    request: GetLabelOrderRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  /** List label orders. */
+  listLabelOrders(
+    request: ListLabelOrdersRequest,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  listLabelOrders(
+    request: ListLabelOrdersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  listLabelOrders(
+    request: ListLabelOrdersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more label orders. */
+  patchLabelOrders(
+    request: PatchLabelOrdersRequest,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  patchLabelOrders(
+    request: PatchLabelOrdersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  patchLabelOrders(
+    request: PatchLabelOrdersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiLabelOrderResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Delete multiple label orders in one request.
+   * this do not change task status
+   */
+  deleteLabelOrders(
+    request: DeleteLabelOrdersRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteLabelOrders(
+    request: DeleteLabelOrdersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteLabelOrders(
+    request: DeleteLabelOrdersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Add a list of Collectors to an app.
+   * In the handler of this endpoint we also check for all the scopes of the  POST /inputs
+   * endpoint.
+   * Those current scopes are listed here as a hard requirement.
+   * They are needed when adding the collectors just so we now that you have permission with
+   * that key at least to do the writing to this app with POST /inputs.
+   */
+  postCollectors(
+    request: PostCollectorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  postCollectors(
+    request: PostCollectorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  postCollectors(
+    request: PostCollectorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific collector from an app. */
+  getCollector(
+    request: GetCollectorRequest,
+    callback: (error: ServiceError | null, response: SingleCollectorResponse) => void,
+  ): ClientUnaryCall;
+  getCollector(
+    request: GetCollectorRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleCollectorResponse) => void,
+  ): ClientUnaryCall;
+  getCollector(
+    request: GetCollectorRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleCollectorResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the collectors. */
+  listCollectors(
+    request: ListCollectorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  listCollectors(
+    request: ListCollectorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  listCollectors(
+    request: ListCollectorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more collectors. */
+  patchCollectors(
+    request: PatchCollectorsRequest,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  patchCollectors(
+    request: PatchCollectorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  patchCollectors(
+    request: PatchCollectorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCollectorResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Delete multiple collectors in one request.
+   * This call is asynchronous. Use DeleteCollector if you want a synchronous version.
+   */
+  deleteCollectors(
+    request: DeleteCollectorsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteCollectors(
+    request: DeleteCollectorsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteCollectors(
+    request: DeleteCollectorsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** PostStatValues */
+  postStatValues(
+    request: PostStatValuesRequest,
+    callback: (error: ServiceError | null, response: MultiStatValueResponse) => void,
+  ): ClientUnaryCall;
+  postStatValues(
+    request: PostStatValuesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiStatValueResponse) => void,
+  ): ClientUnaryCall;
+  postStatValues(
+    request: PostStatValuesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiStatValueResponse) => void,
+  ): ClientUnaryCall;
+  /** PostStatValuesAggregate */
+  postStatValuesAggregate(
+    request: PostStatValuesAggregateRequest,
+    callback: (error: ServiceError | null, response: MultiStatValueAggregateResponse) => void,
+  ): ClientUnaryCall;
+  postStatValuesAggregate(
+    request: PostStatValuesAggregateRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiStatValueAggregateResponse) => void,
+  ): ClientUnaryCall;
+  postStatValuesAggregate(
+    request: PostStatValuesAggregateRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiStatValueAggregateResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific module from an app. */
+  getModule(
+    request: GetModuleRequest,
+    callback: (error: ServiceError | null, response: SingleModuleResponse) => void,
+  ): ClientUnaryCall;
+  getModule(
+    request: GetModuleRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModuleResponse) => void,
+  ): ClientUnaryCall;
+  getModule(
+    request: GetModuleRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModuleResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the modules in community, by user or by app. */
+  listModules(
+    request: ListModulesRequest,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  listModules(
+    request: ListModulesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  listModules(
+    request: ListModulesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a modules to an app. */
+  postModules(
+    request: PostModulesRequest,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  postModules(
+    request: PostModulesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  postModules(
+    request: PostModulesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch one or more modules. */
+  patchModules(
+    request: PatchModulesRequest,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  patchModules(
+    request: PatchModulesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  patchModules(
+    request: PatchModulesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple modules in one request. */
+  deleteModules(
+    request: DeleteModulesRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModules(
+    request: DeleteModulesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModules(
+    request: DeleteModulesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Get a specific module version for a module. */
+  getModuleVersion(
+    request: GetModuleVersionRequest,
+    callback: (error: ServiceError | null, response: SingleModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModuleVersion(
+    request: GetModuleVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  getModuleVersion(
+    request: GetModuleVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the modules versions for a given module. */
+  listModuleVersions(
+    request: ListModuleVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  listModuleVersions(
+    request: ListModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  listModuleVersions(
+    request: ListModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Create a new module version to trigger training of the module. */
+  postModuleVersions(
+    request: PostModuleVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  postModuleVersions(
+    request: PostModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  postModuleVersions(
+    request: PostModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Modify details of an existing module version. */
+  patchModuleVersions(
+    request: PatchModuleVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchModuleVersions(
+    request: PatchModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchModuleVersions(
+    request: PatchModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete a multiple module version. */
+  deleteModuleVersions(
+    request: DeleteModuleVersionsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModuleVersions(
+    request: DeleteModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteModuleVersions(
+    request: DeleteModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Get usage count for specific module version. */
+  getModuleVersionUsageCount(
     request: GetModuleVersionUsageCountRequest,
-  ): Promise<SingleModuleVersionUsageCountResponse> {
-    const data = GetModuleVersionUsageCountRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetModuleVersionUsageCount", data);
-    return promise.then((data) => SingleModuleVersionUsageCountResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInstalledModuleVersion(request: GetInstalledModuleVersionRequest): Promise<SingleInstalledModuleVersionResponse> {
-    const data = GetInstalledModuleVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInstalledModuleVersion", data);
-    return promise.then((data) => SingleInstalledModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListInstalledModuleVersions(
+    callback: (error: ServiceError | null, response: SingleModuleVersionUsageCountResponse) => void,
+  ): ClientUnaryCall;
+  getModuleVersionUsageCount(
+    request: GetModuleVersionUsageCountRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleModuleVersionUsageCountResponse) => void,
+  ): ClientUnaryCall;
+  getModuleVersionUsageCount(
+    request: GetModuleVersionUsageCountRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleModuleVersionUsageCountResponse) => void,
+  ): ClientUnaryCall;
+  /** Get installed modules vesrions for an app. */
+  getInstalledModuleVersion(
+    request: GetInstalledModuleVersionRequest,
+    callback: (error: ServiceError | null, response: SingleInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  getInstalledModuleVersion(
+    request: GetInstalledModuleVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  getInstalledModuleVersion(
+    request: GetInstalledModuleVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** List installed modules vesrions for an app. */
+  listInstalledModuleVersions(
     request: ListInstalledModuleVersionsRequest,
-  ): Promise<MultiInstalledModuleVersionResponse> {
-    const data = ListInstalledModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListInstalledModuleVersions", data);
-    return promise.then((data) => MultiInstalledModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInstalledModuleVersions(
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  listInstalledModuleVersions(
+    request: ListInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  listInstalledModuleVersions(
+    request: ListInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /** Install a new module version which will deploy the specific ModuleVersion to the app in the url. */
+  postInstalledModuleVersions(
     request: PostInstalledModuleVersionsRequest,
-  ): Promise<MultiInstalledModuleVersionResponse> {
-    const data = PostInstalledModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInstalledModuleVersions", data);
-    return promise.then((data) => MultiInstalledModuleVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteInstalledModuleVersions(request: DeleteInstalledModuleVersionsRequest): Promise<BaseResponse> {
-    const data = DeleteInstalledModuleVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteInstalledModuleVersions", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInstalledModuleVersionsKey(request: PostInstalledModuleVersionsKeyRequest): Promise<SingleKeyResponse> {
-    const data = PostInstalledModuleVersionsKeyRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInstalledModuleVersionsKey", data);
-    return promise.then((data) => SingleKeyResponse.decode(new BinaryReader(data)));
-  }
-
-  PostBulkOperations(request: PostBulkOperationsRequest): Promise<MultiBulkOperationsResponse> {
-    const data = PostBulkOperationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostBulkOperations", data);
-    return promise.then((data) => MultiBulkOperationsResponse.decode(new BinaryReader(data)));
-  }
-
-  ListBulkOperations(request: ListBulkOperationsRequest): Promise<MultiBulkOperationsResponse> {
-    const data = ListBulkOperationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListBulkOperations", data);
-    return promise.then((data) => MultiBulkOperationsResponse.decode(new BinaryReader(data)));
-  }
-
-  GetBulkOperation(request: GetBulkOperationRequest): Promise<SingleBulkOperationsResponse> {
-    const data = GetBulkOperationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetBulkOperation", data);
-    return promise.then((data) => SingleBulkOperationsResponse.decode(new BinaryReader(data)));
-  }
-
-  CancelBulkOperations(request: CancelBulkOperationRequest): Promise<MultiBulkOperationsResponse> {
-    const data = CancelBulkOperationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "CancelBulkOperations", data);
-    return promise.then((data) => MultiBulkOperationsResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteBulkOperations(request: DeleteBulkOperationRequest): Promise<BaseResponse> {
-    const data = DeleteBulkOperationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteBulkOperations", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListNextTaskAssignments(request: ListNextTaskAssignmentsRequest): Promise<MultiInputResponse> {
-    const data = ListNextTaskAssignmentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListNextTaskAssignments", data);
-    return promise.then((data) => MultiInputResponse.decode(new BinaryReader(data)));
-  }
-
-  PutTaskAssignments(request: PutTaskAssignmentsRequest): Promise<MultiTaskAssignmentResponse> {
-    const data = PutTaskAssignmentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PutTaskAssignments", data);
-    return promise.then((data) => MultiTaskAssignmentResponse.decode(new BinaryReader(data)));
-  }
-
-  ListInputsAddJobs(request: ListInputsAddJobsRequest): Promise<MultiInputsAddJobResponse> {
-    const data = ListInputsAddJobsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListInputsAddJobs", data);
-    return promise.then((data) => MultiInputsAddJobResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInputsAddJob(request: GetInputsAddJobRequest): Promise<SingleInputsAddJobResponse> {
-    const data = GetInputsAddJobRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInputsAddJob", data);
-    return promise.then((data) => SingleInputsAddJobResponse.decode(new BinaryReader(data)));
-  }
-
-  CancelInputsAddJob(request: CancelInputsAddJobRequest): Promise<SingleInputsAddJobResponse> {
-    const data = CancelInputsAddJobRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "CancelInputsAddJob", data);
-    return promise.then((data) => SingleInputsAddJobResponse.decode(new BinaryReader(data)));
-  }
-
-  PostUploads(request: PostUploadsRequest): Promise<MultiUploadResponse> {
-    const data = PostUploadsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostUploads", data);
-    return promise.then((data) => MultiUploadResponse.decode(new BinaryReader(data)));
-  }
-
-  PutUploadContentParts(request: PutUploadContentPartsRequest): Promise<SingleUploadResponse> {
-    const data = PutUploadContentPartsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PutUploadContentParts", data);
-    return promise.then((data) => SingleUploadResponse.decode(new BinaryReader(data)));
-  }
-
-  GetUpload(request: GetUploadRequest): Promise<SingleUploadResponse> {
-    const data = GetUploadRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetUpload", data);
-    return promise.then((data) => SingleUploadResponse.decode(new BinaryReader(data)));
-  }
-
-  ListUploads(request: ListUploadsRequest): Promise<MultiUploadResponse> {
-    const data = ListUploadsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListUploads", data);
-    return promise.then((data) => MultiUploadResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteUploads(request: DeleteUploadsRequest): Promise<BaseResponse> {
-    const data = DeleteUploadsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteUploads", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInputsDataSources(request: PostInputsDataSourcesRequest): Promise<MultiInputsAddJobResponse> {
-    const data = PostInputsDataSourcesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInputsDataSources", data);
-    return promise.then((data) => MultiInputsAddJobResponse.decode(new BinaryReader(data)));
-  }
-
-  GetInputsExtractionJob(request: GetInputsExtractionJobRequest): Promise<SingleInputsExtractionJobResponse> {
-    const data = GetInputsExtractionJobRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetInputsExtractionJob", data);
-    return promise.then((data) => SingleInputsExtractionJobResponse.decode(new BinaryReader(data)));
-  }
-
-  ListInputsExtractionJobs(request: ListInputsExtractionJobsRequest): Promise<MultiInputsExtractionJobResponse> {
-    const data = ListInputsExtractionJobsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListInputsExtractionJobs", data);
-    return promise.then((data) => MultiInputsExtractionJobResponse.decode(new BinaryReader(data)));
-  }
-
-  CancelInputsExtractionJobs(request: CancelInputsExtractionJobsRequest): Promise<MultiInputsExtractionJobResponse> {
-    const data = CancelInputsExtractionJobsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "CancelInputsExtractionJobs", data);
-    return promise.then((data) => MultiInputsExtractionJobResponse.decode(new BinaryReader(data)));
-  }
-
-  PostInputsUploads(request: PostInputsUploadsRequest): Promise<MultiInputsAddJobResponse> {
-    const data = PostInputsUploadsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostInputsUploads", data);
-    return promise.then((data) => MultiInputsAddJobResponse.decode(new BinaryReader(data)));
-  }
-
-  ListPipelineVersionRuns(request: ListPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse> {
-    const data = ListPipelineVersionRunsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListPipelineVersionRuns", data);
-    return promise.then((data) => MultiPipelineVersionRunResponse.decode(new BinaryReader(data)));
-  }
-
-  GetRunner(request: GetRunnerRequest): Promise<SingleRunnerResponse> {
-    const data = GetRunnerRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetRunner", data);
-    return promise.then((data) => SingleRunnerResponse.decode(new BinaryReader(data)));
-  }
-
-  ListRunners(request: ListRunnersRequest): Promise<MultiRunnerResponse> {
-    const data = ListRunnersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListRunners", data);
-    return promise.then((data) => MultiRunnerResponse.decode(new BinaryReader(data)));
-  }
-
-  PostRunners(request: PostRunnersRequest): Promise<MultiRunnerResponse> {
-    const data = PostRunnersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostRunners", data);
-    return promise.then((data) => MultiRunnerResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchRunners(request: PatchRunnersRequest): Promise<MultiRunnerResponse> {
-    const data = PatchRunnersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchRunners", data);
-    return promise.then((data) => MultiRunnerResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteRunners(request: DeleteRunnersRequest): Promise<BaseResponse> {
-    const data = DeleteRunnersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteRunners", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListRunnerItems(request: ListRunnerItemsRequest): Promise<MultiRunnerItemResponse> {
-    const data = ListRunnerItemsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListRunnerItems", data);
-    return promise.then((data) => MultiRunnerItemResponse.decode(new BinaryReader(data)));
-  }
-
-  PostRunnerItemOutputs(request: PostRunnerItemOutputsRequest): Promise<MultiRunnerItemOutputResponse> {
-    const data = PostRunnerItemOutputsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostRunnerItemOutputs", data);
-    return promise.then((data) => MultiRunnerItemOutputResponse.decode(new BinaryReader(data)));
-  }
-
-  ProcessRunnerItems(request: Observable<PostRunnerItemOutputsRequest>): Observable<MultiRunnerItemResponse> {
-    const data = request.pipe(map((request) => PostRunnerItemOutputsRequest.encode(request).finish()));
-    const result = this.rpc.bidirectionalStreamingRequest(this.service, "ProcessRunnerItems", data);
-    return result.pipe(map((data) => MultiRunnerItemResponse.decode(new BinaryReader(data))));
-  }
-
-  PostModelVersionsTrainingTimeEstimate(
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  postInstalledModuleVersions(
+    request: PostInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  postInstalledModuleVersions(
+    request: PostInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInstalledModuleVersionResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Uninstall an installed module version which will deploy the specific ModuleVersion to the app
+   * in the url.
+   * This cleaned up any associated caller keys so needs the Keys_Delete scope.
+   */
+  deleteInstalledModuleVersions(
+    request: DeleteInstalledModuleVersionsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInstalledModuleVersions(
+    request: DeleteInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteInstalledModuleVersions(
+    request: DeleteInstalledModuleVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Assign a key that the caller owns to be used when accessing this installed module version
+   * If this endpoint is called with a different key then it overwrites what is there.
+   */
+  postInstalledModuleVersionsKey(
+    request: PostInstalledModuleVersionsKeyRequest,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  postInstalledModuleVersionsKey(
+    request: PostInstalledModuleVersionsKeyRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  postInstalledModuleVersionsKey(
+    request: PostInstalledModuleVersionsKeyRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleKeyResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Perform bulk operations on a list of inputs based on input source.
+   * Operation include add, update, delete of concepts, metadata and geo data.
+   * This is an Asynchronous process. Use ListBulkOperations or GetBulkOperation to check the status.
+   */
+  postBulkOperations(
+    request: PostBulkOperationsRequest,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  postBulkOperations(
+    request: PostBulkOperationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  postBulkOperations(
+    request: PostBulkOperationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the bulk operations */
+  listBulkOperations(
+    request: ListBulkOperationsRequest,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  listBulkOperations(
+    request: ListBulkOperationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  listBulkOperations(
+    request: ListBulkOperationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  /** Get the bulk operation details by ID */
+  getBulkOperation(
+    request: GetBulkOperationRequest,
+    callback: (error: ServiceError | null, response: SingleBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  getBulkOperation(
+    request: GetBulkOperationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  getBulkOperation(
+    request: GetBulkOperationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  /** Cancel one or more bulk operations */
+  cancelBulkOperations(
+    request: CancelBulkOperationRequest,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  cancelBulkOperations(
+    request: CancelBulkOperationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  cancelBulkOperations(
+    request: CancelBulkOperationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiBulkOperationsResponse) => void,
+  ): ClientUnaryCall;
+  /** delete one or more terminated bulk operations */
+  deleteBulkOperations(
+    request: DeleteBulkOperationRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteBulkOperations(
+    request: DeleteBulkOperationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteBulkOperations(
+    request: DeleteBulkOperationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Deprecated: Use PutTaskAssignments with action=LABEL_START.
+   *   This endpoint has initially been designed as a GET request,
+   *   but has been re-designed to serve a PUT logic.
+   *   In order to clearly highlight that this endpoint serves a PUT request,
+   *   this endpoint has been deprecated and replaced by PutTaskAssignments with action=LABEL_START.
+   */
+  listNextTaskAssignments(
+    request: ListNextTaskAssignmentsRequest,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listNextTaskAssignments(
+    request: ListNextTaskAssignmentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  listNextTaskAssignments(
+    request: ListNextTaskAssignmentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * PutTaskAssignments performs an idempotent action for the task assignments in given task.
+   * See PutTaskAssignmentsRequestAction for more details about possible actions.
+   */
+  putTaskAssignments(
+    request: PutTaskAssignmentsRequest,
+    callback: (error: ServiceError | null, response: MultiTaskAssignmentResponse) => void,
+  ): ClientUnaryCall;
+  putTaskAssignments(
+    request: PutTaskAssignmentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiTaskAssignmentResponse) => void,
+  ): ClientUnaryCall;
+  putTaskAssignments(
+    request: PutTaskAssignmentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiTaskAssignmentResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the inputs add jobs */
+  listInputsAddJobs(
+    request: ListInputsAddJobsRequest,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  listInputsAddJobs(
+    request: ListInputsAddJobsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  listInputsAddJobs(
+    request: ListInputsAddJobsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  /** Get the input add job details by ID */
+  getInputsAddJob(
+    request: GetInputsAddJobRequest,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  getInputsAddJob(
+    request: GetInputsAddJobRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  getInputsAddJob(
+    request: GetInputsAddJobRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  /** cancel the input add job by ID */
+  cancelInputsAddJob(
+    request: CancelInputsAddJobRequest,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  cancelInputsAddJob(
+    request: CancelInputsAddJobRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  cancelInputsAddJob(
+    request: CancelInputsAddJobRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * PostUploads is used to upload files. Note that this does not create inputs.
+   * returns job with uploadID, job has UPLOAD_IN_PROGRESS status
+   * Actual upload content can be done in multiple calls with PutUploadContentParts
+   * You can get status of upload with GetUpload or ListUploads endpoints
+   * See also PostInputsUploads
+   */
+  postUploads(
+    request: PostUploadsRequest,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  postUploads(
+    request: PostUploadsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  postUploads(
+    request: PostUploadsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Upload a part of a multipart upload.
+   * Behaviour on completion depends on the endpoint that was used to initiate the upload.
+   */
+  putUploadContentParts(
+    request: PutUploadContentPartsRequest,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  putUploadContentParts(
+    request: PutUploadContentPartsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  putUploadContentParts(
+    request: PutUploadContentPartsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  getUpload(
+    request: GetUploadRequest,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  getUpload(
+    request: GetUploadRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  getUpload(
+    request: GetUploadRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleUploadResponse) => void,
+  ): ClientUnaryCall;
+  listUploads(
+    request: ListUploadsRequest,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  listUploads(
+    request: ListUploadsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  listUploads(
+    request: ListUploadsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiUploadResponse) => void,
+  ): ClientUnaryCall;
+  deleteUploads(
+    request: DeleteUploadsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteUploads(
+    request: DeleteUploadsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteUploads(
+    request: DeleteUploadsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Initiates retrieval of inputs from cloud storage from a user provided data source.
+   * Will create and return an inputs-add-job for tracking progress.
+   * Archives will be extracted and their contents will be processed as inputs.
+   *
+   * The cloud URL will be treated as a filter prefix. For example s3:/bucket/images_folder/abc will process
+   * files in the images_folder beginning with abc or in a subfolder beginning with abc.
+   * For example:
+   * bucket/images_folder/abcImage.png
+   * bucket/images_folder/abc-1/Data.zip
+   *
+   * If given URL is for a private bucket or file, then credentials should be provided to access the bucket.
+   * Credentials should include rights to list the objects in the bucket, except when pointed directly at a file archive,
+   * in which case it only requires rights to access that particular file.
+   */
+  postInputsDataSources(
+    request: PostInputsDataSourcesRequest,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  postInputsDataSources(
+    request: PostInputsDataSourcesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  postInputsDataSources(
+    request: PostInputsDataSourcesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  /** Get the input extraction job details by ID */
+  getInputsExtractionJob(
+    request: GetInputsExtractionJobRequest,
+    callback: (error: ServiceError | null, response: SingleInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  getInputsExtractionJob(
+    request: GetInputsExtractionJobRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  getInputsExtractionJob(
+    request: GetInputsExtractionJobRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the input extraction jobs */
+  listInputsExtractionJobs(
+    request: ListInputsExtractionJobsRequest,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  listInputsExtractionJobs(
+    request: ListInputsExtractionJobsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  listInputsExtractionJobs(
+    request: ListInputsExtractionJobsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  cancelInputsExtractionJobs(
+    request: CancelInputsExtractionJobsRequest,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  cancelInputsExtractionJobs(
+    request: CancelInputsExtractionJobsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  cancelInputsExtractionJobs(
+    request: CancelInputsExtractionJobsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputsExtractionJobResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Create new upload job with a file archive containing inputs (images, videos, text, audio)
+   * Actual file upload happens in next steps by calling `PutUploadContentParts` endpoint
+   * and providing the file content in the request body.
+   * This endpoint creates and return an inputs-add-job which contains an upload id needed for upload and further status tracking
+   * Completing the upload will automatically begin unpacking the archive and uploading the contents as inputs.
+   * See also GetInputsAddJob and then GetInputsExtractionJob
+   */
+  postInputsUploads(
+    request: PostInputsUploadsRequest,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  postInputsUploads(
+    request: PostInputsUploadsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  postInputsUploads(
+    request: PostInputsUploadsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInputsAddJobResponse) => void,
+  ): ClientUnaryCall;
+  /** putting above the Get Nodepool endpoint to make it appear above the other one */
+  listPipelineVersionRuns(
+    request: ListPipelineVersionRunsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineVersionRuns(
+    request: ListPipelineVersionRunsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineVersionRuns(
+    request: ListPipelineVersionRunsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Get a specific runner.
+   * TODO(zeiler): runner_id is a UUID so can list globally as well.
+   */
+  getRunner(
+    request: GetRunnerRequest,
+    callback: (error: ServiceError | null, response: SingleRunnerResponse) => void,
+  ): ClientUnaryCall;
+  getRunner(
+    request: GetRunnerRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleRunnerResponse) => void,
+  ): ClientUnaryCall;
+  getRunner(
+    request: GetRunnerRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleRunnerResponse) => void,
+  ): ClientUnaryCall;
+  /** List all the runners for the user. */
+  listRunners(
+    request: ListRunnersRequest,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  listRunners(
+    request: ListRunnersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  listRunners(
+    request: ListRunnersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  /** Add a runners to a user. */
+  postRunners(
+    request: PostRunnersRequest,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  postRunners(
+    request: PostRunnersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  postRunners(
+    request: PostRunnersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  /** Patch runners of a user. */
+  patchRunners(
+    request: PatchRunnersRequest,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  patchRunners(
+    request: PatchRunnersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  patchRunners(
+    request: PatchRunnersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiRunnerResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple runners in one request. */
+  deleteRunners(
+    request: DeleteRunnersRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteRunners(
+    request: DeleteRunnersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteRunners(
+    request: DeleteRunnersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * List items for the remote runner to work on.
+   * since the runner_id is a UUID we can access it directly too.
+   */
+  listRunnerItems(
+    request: ListRunnerItemsRequest,
+    callback: (error: ServiceError | null, response: MultiRunnerItemResponse) => void,
+  ): ClientUnaryCall;
+  listRunnerItems(
+    request: ListRunnerItemsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiRunnerItemResponse) => void,
+  ): ClientUnaryCall;
+  listRunnerItems(
+    request: ListRunnerItemsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiRunnerItemResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * Post back outputs from remote runners
+   * since the runner_id is a UUID we can access it directly too.
+   */
+  postRunnerItemOutputs(
+    request: PostRunnerItemOutputsRequest,
+    callback: (error: ServiceError | null, response: MultiRunnerItemOutputResponse) => void,
+  ): ClientUnaryCall;
+  postRunnerItemOutputs(
+    request: PostRunnerItemOutputsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiRunnerItemOutputResponse) => void,
+  ): ClientUnaryCall;
+  postRunnerItemOutputs(
+    request: PostRunnerItemOutputsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiRunnerItemOutputResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * This maintains a single request for asking the API if there is any work to be done, processing
+   * it and streaming back results.
+   * To do that first handshake the MultiRunnerItemOutputResponse will have RUNNER_STREAM_START
+   * status filled in so that the API knows to respond with a MultiRunnerItemResponse.
+   * For now there will only be one of those if the model prediction only has one request.
+   * NOTE(zeiler): downside of this is you can't use HTTP REST requests to do runner work.
+   */
+  processRunnerItems(): ClientDuplexStream<PostRunnerItemOutputsRequest, MultiRunnerItemResponse>;
+  processRunnerItems(
+    options: Partial<CallOptions>,
+  ): ClientDuplexStream<PostRunnerItemOutputsRequest, MultiRunnerItemResponse>;
+  processRunnerItems(
+    metadata: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientDuplexStream<PostRunnerItemOutputsRequest, MultiRunnerItemResponse>;
+  /** Get the training time estimate based off train request and estimated input count. */
+  postModelVersionsTrainingTimeEstimate(
     request: PostModelVersionsTrainingTimeEstimateRequest,
-  ): Promise<MultiTrainingTimeEstimateResponse> {
-    const data = PostModelVersionsTrainingTimeEstimateRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostModelVersionsTrainingTimeEstimate", data);
-    return promise.then((data) => MultiTrainingTimeEstimateResponse.decode(new BinaryReader(data)));
-  }
-
-  ListCloudProviders(request: ListCloudProvidersRequest): Promise<MultiCloudProviderResponse> {
-    const data = ListCloudProvidersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListCloudProviders", data);
-    return promise.then((data) => MultiCloudProviderResponse.decode(new BinaryReader(data)));
-  }
-
-  ListCloudRegions(request: ListCloudRegionsRequest): Promise<MultiCloudRegionResponse> {
-    const data = ListCloudRegionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListCloudRegions", data);
-    return promise.then((data) => MultiCloudRegionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListInstanceTypes(request: ListInstanceTypesRequest): Promise<MultiInstanceTypeResponse> {
-    const data = ListInstanceTypesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListInstanceTypes", data);
-    return promise.then((data) => MultiInstanceTypeResponse.decode(new BinaryReader(data)));
-  }
-
-  GetComputeCluster(request: GetComputeClusterRequest): Promise<SingleComputeClusterResponse> {
-    const data = GetComputeClusterRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetComputeCluster", data);
-    return promise.then((data) => SingleComputeClusterResponse.decode(new BinaryReader(data)));
-  }
-
-  ListComputeClusters(request: ListComputeClustersRequest): Promise<MultiComputeClusterResponse> {
-    const data = ListComputeClustersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListComputeClusters", data);
-    return promise.then((data) => MultiComputeClusterResponse.decode(new BinaryReader(data)));
-  }
-
-  PostComputeClusters(request: PostComputeClustersRequest): Promise<MultiComputeClusterResponse> {
-    const data = PostComputeClustersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostComputeClusters", data);
-    return promise.then((data) => MultiComputeClusterResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteComputeClusters(request: DeleteComputeClustersRequest): Promise<BaseResponse> {
-    const data = DeleteComputeClustersRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteComputeClusters", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetNodepool(request: GetNodepoolRequest): Promise<SingleNodepoolResponse> {
-    const data = GetNodepoolRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetNodepool", data);
-    return promise.then((data) => SingleNodepoolResponse.decode(new BinaryReader(data)));
-  }
-
-  ListNodepools(request: ListNodepoolsRequest): Promise<MultiNodepoolResponse> {
-    const data = ListNodepoolsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListNodepools", data);
-    return promise.then((data) => MultiNodepoolResponse.decode(new BinaryReader(data)));
-  }
-
-  PostNodepools(request: PostNodepoolsRequest): Promise<MultiNodepoolResponse> {
-    const data = PostNodepoolsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostNodepools", data);
-    return promise.then((data) => MultiNodepoolResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchNodepools(request: PatchNodepoolsRequest): Promise<MultiNodepoolResponse> {
-    const data = PatchNodepoolsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchNodepools", data);
-    return promise.then((data) => MultiNodepoolResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteNodepools(request: DeleteNodepoolsRequest): Promise<BaseResponse> {
-    const data = DeleteNodepoolsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteNodepools", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetDeployment(request: GetDeploymentRequest): Promise<SingleDeploymentResponse> {
-    const data = GetDeploymentRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetDeployment", data);
-    return promise.then((data) => SingleDeploymentResponse.decode(new BinaryReader(data)));
-  }
-
-  ListDeployments(request: ListDeploymentsRequest): Promise<MultiDeploymentResponse> {
-    const data = ListDeploymentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListDeployments", data);
-    return promise.then((data) => MultiDeploymentResponse.decode(new BinaryReader(data)));
-  }
-
-  PostDeployments(request: PostDeploymentsRequest): Promise<MultiDeploymentResponse> {
-    const data = PostDeploymentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostDeployments", data);
-    return promise.then((data) => MultiDeploymentResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchDeployments(request: PatchDeploymentsRequest): Promise<MultiDeploymentResponse> {
-    const data = PatchDeploymentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchDeployments", data);
-    return promise.then((data) => MultiDeploymentResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteDeployments(request: DeleteDeploymentsRequest): Promise<BaseResponse> {
-    const data = DeleteDeploymentsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteDeployments", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostAuditLogSearches(request: PostAuditLogSearchesRequest): Promise<MultiAuditLogEntryResponse> {
-    const data = PostAuditLogSearchesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostAuditLogSearches", data);
-    return promise.then((data) => MultiAuditLogEntryResponse.decode(new BinaryReader(data)));
-  }
-
-  ListWorkflowEvaluationTemplates(
+    callback: (error: ServiceError | null, response: MultiTrainingTimeEstimateResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsTrainingTimeEstimate(
+    request: PostModelVersionsTrainingTimeEstimateRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiTrainingTimeEstimateResponse) => void,
+  ): ClientUnaryCall;
+  postModelVersionsTrainingTimeEstimate(
+    request: PostModelVersionsTrainingTimeEstimateRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiTrainingTimeEstimateResponse) => void,
+  ): ClientUnaryCall;
+  /** List Available Cloud Providers */
+  listCloudProviders(
+    request: ListCloudProvidersRequest,
+    callback: (error: ServiceError | null, response: MultiCloudProviderResponse) => void,
+  ): ClientUnaryCall;
+  listCloudProviders(
+    request: ListCloudProvidersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCloudProviderResponse) => void,
+  ): ClientUnaryCall;
+  listCloudProviders(
+    request: ListCloudProvidersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCloudProviderResponse) => void,
+  ): ClientUnaryCall;
+  /** List Regions for given Cloud Provider */
+  listCloudRegions(
+    request: ListCloudRegionsRequest,
+    callback: (error: ServiceError | null, response: MultiCloudRegionResponse) => void,
+  ): ClientUnaryCall;
+  listCloudRegions(
+    request: ListCloudRegionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiCloudRegionResponse) => void,
+  ): ClientUnaryCall;
+  listCloudRegions(
+    request: ListCloudRegionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiCloudRegionResponse) => void,
+  ): ClientUnaryCall;
+  /** Get InstanceTypes given Cloud Provider and Region */
+  listInstanceTypes(
+    request: ListInstanceTypesRequest,
+    callback: (error: ServiceError | null, response: MultiInstanceTypeResponse) => void,
+  ): ClientUnaryCall;
+  listInstanceTypes(
+    request: ListInstanceTypesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiInstanceTypeResponse) => void,
+  ): ClientUnaryCall;
+  listInstanceTypes(
+    request: ListInstanceTypesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiInstanceTypeResponse) => void,
+  ): ClientUnaryCall;
+  /** ComputeCluster CRUD */
+  getComputeCluster(
+    request: GetComputeClusterRequest,
+    callback: (error: ServiceError | null, response: SingleComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  getComputeCluster(
+    request: GetComputeClusterRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  getComputeCluster(
+    request: GetComputeClusterRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  listComputeClusters(
+    request: ListComputeClustersRequest,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  listComputeClusters(
+    request: ListComputeClustersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  listComputeClusters(
+    request: ListComputeClustersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  postComputeClusters(
+    request: PostComputeClustersRequest,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  postComputeClusters(
+    request: PostComputeClustersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  postComputeClusters(
+    request: PostComputeClustersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiComputeClusterResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple compute_clusters in one request. */
+  deleteComputeClusters(
+    request: DeleteComputeClustersRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteComputeClusters(
+    request: DeleteComputeClustersRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteComputeClusters(
+    request: DeleteComputeClustersRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Nodepools CRUD */
+  getNodepool(
+    request: GetNodepoolRequest,
+    callback: (error: ServiceError | null, response: SingleNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  getNodepool(
+    request: GetNodepoolRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  getNodepool(
+    request: GetNodepoolRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  listNodepools(
+    request: ListNodepoolsRequest,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  listNodepools(
+    request: ListNodepoolsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  listNodepools(
+    request: ListNodepoolsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  postNodepools(
+    request: PostNodepoolsRequest,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  postNodepools(
+    request: PostNodepoolsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  postNodepools(
+    request: PostNodepoolsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  patchNodepools(
+    request: PatchNodepoolsRequest,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  patchNodepools(
+    request: PatchNodepoolsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  patchNodepools(
+    request: PatchNodepoolsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiNodepoolResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple nodepools in one request. */
+  deleteNodepools(
+    request: DeleteNodepoolsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteNodepools(
+    request: DeleteNodepoolsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteNodepools(
+    request: DeleteNodepoolsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  /** Deployments CRUD */
+  getDeployment(
+    request: GetDeploymentRequest,
+    callback: (error: ServiceError | null, response: SingleDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  getDeployment(
+    request: GetDeploymentRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  getDeployment(
+    request: GetDeploymentRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  listDeployments(
+    request: ListDeploymentsRequest,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  listDeployments(
+    request: ListDeploymentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  listDeployments(
+    request: ListDeploymentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  postDeployments(
+    request: PostDeploymentsRequest,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  postDeployments(
+    request: PostDeploymentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  postDeployments(
+    request: PostDeploymentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  patchDeployments(
+    request: PatchDeploymentsRequest,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  patchDeployments(
+    request: PatchDeploymentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  patchDeployments(
+    request: PatchDeploymentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiDeploymentResponse) => void,
+  ): ClientUnaryCall;
+  /** Delete multiple deployments in one request. */
+  deleteDeployments(
+    request: DeleteDeploymentsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDeployments(
+    request: DeleteDeploymentsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deleteDeployments(
+    request: DeleteDeploymentsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postAuditLogSearches(
+    request: PostAuditLogSearchesRequest,
+    callback: (error: ServiceError | null, response: MultiAuditLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  postAuditLogSearches(
+    request: PostAuditLogSearchesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiAuditLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  postAuditLogSearches(
+    request: PostAuditLogSearchesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiAuditLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowEvaluationTemplates(
     request: ListWorkflowEvaluationTemplatesRequest,
-  ): Promise<MultiWorkflowEvaluationTemplateResponse> {
-    const data = ListWorkflowEvaluationTemplatesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListWorkflowEvaluationTemplates", data);
-    return promise.then((data) => MultiWorkflowEvaluationTemplateResponse.decode(new BinaryReader(data)));
-  }
-
-  PostLogEntries(request: PostLogEntriesRequest): Promise<BaseResponse> {
-    const data = PostLogEntriesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostLogEntries", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  ListLogEntries(request: ListLogEntriesRequest): Promise<MultiLogEntryResponse> {
-    const data = ListLogEntriesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListLogEntries", data);
-    return promise.then((data) => MultiLogEntryResponse.decode(new BinaryReader(data)));
-  }
-
-  StreamLogEntries(request: StreamLogEntriesRequest): Observable<MultiLogEntryResponse> {
-    const data = StreamLogEntriesRequest.encode(request).finish();
-    const result = this.rpc.serverStreamingRequest(this.service, "StreamLogEntries", data);
-    return result.pipe(map((data) => MultiLogEntryResponse.decode(new BinaryReader(data))));
-  }
-
-  PostComputePlaneMetrics(request: PostComputePlaneMetricsRequest): Promise<BaseResponse> {
-    const data = PostComputePlaneMetricsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostComputePlaneMetrics", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflowVersionEvaluations(
+    callback: (error: ServiceError | null, response: MultiWorkflowEvaluationTemplateResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowEvaluationTemplates(
+    request: ListWorkflowEvaluationTemplatesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowEvaluationTemplateResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowEvaluationTemplates(
+    request: ListWorkflowEvaluationTemplatesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowEvaluationTemplateResponse) => void,
+  ): ClientUnaryCall;
+  postLogEntries(
+    request: PostLogEntriesRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postLogEntries(
+    request: PostLogEntriesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postLogEntries(
+    request: PostLogEntriesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  listLogEntries(
+    request: ListLogEntriesRequest,
+    callback: (error: ServiceError | null, response: MultiLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  listLogEntries(
+    request: ListLogEntriesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  listLogEntries(
+    request: ListLogEntriesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiLogEntryResponse) => void,
+  ): ClientUnaryCall;
+  streamLogEntries(
+    request: StreamLogEntriesRequest,
+    options?: Partial<CallOptions>,
+  ): ClientReadableStream<MultiLogEntryResponse>;
+  streamLogEntries(
+    request: StreamLogEntriesRequest,
+    metadata?: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientReadableStream<MultiLogEntryResponse>;
+  postComputePlaneMetrics(
+    request: PostComputePlaneMetricsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postComputePlaneMetrics(
+    request: PostComputePlaneMetricsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postComputePlaneMetrics(
+    request: PostComputePlaneMetricsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluations(
     request: PostWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse> {
-    const data = PostWorkflowVersionEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflowVersionEvaluations", data);
-    return promise.then((data) => MultiWorkflowVersionEvaluationResponse.decode(new BinaryReader(data)));
-  }
-
-  GetWorkflowVersionEvaluation(
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluations(
+    request: PostWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluations(
+    request: PostWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflowVersionEvaluation(
     request: GetWorkflowVersionEvaluationRequest,
-  ): Promise<SingleWorkflowVersionEvaluationResponse> {
-    const data = GetWorkflowVersionEvaluationRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetWorkflowVersionEvaluation", data);
-    return promise.then((data) => SingleWorkflowVersionEvaluationResponse.decode(new BinaryReader(data)));
-  }
-
-  ListWorkflowVersionEvaluations(
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflowVersionEvaluation(
+    request: GetWorkflowVersionEvaluationRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  getWorkflowVersionEvaluation(
+    request: GetWorkflowVersionEvaluationRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluations(
     request: ListWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse> {
-    const data = ListWorkflowVersionEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListWorkflowVersionEvaluations", data);
-    return promise.then((data) => MultiWorkflowVersionEvaluationResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchWorkflowVersionEvaluations(
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluations(
+    request: ListWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluations(
+    request: ListWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowVersionEvaluations(
     request: PatchWorkflowVersionEvaluationsRequest,
-  ): Promise<MultiWorkflowVersionEvaluationResponse> {
-    const data = PatchWorkflowVersionEvaluationsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchWorkflowVersionEvaluations", data);
-    return promise.then((data) => MultiWorkflowVersionEvaluationResponse.decode(new BinaryReader(data)));
-  }
-
-  ListWorkflowVersionEvaluationData(
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowVersionEvaluations(
+    request: PatchWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  patchWorkflowVersionEvaluations(
+    request: PatchWorkflowVersionEvaluationsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiWorkflowVersionEvaluationResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluationData(
     request: ListWorkflowVersionEvaluationDataRequest,
-  ): Promise<MultiListWorkflowVersionEvaluationDataResponse> {
-    const data = ListWorkflowVersionEvaluationDataRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListWorkflowVersionEvaluationData", data);
-    return promise.then((data) => MultiListWorkflowVersionEvaluationDataResponse.decode(new BinaryReader(data)));
-  }
-
-  PostWorkflowVersionEvaluationData(
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluationData(
+    request: ListWorkflowVersionEvaluationDataRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  listWorkflowVersionEvaluationData(
+    request: ListWorkflowVersionEvaluationDataRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluationData(
     request: PostWorkflowVersionEvaluationDataRequest,
-  ): Promise<MultiListWorkflowVersionEvaluationDataResponse> {
-    const data = PostWorkflowVersionEvaluationDataRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostWorkflowVersionEvaluationData", data);
-    return promise.then((data) => MultiListWorkflowVersionEvaluationDataResponse.decode(new BinaryReader(data)));
-  }
-
-  PostPipelines(request: PostPipelinesRequest): Promise<MultiPipelineResponse> {
-    const data = PostPipelinesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostPipelines", data);
-    return promise.then((data) => MultiPipelineResponse.decode(new BinaryReader(data)));
-  }
-
-  GetPipeline(request: GetPipelineRequest): Promise<SinglePipelineResponse> {
-    const data = GetPipelineRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetPipeline", data);
-    return promise.then((data) => SinglePipelineResponse.decode(new BinaryReader(data)));
-  }
-
-  ListPipelines(request: ListPipelinesRequest): Promise<MultiPipelineResponse> {
-    const data = ListPipelinesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListPipelines", data);
-    return promise.then((data) => MultiPipelineResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchPipelines(request: PatchPipelinesRequest): Promise<MultiPipelineResponse> {
-    const data = PatchPipelinesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchPipelines", data);
-    return promise.then((data) => MultiPipelineResponse.decode(new BinaryReader(data)));
-  }
-
-  DeletePipelines(request: DeletePipelinesRequest): Promise<BaseResponse> {
-    const data = DeletePipelinesRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeletePipelines", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetPipelineVersion(request: GetPipelineVersionRequest): Promise<SinglePipelineVersionResponse> {
-    const data = GetPipelineVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetPipelineVersion", data);
-    return promise.then((data) => SinglePipelineVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  ListPipelineVersions(request: ListPipelineVersionsRequest): Promise<MultiPipelineVersionResponse> {
-    const data = ListPipelineVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListPipelineVersions", data);
-    return promise.then((data) => MultiPipelineVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchPipelineVersions(request: PatchPipelineVersionsRequest): Promise<MultiPipelineVersionResponse> {
-    const data = PatchPipelineVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchPipelineVersions", data);
-    return promise.then((data) => MultiPipelineVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  DeletePipelineVersions(request: DeletePipelineVersionsRequest): Promise<BaseResponse> {
-    const data = DeletePipelineVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeletePipelineVersions", data);
-    return promise.then((data) => BaseResponse.decode(new BinaryReader(data)));
-  }
-
-  GetPipelineVersionRun(request: GetPipelineVersionRunRequest): Promise<SinglePipelineVersionRunResponse> {
-    const data = GetPipelineVersionRunRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetPipelineVersionRun", data);
-    return promise.then((data) => SinglePipelineVersionRunResponse.decode(new BinaryReader(data)));
-  }
-
-  PostPipelineVersionRuns(request: PostPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse> {
-    const data = PostPipelineVersionRunsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostPipelineVersionRuns", data);
-    return promise.then((data) => MultiPipelineVersionRunResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchPipelineVersionRuns(request: PatchPipelineVersionRunsRequest): Promise<MultiPipelineVersionRunResponse> {
-    const data = PatchPipelineVersionRunsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchPipelineVersionRuns", data);
-    return promise.then((data) => MultiPipelineVersionRunResponse.decode(new BinaryReader(data)));
-  }
-
-  PostPipelineSteps(request: PostPipelineStepsRequest): Promise<MultiPipelineStepResponse> {
-    const data = PostPipelineStepsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostPipelineSteps", data);
-    return promise.then((data) => MultiPipelineStepResponse.decode(new BinaryReader(data)));
-  }
-
-  GetPipelineStep(request: GetPipelineStepRequest): Promise<SinglePipelineStepResponse> {
-    const data = GetPipelineStepRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetPipelineStep", data);
-    return promise.then((data) => SinglePipelineStepResponse.decode(new BinaryReader(data)));
-  }
-
-  ListPipelineSteps(request: ListPipelineStepsRequest): Promise<MultiPipelineStepResponse> {
-    const data = ListPipelineStepsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListPipelineSteps", data);
-    return promise.then((data) => MultiPipelineStepResponse.decode(new BinaryReader(data)));
-  }
-
-  PostPipelineStepVersionsUpload(
-    request: Observable<PostPipelineStepVersionsUploadRequest>,
-  ): Observable<PostPipelineStepVersionsUploadResponse> {
-    const data = request.pipe(map((request) => PostPipelineStepVersionsUploadRequest.encode(request).finish()));
-    const result = this.rpc.bidirectionalStreamingRequest(this.service, "PostPipelineStepVersionsUpload", data);
-    return result.pipe(map((data) => PostPipelineStepVersionsUploadResponse.decode(new BinaryReader(data))));
-  }
-
-  ListPipelineStepVersions(request: ListPipelineStepVersionsRequest): Promise<MultiPipelineStepVersionResponse> {
-    const data = ListPipelineStepVersionsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListPipelineStepVersions", data);
-    return promise.then((data) => MultiPipelineStepVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  GetPipelineStepVersion(request: GetPipelineStepVersionRequest): Promise<SinglePipelineStepVersionResponse> {
-    const data = GetPipelineStepVersionRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetPipelineStepVersion", data);
-    return promise.then((data) => SinglePipelineStepVersionResponse.decode(new BinaryReader(data)));
-  }
-
-  GetSecret(request: GetSecretRequest): Promise<SingleSecretResponse> {
-    const data = GetSecretRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "GetSecret", data);
-    return promise.then((data) => SingleSecretResponse.decode(new BinaryReader(data)));
-  }
-
-  ListSecrets(request: ListSecretsRequest): Promise<MultiSecretResponse> {
-    const data = ListSecretsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "ListSecrets", data);
-    return promise.then((data) => MultiSecretResponse.decode(new BinaryReader(data)));
-  }
-
-  PostSecrets(request: PostSecretsRequest): Promise<MultiSecretResponse> {
-    const data = PostSecretsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PostSecrets", data);
-    return promise.then((data) => MultiSecretResponse.decode(new BinaryReader(data)));
-  }
-
-  PatchSecrets(request: PatchSecretsRequest): Promise<MultiSecretResponse> {
-    const data = PatchSecretsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "PatchSecrets", data);
-    return promise.then((data) => MultiSecretResponse.decode(new BinaryReader(data)));
-  }
-
-  DeleteSecrets(request: DeleteSecretsRequest): Promise<MultiSecretResponse> {
-    const data = DeleteSecretsRequest.encode(request).finish();
-    const promise = this.rpc.request(this.service, "DeleteSecrets", data);
-    return promise.then((data) => MultiSecretResponse.decode(new BinaryReader(data)));
-  }
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluationData(
+    request: PostWorkflowVersionEvaluationDataRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  postWorkflowVersionEvaluationData(
+    request: PostWorkflowVersionEvaluationDataRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiListWorkflowVersionEvaluationDataResponse) => void,
+  ): ClientUnaryCall;
+  postPipelines(
+    request: PostPipelinesRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  postPipelines(
+    request: PostPipelinesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  postPipelines(
+    request: PostPipelinesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  getPipeline(
+    request: GetPipelineRequest,
+    callback: (error: ServiceError | null, response: SinglePipelineResponse) => void,
+  ): ClientUnaryCall;
+  getPipeline(
+    request: GetPipelineRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePipelineResponse) => void,
+  ): ClientUnaryCall;
+  getPipeline(
+    request: GetPipelineRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePipelineResponse) => void,
+  ): ClientUnaryCall;
+  listPipelines(
+    request: ListPipelinesRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  listPipelines(
+    request: ListPipelinesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  listPipelines(
+    request: ListPipelinesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelines(
+    request: PatchPipelinesRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelines(
+    request: PatchPipelinesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelines(
+    request: PatchPipelinesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelines(
+    request: DeletePipelinesRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelines(
+    request: DeletePipelinesRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelines(
+    request: DeletePipelinesRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersion(
+    request: GetPipelineVersionRequest,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersion(
+    request: GetPipelineVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersion(
+    request: GetPipelineVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineVersions(
+    request: ListPipelineVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineVersions(
+    request: ListPipelineVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineVersions(
+    request: ListPipelineVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersions(
+    request: PatchPipelineVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersions(
+    request: PatchPipelineVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersions(
+    request: PatchPipelineVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelineVersions(
+    request: DeletePipelineVersionsRequest,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelineVersions(
+    request: DeletePipelineVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  deletePipelineVersions(
+    request: DeletePipelineVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: BaseResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersionRun(
+    request: GetPipelineVersionRunRequest,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersionRun(
+    request: GetPipelineVersionRunRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineVersionRun(
+    request: GetPipelineVersionRunRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineVersionRuns(
+    request: PostPipelineVersionRunsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineVersionRuns(
+    request: PostPipelineVersionRunsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineVersionRuns(
+    request: PostPipelineVersionRunsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersionRuns(
+    request: PatchPipelineVersionRunsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersionRuns(
+    request: PatchPipelineVersionRunsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  patchPipelineVersionRuns(
+    request: PatchPipelineVersionRunsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineVersionRunResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineSteps(
+    request: PostPipelineStepsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineSteps(
+    request: PostPipelineStepsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  postPipelineSteps(
+    request: PostPipelineStepsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStep(
+    request: GetPipelineStepRequest,
+    callback: (error: ServiceError | null, response: SinglePipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStep(
+    request: GetPipelineStepRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStep(
+    request: GetPipelineStepRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineSteps(
+    request: ListPipelineStepsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineSteps(
+    request: ListPipelineStepsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineSteps(
+    request: ListPipelineStepsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineStepResponse) => void,
+  ): ClientUnaryCall;
+  /**
+   * This is a streaming endpoint, the request has a field, upload_data, which can either be the config for the upload or the actual data to upload.
+   * The config must be sent first before the pipeline_step_bytes can be uploaded.
+   * Once the config has been sent, the server will respond with a confirmation containing the pipeline_step_version_id.
+   * This is so that if your upload is interrupted, you can resume the upload by sending the config again with the pipeline_step_version_id specified for your pipeline_step_version.
+   * The actual upload will be done via a multipart upload, the latest successful part_id will be sent from the server in the response to the pipeline_step_bytes.
+   */
+  postPipelineStepVersionsUpload(): ClientDuplexStream<
+    PostPipelineStepVersionsUploadRequest,
+    PostPipelineStepVersionsUploadResponse
+  >;
+  postPipelineStepVersionsUpload(
+    options: Partial<CallOptions>,
+  ): ClientDuplexStream<PostPipelineStepVersionsUploadRequest, PostPipelineStepVersionsUploadResponse>;
+  postPipelineStepVersionsUpload(
+    metadata: Metadata,
+    options?: Partial<CallOptions>,
+  ): ClientDuplexStream<PostPipelineStepVersionsUploadRequest, PostPipelineStepVersionsUploadResponse>;
+  listPipelineStepVersions(
+    request: ListPipelineStepVersionsRequest,
+    callback: (error: ServiceError | null, response: MultiPipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineStepVersions(
+    request: ListPipelineStepVersionsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiPipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  listPipelineStepVersions(
+    request: ListPipelineStepVersionsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiPipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStepVersion(
+    request: GetPipelineStepVersionRequest,
+    callback: (error: ServiceError | null, response: SinglePipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStepVersion(
+    request: GetPipelineStepVersionRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SinglePipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  getPipelineStepVersion(
+    request: GetPipelineStepVersionRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SinglePipelineStepVersionResponse) => void,
+  ): ClientUnaryCall;
+  getSecret(
+    request: GetSecretRequest,
+    callback: (error: ServiceError | null, response: SingleSecretResponse) => void,
+  ): ClientUnaryCall;
+  getSecret(
+    request: GetSecretRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: SingleSecretResponse) => void,
+  ): ClientUnaryCall;
+  getSecret(
+    request: GetSecretRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: SingleSecretResponse) => void,
+  ): ClientUnaryCall;
+  listSecrets(
+    request: ListSecretsRequest,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  listSecrets(
+    request: ListSecretsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  listSecrets(
+    request: ListSecretsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  postSecrets(
+    request: PostSecretsRequest,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  postSecrets(
+    request: PostSecretsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  postSecrets(
+    request: PostSecretsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  patchSecrets(
+    request: PatchSecretsRequest,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  patchSecrets(
+    request: PatchSecretsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  patchSecrets(
+    request: PatchSecretsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  deleteSecrets(
+    request: DeleteSecretsRequest,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  deleteSecrets(
+    request: DeleteSecretsRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
+  deleteSecrets(
+    request: DeleteSecretsRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: MultiSecretResponse) => void,
+  ): ClientUnaryCall;
 }
 
-interface Rpc {
-  request(service: string, method: string, data: Uint8Array): Promise<Uint8Array>;
-  clientStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Promise<Uint8Array>;
-  serverStreamingRequest(service: string, method: string, data: Uint8Array): Observable<Uint8Array>;
-  bidirectionalStreamingRequest(service: string, method: string, data: Observable<Uint8Array>): Observable<Uint8Array>;
-}
+export const V2Client = makeGenericClientConstructor(V2Service, "clarifai.api.V2") as unknown as {
+  new (address: string, credentials: ChannelCredentials, options?: Partial<ClientOptions>): V2Client;
+  service: typeof V2Service;
+  serviceName: string;
+};
 
 type Builtin = Date | Function | Uint8Array | string | number | boolean | undefined;
 

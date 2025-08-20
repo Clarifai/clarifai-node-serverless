@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.7.0",
-    "rxjs": "^7.8.2"
+    "@grpc/grpc-js": "^1.13.4"
   }
 }
