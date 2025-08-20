@@ -15,6 +15,8 @@ const sharedConfig = {
   bundle: true,
   sourcemap: true,
   target: "esnext",
+  treeShaking: true,
+  minify: true,
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
