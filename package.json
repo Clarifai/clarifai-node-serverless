@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "generate:proto": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto --ts_out=./src/generated --proto_path=. $(find proto/clarifai -name '*.proto')"
+    "generate:proto": "protoc --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto --ts_out=./src/generated --proto_path=. $(find proto/clarifai -name '*.proto')",
+    "lint": "tsc --noEmit"
   },
   "devDependencies": {
     "degit": "^2.8.4",
