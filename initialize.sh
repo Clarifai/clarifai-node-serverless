@@ -12,6 +12,6 @@ find ./proto -type d -empty -delete
 
 protoc \
   --plugin=protoc-gen-ts=./node_modules/.bin/protoc-gen-ts_proto \
-  --ts_out=grpc-js,outputServices=grpc-js:./src/generated \
+  --ts_out=grpc-js,outputServices=generic-definitions:./src/generated \
   --proto_path=. \
   $(find proto/clarifai -name '*.proto')
