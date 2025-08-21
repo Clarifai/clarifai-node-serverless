@@ -14,12 +14,13 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node esbuild.js",
+    "build": "npx tsx esbuild.ts",
     "preview": "vite preview",
     "generate:proto": "sh initialize.sh",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
+    "@luncheon/esbuild-plugin-gzip": "^0.1.0",
     "@parcel/transformer-typescript-types": "^2.15.4",
     "@types/node": "^24.3.0",
     "degit": "^2.8.4",
