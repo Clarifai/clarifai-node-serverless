@@ -2,7 +2,7 @@ import esbuild, { BuildOptions } from "esbuild";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import gzipPlugin from "@luncheon/esbuild-plugin-gzip";
+// import gzipPlugin from "@luncheon/esbuild-plugin-gzip";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,17 +18,17 @@ const sharedConfig: BuildOptions = {
   target: "esnext",
   treeShaking: true,
   minify: true,
-  write: false,
+  // write: false,
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
   ],
-  plugins: [
-    gzipPlugin({
-      gzip: true,
-      brotli: true,
-    }),
-  ],
+  // plugins: [
+  //   gzipPlugin({
+  //     gzip: true,
+  //     brotli: true,
+  //   }),
+  // ],
 };
 
 // Build CommonJS
@@ -43,6 +43,6 @@ esbuild.build({
 esbuild.build({
   ...sharedConfig,
   format: "esm",
-  platform: "neutral",
+  platform: "node",
   outfile: "dist/module.js",
 });

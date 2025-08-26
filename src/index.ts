@@ -1,10 +1,11 @@
-import { Client } from "@grpc/grpc-js";
+// import { Client } from "@grpc/grpc-js";
 import {
   PostWorkflowResultsRequest,
-  PostWorkflowResultsResponse,
+  // PostWorkflowResultsResponse,
   V2Client,
 } from "./generated/proto/clarifai/api/service";
 import { ChannelCredentials, Metadata } from "@grpc/grpc-js";
+import { promisify } from "node:util";
 
 // const client = new Client(
 //   "api.clarifai.com:443",
@@ -53,7 +54,18 @@ meta.set("authorization", `Key ${process.env.CLARIFAI_PAT}`);
 //   },
 // );
 
-client.postWorkflowResults(request, meta, (error, response) => {
-  if (error) throw error;
-  console.log(JSON.stringify(response));
-});
+const postWorkflowResults = promisify(client.postWorkflowResults.bind(client));
+
+// @ts-expect-error - meta overload is not picked up after promisify
+postWorkflowResults(request, meta)
+  .then((response) => {
+    console.log(JSON.stringify(response));
+  })
+  .catch((error) => {
+    throw error;
+  });
+
+// client.postWorkflowResults(request, meta, (error, response) => {
+//   if (error) throw error;
+//   console.log(JSON.stringify(response));
+// });

@@ -2,7 +2,6 @@
   "name": "clarifai-node-serverless",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "source": "src/index.ts",
   "main": "./dist/main.js",
   "module": "./dist/module.js",
@@ -13,22 +12,18 @@
     "types": "./dist/types.d.ts"
   },
   "scripts": {
-    "dev": "vite",
     "build": "npx tsx esbuild.ts",
-    "preview": "vite preview",
     "generate:proto": "sh initialize.sh",
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
     "@luncheon/esbuild-plugin-gzip": "^0.1.0",
-    "@parcel/transformer-typescript-types": "^2.15.4",
     "@types/node": "^24.3.0",
     "degit": "^2.8.4",
     "esbuild": "^0.25.9",
-    "parcel": "^2.15.4",
     "ts-proto": "^2.7.7",
-    "typescript": "~5.8.3",
-    "vite": "^7.1.2"
+    "tsx": "^4.20.5",
+    "typescript": "~5.8.3"
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.7.0",
