@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.7.0",
-    "@grpc/grpc-js": "^1.13.4"
+    "@grpc/grpc-js": "^1.13.4",
+    "uuid": "^11.1.0"
   }
 }
