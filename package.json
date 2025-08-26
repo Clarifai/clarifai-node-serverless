@@ -17,7 +17,6 @@
     "lint": "tsc --noEmit"
   },
   "devDependencies": {
-    "@luncheon/esbuild-plugin-gzip": "^0.1.0",
     "@types/node": "^24.3.0",
     "degit": "^2.8.4",
     "esbuild": "^0.25.9",
