@@ -1,5 +1,4 @@
-import { Workflow, Input } from "../../src/index";
-import { getInputFromUrl } from "../../src/input";
+import { Workflow, getInputFromUrl } from "../../src/index";
 
 const GENERAL_WORKFLOW =
   "https://clarifai.com/dani-cfg/test-ocr-workflow/workflows/General";
@@ -13,7 +12,7 @@ const workflow = new Workflow({
   },
 });
 
-const input: Input = getInputFromUrl({
+const input = getInputFromUrl({
   url: CELEBRITY_IMAGE,
   inputType: "image",
 });
