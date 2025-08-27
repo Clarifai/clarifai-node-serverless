@@ -1,0 +1,28 @@
+name: "Test Pull Request"
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        branch:
+          - ${{ github.head_ref }}
+
+    permissions:
+      # Required to checkout the code
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
+      - name: "Install Node"
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+      - name: "Install Deps"
+        run: npm ci
+      - name: "Lint"
+        run: npm run lint
