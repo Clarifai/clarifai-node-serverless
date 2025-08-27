@@ -1,8 +1,10 @@
 import { ChannelCredentials, Metadata } from "@grpc/grpc-js";
 import { MAX_WORKFLOW_PREDICT_INPUTS } from "./constants/workflow";
-import { Input, WorkflowState } from "./generated/proto/clarifai/api/resources";
+import {
+  Input as GrpcInput,
+  WorkflowState,
+} from "./generated/proto/clarifai/api/resources";
 import { promisify } from "node:util";
-import { v4 as uuid } from "uuid";
 import {
   PostWorkflowResultsRequest,
   PostWorkflowResultsResponse,
@@ -13,6 +15,9 @@ import { ClarifaiUrl, ClarifaiUrlHelper } from "./urls/helper";
 import { getMetaData } from "./utils/getMetadata";
 import { StatusCode } from "./generated/proto/clarifai/api/status/status_code";
 import { BackoffIterator } from "./utils/misc";
+import { getInputFromBytes, getInputFromUrl } from "./input";
+
+type Input = GrpcInput;
 
 type OutputConfig = { minValue: number };
 
@@ -174,39 +179,10 @@ export class Workflow {
       throw new Error("Invalid bytes.");
     }
 
-    // @ts-expect-error - Optional keys are not well defined
-    const data: Input["data"] =
-      inputType === "image"
-        ? {
-            image: {
-              base64: Buffer.from(inputBytes).toString("base64"),
-            },
-          }
-        : inputType === "text"
-          ? {
-              text: {
-                raw: Buffer.from(inputBytes).toString("utf-8"),
-              },
-            }
-          : inputType === "video"
-            ? {
-                video: {
-                  base64: Buffer.from(inputBytes).toString("base64"),
-                },
-              }
-            : inputType === "audio"
-              ? {
-                  audio: {
-                    base64: Buffer.from(inputBytes).toString("base64"),
-                  },
-                }
-              : {};
-
-    // @ts-expect-error - Optional keys are not well defined
-    const input: Input = {
-      id: uuid(),
-      data,
-    };
+    const input: Input = getInputFromBytes({
+      inputBytes,
+      inputType,
+    });
 
     return this.predict({ inputs: [input], workflowStateId });
   }
@@ -225,39 +201,11 @@ export class Workflow {
         "Invalid input type. It should be image, text, video, or audio.",
       );
     }
-    // @ts-expect-error - Optional keys are not well defined
-    const data: Input["data"] =
-      inputType === "image"
-        ? {
-            image: {
-              url,
-            },
-          }
-        : inputType === "text"
-          ? {
-              text: {
-                url,
-              },
-            }
-          : inputType === "video"
-            ? {
-                video: {
-                  url,
-                },
-              }
-            : inputType === "audio"
-              ? {
-                  audio: {
-                    url,
-                  },
-                }
-              : {};
 
-    // @ts-expect-error - Optional keys are not well defined
-    const input: Input = {
-      id: uuid(),
-      data,
-    };
+    const input = getInputFromUrl({
+      url,
+      inputType,
+    });
 
     return this.predict({ inputs: [input], workflowStateId });
   }
