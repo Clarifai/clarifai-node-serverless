@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.2](https://github.com/Clarifai/clarifai-node-serverless/compare/v0.0.1...v0.0.2) (2025-08-28)
+
+
+### Miscellaneous Chores
+
+* remove private field in package.json ([#7](https://github.com/Clarifai/clarifai-node-serverless/issues/7)) ([53c3438](https://github.com/Clarifai/clarifai-node-serverless/commit/53c34387b01577b9a928187fe0535aa936d7cefe))
+
 ## 0.0.1 (2025-08-28)
 
 
