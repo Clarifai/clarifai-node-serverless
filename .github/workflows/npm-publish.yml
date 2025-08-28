@@ -25,6 +25,8 @@ jobs:
         run: npm ci
       - name: Lint
         run: npm run lint
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
       - name: Build
         run: npm run build
       - name: Publish to npm
