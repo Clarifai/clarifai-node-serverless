@@ -26,3 +26,6 @@ dist-ssr
 .env
 .env*
 .parcel-cache
+
+# build outputs
+*.tgz
