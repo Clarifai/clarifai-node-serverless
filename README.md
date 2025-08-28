@@ -3,6 +3,7 @@
 <h2 align="center">Clarifai Node.js SDK - For Serverless Environments</h2>
 
 [![npm](https://img.shields.io/npm/v/clarifai-node-serverless)](https://www.npmjs.com/package/clarifai-node-serverless)
+[![Build](https://github.com/Clarifai/clarifai-node-serverless/actions/workflows/build.yml/badge.svg)](https://github.com/Clarifai/clarifai-node-serverless/actions/workflows/build.yml)
 [![Discord](https://img.shields.io/discord/1145701543228735582)](https://discord.com/invite/26upV8Y4Nd)
 
 # Clarifai Node.js SDK - For Serverless Environments

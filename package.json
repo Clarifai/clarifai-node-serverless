@@ -1,7 +1,7 @@
 {
   "name": "clarifai-node-serverless",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "source": "src/index.ts",
   "main": "./dist/main.js",
   "module": "./dist/module.js",
@@ -16,6 +16,19 @@
     "generate:proto": "sh initialize.sh",
     "lint": "tsc --noEmit"
   },
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Clarifai/clarifai-node-serverless.git"
+  },
+  "keywords": [
+    "clarifai",
+    "clarifai-nodejs",
+    "serverless",
+    "clarifai-typescript"
+  ],
   "devDependencies": {
     "@types/node": "^24.3.0",
     "degit": "^2.8.4",
