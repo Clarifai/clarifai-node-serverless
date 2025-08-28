@@ -1,4 +1,4 @@
-import { ChannelCredentials, Metadata } from "@grpc/grpc-js";
+import { Metadata } from "@grpc/grpc-js";
 import { MAX_WORKFLOW_PREDICT_INPUTS } from "./constants/workflow";
 import {
   Input as GrpcInput,
@@ -8,7 +8,6 @@ import { promisify } from "node:util";
 import {
   PostWorkflowResultsRequest,
   PostWorkflowResultsResponse,
-  V2Client,
 } from "./generated/proto/clarifai/api/service";
 import { AuthConfig } from "./types";
 import { ClarifaiUrl, ClarifaiUrlHelper } from "./urls/helper";
@@ -16,6 +15,7 @@ import { getMetaData } from "./utils/getMetadata";
 import { StatusCode } from "./generated/proto/clarifai/api/status/status_code";
 import { BackoffIterator } from "./utils/misc";
 import { getInputFromBytes, getInputFromUrl } from "./input";
+import { getClient } from "./utils/client";
 
 type Input = GrpcInput;
 
@@ -105,10 +105,7 @@ export class Workflow {
         : undefined,
     });
 
-    const client = new V2Client(
-      this.authConfig.base || "api.clarifai.com:443",
-      ChannelCredentials.createSsl(),
-    );
+    const client = getClient(this.authConfig.base);
 
     const postWorkflowResults = promisify<
       (
