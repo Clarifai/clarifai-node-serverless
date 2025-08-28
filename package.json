@@ -5,14 +5,21 @@
   "source": "src/index.ts",
   "main": "./dist/main.js",
   "module": "./dist/module.js",
-  "types": "./dist/types.d.ts",
+  "types": "./dist/types/index.d.ts",
   "exports": {
-    "import": "./dist/module.js",
-    "require": "./dist/main.js",
-    "types": "./dist/types.d.ts"
+    ".": {
+      "import": "./dist/module.js",
+      "require": "./dist/main.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./grpc/*": {
+      "import": "./dist/grpc/esm/*.js",
+      "require": "./dist/grpc/cjs/*.js",
+      "types": "./dist/types/generated/*.d.ts"
+    }
   },
   "scripts": {
-    "build": "npx tsx esbuild.ts",
+    "build": "npx tsx esbuild.ts && tsc",
     "generate:proto": "sh initialize.sh",
     "lint": "tsc --noEmit"
   },

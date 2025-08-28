@@ -66,3 +66,57 @@ const response = await workflow.predict({
 
 console.log(response);
 ```
+
+### Using Clarifai GRPC directly
+
+If you were previously using the [clarifai-nodejs-grpc](https://github.com/clarifai/clarifai-nodejs-grpc) package or you want to access the full range of Clarifai API features, you can use the GRPC client directly.
+
+```typescript
+import {
+  PostModelOutputsRequest,
+  V2Client,
+} from "clarifai-node-serverless/grpc/proto/clarifai/api/service";
+import { ChannelCredentials, Metadata } from "@grpc/grpc-js";
+import { StatusCode } from "clarifai-node-serverless/grpc/proto/clarifai/api/status/status_code";
+
+const client = new V2Client(
+  "api.clarifai.com:443",
+  ChannelCredentials.createSsl(),
+);
+
+const postModelOutputsRequest = PostModelOutputsRequest.fromPartial({
+  modelId: "aaa03c23b3724a16a56b629203edc62c",
+  inputs: [
+    {
+      data: {
+        image: {
+          url: "https://samples.clarifai.com/dog2.jpeg",
+        },
+      },
+    },
+  ],
+});
+
+const metadata = new Metadata();
+metadata.set("authorization", `key ${process.env.CLARIFAI_PAT}`);
+
+client.postModelOutputs(postModelOutputsRequest, metadata, (err, response) => {
+  if (err) {
+    console.log("Error: " + err);
+    return;
+  }
+
+  if (response?.status?.code !== StatusCode.SUCCESS) {
+    console.log(
+      "Received failed status: " +
+        response?.status?.description +
+        "\n" +
+        response?.status?.details,
+    );
+    return;
+  }
+
+  console.log("results:");
+  console.log(response?.outputs);
+});
+```

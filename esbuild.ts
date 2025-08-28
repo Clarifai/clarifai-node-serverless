@@ -38,3 +38,26 @@ esbuild.build({
   platform: "node",
   outfile: "dist/module.js",
 });
+
+// Build Core GRPC files
+// CJS
+esbuild.build({
+  entryPoints: ["src/generated/**/*.ts"],
+  outdir: "dist/grpc/cjs/",
+  platform: "node",
+  format: "cjs",
+  bundle: false,
+  sourcemap: true,
+  target: "esnext",
+});
+
+// ESM
+esbuild.build({
+  entryPoints: ["src/generated/**/*.ts"],
+  outdir: "dist/grpc/esm/",
+  platform: "node",
+  format: "esm",
+  bundle: false,
+  sourcemap: true,
+  target: "esnext",
+});
