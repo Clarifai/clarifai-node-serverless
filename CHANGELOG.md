@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0](https://github.com/Clarifai/clarifai-node-serverless/compare/v0.0.2...v0.1.0) (2025-09-02)
+
+
+### Features
+
+* model predict methods ([#10](https://github.com/Clarifai/clarifai-node-serverless/issues/10)) ([3e91599](https://github.com/Clarifai/clarifai-node-serverless/commit/3e91599ef4f5ffaf30964cdd1c9f49723621317a))
+
 ## [0.0.2](https://github.com/Clarifai/clarifai-node-serverless/compare/v0.0.1...v0.0.2) (2025-08-28)
 
 
