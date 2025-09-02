@@ -85,13 +85,12 @@ const isModelConfigWithUrl = (
   return (config as ModelConfigWithUrl).url !== undefined;
 };
 
-export class Models {
+export class Model {
   private appId: string;
   private id: string;
   private modelUserAppId: UserAppIDSet | undefined;
   private modelVersion: { id: string } | undefined;
   public modelInfo: Partial<GrpcModel>;
-  private trainingParams: Record<string, unknown>;
   private runner: RunnerSelector | undefined;
   private authConfig: AuthConfig;
   private userAppId: UserAppIDSet;
@@ -162,7 +161,6 @@ export class Models {
     if (this.modelVersion) {
       this.modelInfo.modelVersion = grpcModelVersion as ModelVersion;
     }
-    this.trainingParams = {};
     if (modelUserAppId) this.modelUserAppId = modelUserAppId;
     if (config.runner) {
       this.setRunner(config.runner);
@@ -288,9 +286,11 @@ export class Models {
 
     const meta = getMetaData(this.authConfig.pat);
 
+    const requestObject = PostModelOutputsRequest.fromPartial(request);
+
     return new Promise<MultiOutputResponse["outputs"]>((resolve, reject) => {
       const makeRequest = () => {
-        postModelOutputs(request, meta)
+        postModelOutputs(requestObject, meta)
           .then((response) => {
             if (
               response.status?.code === StatusCode.MODEL_DEPLOYING &&
@@ -434,12 +434,8 @@ export class Models {
     request.modelId = this.id;
     if (this.modelVersion && this.modelVersion.id)
       request.versionId = this.modelVersion.id;
-    request.model = this.modelInfo as GrpcModel;
     const input: Input = {} as Input;
     const requestData: Data = {} as Data;
-    requestData.metadata = Struct.fromJavaScript({
-      _method_name: methodName,
-    });
     requestData.parts = [...payloadPart, ...paramsPart];
     input.data = requestData;
     request.inputs = [input];
