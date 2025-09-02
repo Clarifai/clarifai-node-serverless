@@ -1,0 +1,1 @@
+export const MAX_MODEL_PREDICT_INPUTS = 128;

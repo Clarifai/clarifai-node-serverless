@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_OPTIONS: --max-old-space-size=4096
+  NODE_OPTIONS: --max-old-space-size=6144
 
 jobs:
   publish:

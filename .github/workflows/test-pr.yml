@@ -3,7 +3,7 @@ on:
   pull_request:
 
 env:
-  NODE_OPTIONS: --max-old-space-size=4096
+  NODE_OPTIONS: --max-old-space-size=6144
 
 jobs:
   test:
@@ -29,3 +29,5 @@ jobs:
         run: npm ci
       - name: "Lint"
         run: npm run lint
+      - name: "Build"
+        run: npm run build
