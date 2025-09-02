@@ -7,6 +7,7 @@ import {
   MethodSignature,
   ModelVersion,
   OutputConfig,
+  OutputInfo,
   RunnerSelector,
   UserAppIDSet,
 } from "./generated/proto/clarifai/api/resources";
@@ -26,6 +27,8 @@ import { validateMethodSignaturesList } from "./utils/validateMethodSignaturesLi
 import { extractPayloadAndParams } from "./utils/extractPayloadAndParams";
 import { constructPartsFromPayload } from "./utils/constructPartsFromPayload";
 import { constructPartsFromParams } from "./utils/setPartsFromParams";
+import { MAX_MODEL_PREDICT_INPUTS } from "./constants/model";
+import { BackoffIterator } from "./utils/misc";
 const { Struct } = struct_pb;
 
 interface BaseModelConfig {
@@ -63,6 +66,17 @@ type TextModelPredictConfig = {
 } & Record<string, unknown>;
 
 type ModelPredictConfig = GeneralModelPredictConfig | TextModelPredictConfig;
+
+const isTextModelPredictConfig = (
+  config: ModelPredictConfig,
+): config is TextModelPredictConfig => {
+  return (
+    typeof config === "object" &&
+    config !== null &&
+    // @ts-expect-error - methodName check needed for the type guard
+    typeof config.methodName === "string"
+  );
+};
 
 const isModelConfigWithUrl = (
   config: ModelConfig,
@@ -193,6 +207,89 @@ export class Models {
     config: ModelPredictConfig,
   ): Promise<MultiOutputResponse["outputs"]> {
     let request: PostModelOutputsRequest = {} as PostModelOutputsRequest;
+    if (isTextModelPredictConfig(config)) {
+      request = await this.constructRequestWithMethodSignature(request, config);
+    } else {
+      const { inputs, inferenceParams, outputConfig } = config;
+      if (!Array.isArray(inputs)) {
+        throw new Error(
+          "Invalid inputs, inputs must be an array of Input objects.",
+        );
+      }
+      if (inputs.length > MAX_MODEL_PREDICT_INPUTS) {
+        throw new Error(`Too many inputs. Max is ${MAX_MODEL_PREDICT_INPUTS}.`);
+      }
+
+      this.overrideModelVersion({ inferenceParams, outputConfig });
+      const requestInputs: Input[] = [];
+      for (const input of inputs) {
+        requestInputs.push(input);
+      }
+
+      if (this.modelUserAppId) {
+        request.userAppId = this.modelUserAppId;
+      } else {
+        request.userAppId = this.userAppId;
+      }
+      request.modelId = this.id;
+      if (this.modelVersion && this.modelVersion.id)
+        request.versionId = this.modelVersion.id;
+      request.inputs = requestInputs;
+      request.model = this.modelInfo as GrpcModel;
+    }
+    if (this.runner) {
+      request.runnerSelector = this.runner;
+    }
+    const startTime = Date.now();
+    const backoffIterator = new BackoffIterator();
+
+    const client = getClient(this.authConfig.base);
+
+    const postModelOutputs = promisify<
+      (
+        request: PostModelOutputsRequest,
+        meta: Metadata,
+      ) => Promise<MultiOutputResponse>
+      // @ts-expect-error - right overload is not picked up
+    >(client.postModelOutputs.bind(client));
+
+    const meta = getMetaData(this.authConfig.pat);
+
+    return new Promise<MultiOutputResponse["outputs"]>((resolve, reject) => {
+      const makeRequest = () => {
+        postModelOutputs(request, meta)
+          .then((response) => {
+            if (
+              response.status?.code === StatusCode.MODEL_DEPLOYING &&
+              Date.now() - startTime < 600000
+            ) {
+              console.log(
+                `${this.id} model is still deploying, please wait...`,
+              );
+              setTimeout(makeRequest, backoffIterator.next().value * 1000);
+            } else if (response.status?.code !== StatusCode.SUCCESS) {
+              reject(
+                new Error(
+                  `Model Predict failed with response ${JSON.stringify(response.status)}`,
+                  {
+                    cause: response,
+                  },
+                ),
+              );
+            } else {
+              resolve(response.outputs);
+            }
+          })
+          .catch((error) => {
+            reject(
+              new Error(`Model Predict failed with error: ${error.message}`, {
+                cause: error.cause,
+              }),
+            );
+          });
+      };
+      makeRequest();
+    });
   }
 
   async loadInfo() {
@@ -315,5 +412,38 @@ export class Models {
     request.inputs = [input];
 
     return request;
+  }
+
+  private overrideModelVersion({
+    inferenceParams,
+    outputConfig,
+  }: {
+    inferenceParams?: Record<string, any>;
+    outputConfig?: OutputConfig;
+  }): void {
+    let currentModelVersion = this.modelInfo.modelVersion;
+    if (!currentModelVersion) {
+      currentModelVersion = {} as ModelVersion;
+    }
+    let currentOutputInfo = currentModelVersion.outputInfo;
+    if (!currentOutputInfo) {
+      currentOutputInfo = {} as OutputInfo;
+    }
+    if (outputConfig) {
+      currentOutputInfo.outputConfig = outputConfig;
+      const newOutputInfo = currentOutputInfo;
+      currentModelVersion.outputInfo = newOutputInfo;
+      this.modelInfo.modelVersion = currentModelVersion;
+    }
+    const updatedModelVersion = this.modelInfo.modelVersion;
+    const updatedOutputInfo = updatedModelVersion?.outputInfo;
+    if (updatedOutputInfo && inferenceParams) {
+      const params = Struct.fromJavaScript(inferenceParams);
+      updatedOutputInfo.params = params;
+      if (updatedModelVersion.outputInfo) {
+        updatedModelVersion.outputInfo = updatedOutputInfo;
+      }
+      this.modelInfo.modelVersion = updatedModelVersion;
+    }
   }
 }
