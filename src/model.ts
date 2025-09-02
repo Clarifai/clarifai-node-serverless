@@ -6,6 +6,7 @@ import {
   Input,
   MethodSignature,
   ModelVersion,
+  Output,
   OutputConfig,
   OutputInfo,
   RunnerSelector,
@@ -193,6 +194,38 @@ export class Models {
       }
     }
     this.runner = RunnerSelector.fromPartial(runner as Partial<RunnerSelector>);
+  }
+
+  async availableMethods(): Promise<string[]> {
+    if (!this.modelInfo.modelVersion?.methodSignatures) await this.loadInfo();
+
+    const methodSignatures = this.modelInfo.modelVersion?.methodSignatures;
+
+    if (!methodSignatures) {
+      throw new Error(
+        `Model ${this.id} is incompatible with the new interface`,
+      );
+    }
+
+    return methodSignatures.map((each) => each.name);
+  }
+
+  static getOutputDataFromModelResponse(outputs: Output[]): Data | undefined {
+    return outputs?.[0]?.data?.parts?.[0]?.data;
+  }
+
+  async methodSignatures(): Promise<MethodSignature[]> {
+    if (!this.modelInfo.modelVersion?.methodSignatures) await this.loadInfo();
+
+    const methodSignatures = this.modelInfo.modelVersion?.methodSignatures;
+
+    if (!methodSignatures) {
+      throw new Error(
+        `Model ${this.id} is incompatible with the new interface`,
+      );
+    }
+
+    return methodSignatures;
   }
 
   async predict(
