@@ -1,11 +1,32 @@
+import { promisify } from "node:util";
+import struct_pb from "google-protobuf/google/protobuf/struct_pb.js";
 import {
+  Data,
   Model as GrpcModel,
+  Input,
+  MethodSignature,
   ModelVersion,
+  OutputConfig,
   RunnerSelector,
   UserAppIDSet,
 } from "./generated/proto/clarifai/api/resources";
+import {
+  GetModelRequest,
+  MultiOutputResponse,
+  PostModelOutputsRequest,
+  SingleModelResponse,
+} from "./generated/proto/clarifai/api/service";
 import { AuthConfig, Subset } from "./types";
 import { ClarifaiUrl, ClarifaiUrlHelper } from "./urls/helper";
+import { getClient } from "./utils/client";
+import { Metadata } from "@grpc/grpc-js";
+import { getMetaData } from "./utils/getMetadata";
+import { StatusCode } from "./generated/proto/clarifai/api/status/status_code";
+import { validateMethodSignaturesList } from "./utils/validateMethodSignaturesList";
+import { extractPayloadAndParams } from "./utils/extractPayloadAndParams";
+import { constructPartsFromPayload } from "./utils/constructPartsFromPayload";
+import { constructPartsFromParams } from "./utils/setPartsFromParams";
+const { Struct } = struct_pb;
 
 interface BaseModelConfig {
   modelVersion?: { id: string };
@@ -31,6 +52,18 @@ interface ModelConfigWithModelId extends BaseModelConfig {
 
 type ModelConfig = ModelConfigWithUrl | ModelConfigWithModelId;
 
+interface GeneralModelPredictConfig {
+  inputs: Input[];
+  inferenceParams?: Record<string, any>;
+  outputConfig?: OutputConfig;
+}
+
+type TextModelPredictConfig = {
+  methodName: string;
+} & Record<string, unknown>;
+
+type ModelPredictConfig = GeneralModelPredictConfig | TextModelPredictConfig;
+
 const isModelConfigWithUrl = (
   config: ModelConfig,
 ): config is ModelConfigWithUrl => {
@@ -46,6 +79,7 @@ export class Models {
   private trainingParams: Record<string, unknown>;
   private runner: RunnerSelector | undefined;
   private authConfig: AuthConfig;
+  private userAppId: UserAppIDSet;
 
   constructor(config: ModelConfig) {
     const { modelId, modelVersion, modelUserAppId } = config;
@@ -67,6 +101,10 @@ export class Models {
       const [userId, appId] = ClarifaiUrlHelper.splitClarifaiUrl(url);
       [, , , _destructuredModelId, _destructuredModelVersionId] =
         ClarifaiUrlHelper.splitClarifaiUrl(url);
+      this.modelUserAppId = {
+        userId,
+        appId,
+      };
       _authConfig = config.authConfig
         ? {
             ...config.authConfig,
@@ -88,6 +126,10 @@ export class Models {
     }
 
     this.authConfig = _authConfig;
+    this.userAppId = {
+      appId: _authConfig.appId!,
+      userId: _authConfig.userId!,
+    };
     this.appId = _authConfig.appId;
     this.modelVersion =
       modelVersion ||
@@ -106,10 +148,7 @@ export class Models {
       this.modelInfo.modelVersion = grpcModelVersion as ModelVersion;
     }
     this.trainingParams = {};
-    this.modelUserAppId = {
-      appId: _authConfig.appId,
-      userId: _authConfig.userId,
-    };
+    if (modelUserAppId) this.modelUserAppId = modelUserAppId;
     if (config.runner) {
       this.setRunner(config.runner);
     }
@@ -140,5 +179,141 @@ export class Models {
       }
     }
     this.runner = RunnerSelector.fromPartial(runner as Partial<RunnerSelector>);
+  }
+
+  async predict(
+    predictArgs: TextModelPredictConfig,
+  ): Promise<MultiOutputResponse["outputs"]>;
+  async predict({
+    inputs,
+    inferenceParams,
+    outputConfig,
+  }: GeneralModelPredictConfig): Promise<MultiOutputResponse["outputs"]>;
+  async predict(
+    config: ModelPredictConfig,
+  ): Promise<MultiOutputResponse["outputs"]> {
+    let request: PostModelOutputsRequest = {} as PostModelOutputsRequest;
+  }
+
+  async loadInfo() {
+    const client = getClient(this.authConfig.base);
+
+    const getModelResults = promisify<
+      (request: GetModelRequest, meta: Metadata) => Promise<SingleModelResponse>
+      // @ts-expect-error - right overload is not picked up
+    >(client.getModel.bind(client));
+
+    const request: Partial<GetModelRequest> = {};
+    if (this.modelUserAppId) {
+      request.userAppId = this.modelUserAppId;
+    } else {
+      request.userAppId = this.userAppId;
+    }
+    request.modelId = this.id;
+    if (this.modelVersion?.id) request.versionId = this.modelVersion.id;
+
+    const meta = getMetaData(this.authConfig.pat);
+
+    const getModelRequest = GetModelRequest.fromPartial(request);
+    const responseObject = await getModelResults(getModelRequest, meta);
+
+    if (responseObject.status?.code !== StatusCode.SUCCESS) {
+      throw new Error(
+        `Failed to get model: ${responseObject.status?.code} : ${responseObject.status?.description}`,
+        {
+          cause: responseObject,
+        },
+      );
+    }
+
+    this.modelInfo = {};
+    if (responseObject.model?.id) {
+      this.modelInfo.id = responseObject.model?.id;
+    }
+    if (responseObject.model?.appId) {
+      this.modelInfo.appId = responseObject.model?.appId;
+    }
+    if (responseObject.model?.userId) {
+      this.modelInfo.userId = responseObject.model?.userId;
+    }
+    const grpcModelVersion: Partial<ModelVersion> = {};
+    if (responseObject.model?.modelVersion?.id) {
+      grpcModelVersion.id = responseObject.model?.modelVersion?.id;
+    }
+    this.modelInfo.modelVersion = grpcModelVersion as ModelVersion;
+    if (this.modelInfo && this.modelInfo.modelVersion)
+      this.modelInfo.modelVersion.methodSignatures = responseObject.model
+        ?.modelVersion?.methodSignatures as MethodSignature[];
+  }
+
+  private async constructRequestWithMethodSignature(
+    request: PostModelOutputsRequest,
+    config: TextModelPredictConfig,
+  ): Promise<PostModelOutputsRequest> {
+    if (!this.modelInfo.modelVersion?.methodSignatures) {
+      await this.loadInfo();
+    }
+
+    const { methodName, ...otherParams } = config;
+
+    const modelInfoObject = this.modelInfo;
+
+    const methodSignatures = modelInfoObject?.modelVersion?.methodSignatures;
+
+    if (!methodSignatures) {
+      throw new Error(
+        `Model ${this.id} is incompatible with the new interface`,
+      );
+    }
+
+    const targetMethodSignature = methodSignatures.find((each) => {
+      return each.name === methodName;
+    });
+
+    if (!targetMethodSignature) {
+      throw new Error(
+        `Invalid Method: ${methodName}, available methods are ${methodSignatures.map((each) => each.name).join(", ")}`,
+      );
+    }
+
+    validateMethodSignaturesList(
+      otherParams,
+      targetMethodSignature?.inputFields ?? [],
+    );
+
+    const { params, payload } = extractPayloadAndParams(
+      otherParams,
+      targetMethodSignature.inputFields,
+    );
+
+    const payloadPart = constructPartsFromPayload(
+      payload as Record<string, any>,
+      targetMethodSignature.inputFields.filter((each) => !each.isParam),
+    );
+
+    const paramsPart = constructPartsFromParams(
+      params as Record<string, any>,
+      targetMethodSignature.inputFields.filter((each) => each.isParam),
+    );
+
+    if (this.modelUserAppId) {
+      request.userAppId = this.modelUserAppId;
+    } else {
+      request.userAppId = this.userAppId;
+    }
+    request.modelId = this.id;
+    if (this.modelVersion && this.modelVersion.id)
+      request.versionId = this.modelVersion.id;
+    request.model = this.modelInfo as GrpcModel;
+    const input: Input = {} as Input;
+    const requestData: Data = {} as Data;
+    requestData.metadata = Struct.fromJavaScript({
+      _method_name: methodName,
+    });
+    requestData.parts = [...payloadPart, ...paramsPart];
+    input.data = requestData;
+    request.inputs = [input];
+
+    return request;
   }
 }
